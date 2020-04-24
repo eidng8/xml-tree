@@ -1,0 +1,87 @@
+os: linux
+dist: bionic
+language: node_js
+node_js: 12
+branches:
+  only:
+    - master
+    - dev
+    - /Release-v\d+\.\d+\.\d+/
+
+cache:
+  directories:
+    - node_modules
+
+jobs:
+  include:
+    - stage: test
+      os: windows
+      addons:
+        chrome: stable
+      install:
+        - npm install
+      script:
+        - npm run test:unit
+
+    - stage: test
+      os: osx
+      addons:
+        chrome: stable
+      install:
+        - npm install
+      script:
+        - npm run test:unit
+
+    - stage: test
+      os: linux
+      env:
+        - secure: JZhvhE5uAXC1+WL47BFXREtbRJgaBSs7970cs1kSkpFv3cJ7SBGirjCg6xYmFvbqf3xmOYNbrd/iBt5Dyqs074cGxxccOpdwNgGF23euG3YgWzxcP7VUq1RrnxLALRtDRobxveNB7DctCPHxWuKlZgsZSAThEHUCdazH68/bCpBMAMaf/JO+MK/EndcDYWCGqY6TIeDAsmtNVNUI6pVnXkYJakiYODVEyzuSstT44eD8mZ3BXu36NN62d+uvSEw2+JVmC1yTHLgYllM5tiS4ScBaBq7/ih6cZunscZJSNaLBV9ifUeRlUyGTvt2GWBSuWuQMqxZldr5RqU6/APfhDNSzXROXy7hUCYXjgi6xbrHQPFc2yXLYxHX060NklhYn9+6UaPJig23MH2DY/lUjSOrec/jvPXSZ7F83DQwDlz9m1lWSWykO+PCodKBnRb9+75u4/I6h25ycgJ7iHHlCPMBCdiejajCfKgumS24bgN7/GKZHuo8XOlTzxg7wlt2fzO0Pmw79/+94vKMAPh8OrW1/L8zIzbLpfN7/y9MpKmoyMSJ4VSuq4Sp8cfPm3g6yfr9J0klZjX/ARG/dux6Yi650XsiUpZPsyT8YF9QdM/9Z76IvcfP/02RMSjg14tWn84jgtQ23kbAtsU4YtySG3OKNoJRDrMh+NSQxlHKlLs0=
+        - secure: sjd+Ru89jESG+RV8nEhl6ZmhgkdPsImFdW5uNuwrC3rCJXqjLATe1cJxUWDv4MIE3AOb0y5RisqtsRBbk8v9INJtuhZU3fLqbVOOfQXZz/FXynrM/vhRSrbeLTbiHRd/kqmyb/hQgqeoK8ZBjfDsGTz/w9eECLA98e2wOM2j2FLXAUm3jS1YR5rjUvAJuG8IYf0N+srlzpjKS7HE171BxRa7lrhNXUYxpP97XkDqHTxXbb1edGiLTesR+MG9x/yao4AT0lbuGVmFdf2xkib3uTlWX/FlZK3jCYivd2xuiBDhBNc0+g4azThSNwruxMng6pkna1Z9XNl6BF9bFJiU2/VTajMSE18zjJM6HHgvh/G6DINNkAejcNtHAAVoiX5Br54KC4LVnD5ZQkVrStyJTgAsz+Kquwc0Zb9PZMmKzLKAjlSZAQksj2F2XX+PDhEqAhmQZcCU2ln4yDIJrAzODYIZIYwS4J8vtiOkrLfiiHQQNLB69TB6/dOD5Byyvf1UMdbA62VC2mXto5osATZOIQP9hHoWuvFWXFSHh+WBghHXc4HeYMvefUV4BsJ+mKLLhBq07DEml5+YF63psp++MtgZAixdGP8pSe36R2UWC5MwP8m1XI9x+OEmb589gaJv+gd3dIx9l6wbWan6YKaXlhRgv+OLCWLYdlmMG2g1Brc=
+      addons:
+        chrome: stable
+      install:
+        - npm install
+      before_script:
+        - npm install --no-save coveralls
+        - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        - chmod +x ./cc-test-reporter
+        - ./cc-test-reporter before-build
+      script:
+        - npm run test:unit -- --coverage
+        - npm run test:e2e
+      after_script:
+        - cat ./coverage/lcov.info | coveralls
+        - ./cc-test-reporter after-build --exit-code ${TRAVIS_TEST_RESULT}
+
+    - stage: deploy
+      os: linux
+      script: skip
+      before_deploy:
+        - npm install
+        - npm install --no-save @bundle-analyzer/webpack-plugin
+        - npm run build
+        - export PACKAGE=$(npm pack --silent)
+      deploy:
+        provider: releases
+        edge: true
+        file: ${PACKAGE}
+        token:
+          secure: Z4+zHdz07/2oO6QPIeSk/ZaS8+QwldjYPc0iRPIF/6N0Cww35EIMvtEm/tLMyZcw8kYJHAdh9v7q/bNrBwCdhmZ7/8d4qk8cFfqhxjWfA/8EnA8Juo+5+3gkUpYPukcNtDlaei3l++96k3sQ4FyYxuEpY3lWGzFwJggWA+LQGVebGKDreFnVytEr8DeXnOUhCamN39uv8xqrbJufvp+3vWNXu4PwRd5R7N+HqoZGPIQMa8rJwbPhW2cJF4bQoy7ZNzhh6/C0UbhEG9ykBWy/9VXIjxq46RJcWXVSq0dUEhhGWn34F5OZqDxOElPDzntXpunbNb1HnDFCw/hWy4BhDTlNI7DLhFc1R4+PRfd0c0lY1flHt/Xza5O4kV7P24bhZHuf8qVQyWjBg6mf+AOON88k7ewPyqKbkYphoeGdG0AktMcJ3CMbsKvgYtp/+K0mVtPsrgrFkJrXK9vgUazhBlkeq8PRxOrkTP9XeazZR6WzE7tJAmd612Q8Ij7zC1KNyXD1OCoFUs5KkjVD0vx7dM5jafWjhd3GWTegGJgQ/OOecXbfsigvwbSeaMN9Mh9RP8XrKXV8ajj7QeqhHOCzBtt4OukhjXXoU24BK3/Lak/WznKbrnVdtEORlU0jPcnXJvKrMrsRjeHQOeqZOTs4Mgt2GXcKGnzvTbsZVyceMZI=
+        on:
+          repo: eidng8/xml-tree
+          branch: /Release-v\d+\.\d+\.\d+/
+          tags: true
+
+    - stage: deploy
+      os: linux
+      script: skip
+      deploy:
+        provider: npm
+        edge: true
+        email: cheung.jackey@gmail.com
+        api_token:
+          secure: 2mIMc5dD88yzeeAhV1D8uTFJIJhYKgTMPH36K3HbLvMHUtSYRQBOob9H075iEsQ3Ta1Liuk27T93Q0atVsybUj1ufWo0Hzal0iYd4s1aj08hTsiIahD0EPf+dmSRaUELXqjFofXgboRugpxDeyTvOjCTjKT+eF3c1c+X7AFiPMmVzLJmx3eFRb8y3F9yUJ5nVz8NyvjJzv6Me6sf59O8a04awqL9okaSmJcdj79/7lkUzWAQ00LNKHXU+eP5C65VMciqu02PCRIk+C2nNOfw7IH5cRW3ZPzngPu6HAPgeUP0CloRU8yM8qU1LF9A/1IE09fRvctZnOCR2zt3EigmrmWVPPqiYBy2G95NQCJfGlAfynWVl+r/aMHmtABb818OBUyOXBxhEISrW9jJVm3z1N4gqYr+/Yfc62jkCGwUQHhDBOgOuNQv+G/8dN/FzRqRbCm/rXLcP4HaRfFu+CDkf+MFKu5jF5R7QFydRG3XVCOv73mpt/AFewJUJs7+IY/jPQ7J4JMeVhDYo3l31iC1mPE4+ylk9skq6Ss5v17N7/uahE8odV9tUyx0vDUTXfzjtIp6EH+y59HFNHn6dO2wAnQyozGvcDiQazt8jgcEcEAsRiVjrfVYO+UxBLTV2keXkvE4rzdAJZXJZblwRuyC5yFmBlUNGY38bpVBZZYTB+g=
+        on:
+          repo: eidng8/xml-tree
+          branch: /Release-v\d+\.\d+\.\d+/
+          tags: true

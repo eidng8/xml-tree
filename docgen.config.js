@@ -5,5 +5,7 @@
  */
 
 module.exports = {
-  preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
+  componentsRoot: 'src/components',
+  components: '**/*.vue',
+  outDir: 'docs',
 };
