@@ -1,3 +1,9 @@
+<!--
+  - GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
+  -
+  - Author: eidng8
+  -->
+
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
@@ -111,10 +117,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
-export default class HelloWorld extends Vue {
+export default class XmlTree extends Vue {
   @Prop() private msg!: string;
 }
 </script>

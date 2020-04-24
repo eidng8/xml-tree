@@ -1,3 +1,9 @@
+<!--
+  - GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
+  -
+  - Author: eidng8
+  -->
+
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
@@ -6,13 +12,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "./components/HelloWorld.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import XmlTree from './components/xml-tree.vue';
 
 @Component({
   components: {
-    HelloWorld
-  }
+    HelloWorld: XmlTree,
+  },
 })
 export default class App extends Vue {}
 </script>
