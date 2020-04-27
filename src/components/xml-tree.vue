@@ -7,17 +7,14 @@
 <template>
   <ul class="g8-tree-view g8-tree__dark g8-tree__highlight_hover">
     <li v-if="tree.declaration">
-      <div>
-        <span>&lt;?</span>
-        <label
-          v-for="(a, i) in tree.declaration.attributes || []"
-          class="g8-tree__node_entry_tags_tag"
-          :key="i"
-        >
-          {{ a.name }}={{ a.value }}
-        </label>
-        <span>?&gt;</span>
-      </div>
+      <span>&lt;?</span>
+      <label
+        v-for="(a, i) in tree.declaration.attributes || []"
+        class="g8-tree__node_entry_tags_tag"
+        :key="i"
+        >{{ a.name }}={{ a.value }}</label
+      >
+      <span>?&gt;</span>
     </li>
     <g8-tree-view
       v-for="(node, index) in tree.nodes || []"
@@ -28,14 +25,10 @@
       tag-hint="value"
     >
       <template #default="{ item }">
-        <span>
-          {{ item | tag }}
-        </span>
+        <span>{{ item | tag }}</span>
       </template>
       <template #tag="{ item, tag }">
-        <span>
-          {{ tag.name }}
-        </span>
+        <span>{{ tag.name }}</span>
       </template>
     </g8-tree-view>
   </ul>
@@ -77,6 +70,7 @@ export default class XmlTree extends Vue {
 
   tree!: XmlTreeRoot;
 
+  // noinspection JSUnusedGlobalSymbols
   created() {
     this.tree = xml2js(this.xml, {
       addParent: true,
@@ -106,8 +100,3 @@ export default class XmlTree extends Vue {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
-@import './xml-tree';
-</style>
