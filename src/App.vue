@@ -6,24 +6,39 @@
 
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <xml-tree :xml="xml" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import XmlTree from './components/xml-tree.vue';
+import { XmlTree } from '.';
 
-@Component({
-  components: {
-    HelloWorld: XmlTree,
-  },
-})
-export default class App extends Vue {}
+@Component({ components: { XmlTree } })
+export default class App extends Vue {
+  xml =
+    '<?xml version="1.0" encoding="utf-8"?>\n' +
+    '<!-- xslplane.1.xml -->\n' +
+    '<?xml-stylesheet type="text/xsl" href="xslplane.1.xsl" ?>\n' +
+    '<plane xmlns="urn:xxx" xmlns:y="urn:yyy">\n' +
+    '  <![CDATA[<sender>John Smith</sender>]]>\n' +
+    '  <!-- xslplane.2.xml -->\n' +
+    '  <year> 1977 </year>\n' +
+    '  <y:make> <c>Cessna</c> </y:make>\n' +
+    '  <model>\n' +
+    '    Skyhawk\n' +
+    '  </model>\n' +
+    '  <color> Light&nbsp;blue and white </color>\n' +
+    '</plane>';
+}
 </script>
 
 <style lang="scss">
+html,
+body {
+  color: #888;
+  background: #333333;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

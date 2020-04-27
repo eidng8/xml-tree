@@ -5,140 +5,109 @@
   -->
 
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br />
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-        >vue-cli documentation</a
-      >.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel"
-          target="_blank"
-          rel="noopener"
-          >babel</a
+  <ul class="g8-tree-view g8-tree__dark g8-tree__highlight_hover">
+    <li v-if="tree.declaration">
+      <div>
+        <span>&lt;?</span>
+        <label
+          v-for="(a, i) in tree.declaration.attributes || []"
+          class="g8-tree__node_entry_tags_tag"
+          :key="i"
         >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript"
-          target="_blank"
-          rel="noopener"
-          >typescript</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint"
-          target="_blank"
-          rel="noopener"
-          >eslint</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-jest"
-          target="_blank"
-          rel="noopener"
-          >unit-jest</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-e2e-nightwatch"
-          target="_blank"
-          rel="noopener"
-          >e2e-nightwatch</a
-        >
-      </li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li>
-        <a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a>
-      </li>
-      <li>
-        <a href="https://forum.vuejs.org" target="_blank" rel="noopener"
-          >Forum</a
-        >
-      </li>
-      <li>
-        <a href="https://chat.vuejs.org" target="_blank" rel="noopener"
-          >Community Chat</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/vuejs" target="_blank" rel="noopener"
-          >Twitter</a
-        >
-      </li>
-      <li>
-        <a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a>
-      </li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li>
-        <a href="https://router.vuejs.org" target="_blank" rel="noopener"
-          >vue-router</a
-        >
-      </li>
-      <li>
-        <a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-devtools#vue-devtools"
-          target="_blank"
-          rel="noopener"
-          >vue-devtools</a
-        >
-      </li>
-      <li>
-        <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener"
-          >vue-loader</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-          rel="noopener"
-          >awesome-vue</a
-        >
-      </li>
-    </ul>
-  </div>
+          {{ a.name }}={{ a.value }}
+        </label>
+        <span>?&gt;</span>
+      </div>
+    </li>
+    <g8-tree-view
+      v-for="(node, index) in tree.nodes || []"
+      :key="index"
+      :item="node"
+      tags-key="attributes"
+      children-key="nodes"
+      tag-hint="value"
+    >
+      <template #default="{ item }">
+        <span>
+          {{ item | tag }}
+        </span>
+      </template>
+      <template #tag="{ item, tag }">
+        <span>
+          {{ tag.name }}
+        </span>
+      </template>
+    </g8-tree-view>
+  </ul>
 </template>
 
 <script lang="ts">
+import { xml2js } from 'xml-js';
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { G8TreeView } from 'g8-vue-tree';
+import { XmlNodeTypes, XmlTreeRoot } from './types';
 
-@Component
+@Component({
+  name: 'xml-tree',
+  components: { G8TreeView },
+  filters: {
+    tag(node: XmlNodeTypes) {
+      // editor treats string as xml tags, don't use backticks here
+      switch (node.type) {
+        case 'cdata':
+          return '<![CDATA[' + node.cdata + ']]>';
+        case 'comment':
+          return '<!--' + node.comment + '-->';
+        case 'element':
+          return '<' + node.name + '>';
+        case 'instruction':
+          return '<? ' + node.name + ' ?>';
+        case 'text':
+          return node.text;
+        default:
+          return `~~~`;
+      }
+    },
+  },
+})
 export default class XmlTree extends Vue {
   @Prop() private msg!: string;
+
+  @Prop() xml!: string;
+
+  tree!: XmlTreeRoot;
+
+  created() {
+    this.tree = xml2js(this.xml, {
+      addParent: true,
+      elementsKey: 'nodes',
+      attributesFn: this.attributesAsArray,
+    }) as XmlTreeRoot;
+  }
+
+  attributesAsArray(
+    attributes: string | { [key: string]: string },
+  ): { name: string; value: string }[] {
+    if ('string' == typeof attributes) {
+      throw new Error(`Expected object, but got string '${attributes}'`);
+    }
+    return Object.keys(attributes).map(name => ({
+      name,
+      value: attributes[name],
+    }));
+  }
+
+  attributesAsObject(
+    attributes: { name: string; value: string }[],
+  ): { [key: string]: string } {
+    const obj = {} as { [key: string]: string };
+    attributes.forEach(a => (obj[a.name] = a.value));
+    return obj;
+  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+<style lang="scss">
+@import './xml-tree';
 </style>
