@@ -6,17 +6,17 @@
 
 export interface XmlAttribute {
   name: string;
-  value: string;
+  value: string | undefined;
 }
 
 export interface XmlTreeDeclaration {
-  attributes?: XmlAttribute[];
-  parent: XmlTreeEntry;
+  attributes: XmlAttribute[];
+  parent: XmlTreeEntry | XmlTreeRoot;
 }
 
 export interface XmlTreeEntry {
   type: string;
-  parent: XmlTreeEntry;
+  parent: XmlTreeEntry | XmlTreeRoot;
 }
 
 export interface XmlTreeCData extends XmlTreeEntry {
@@ -53,7 +53,7 @@ export interface XmlTreeText extends XmlTreeEntry {
 }
 
 export interface XmlTreeRoot {
-  declaration?: XmlTreeDeclaration;
+  declaration: XmlTreeDeclaration;
   nodes?: XmlTreeEntry[];
 }
 

@@ -6,9 +6,11 @@
 
 <template>
   <div id="app">
-    <div class="control-group">
-      <label for="show-attr-value">Show attribute values</label>
-      <input id="show-attr-value" type="checkbox" v-model="showAttrValue" />
+    <div class="controls">
+      <div class="control-group">
+        <label for="show-attr-value">Show attribute values</label>
+        <input id="show-attr-value" type="checkbox" v-model="showAttrValue" />
+      </div>
     </div>
     <hr />
     <g8-xml-tree :xml="xml" :show-attr-value="showAttrValue" />
@@ -51,19 +53,36 @@ export default class App extends Vue {
 <style lang="scss">
 html,
 body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   color: #888;
   background: #333333;
 }
 
 hr {
+  height: 1px;
+  width: 100%;
   border-width: 0 0 1px;
   border-color: rgba(0.5, 0.5, 0.5, 0.5);
 }
 
 #app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  > .controls {
+    padding: 2px 6px;
+    height: 1.4em;
+  }
+
+  > .g8-xml__container {
+    flex: 1 0 auto;
+  }
 }
 
 .control-group {

@@ -1,0 +1,21 @@
+/*!
+ * GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ * Author: eidng8
+ */
+
+//noinspection SassScssResolvedByNameOnly
+$g8-xml-bg: #fff !default;
+
+//noinspection SassScssResolvedByNameOnly
+$g8-xml-fg: $g8-tree-fg !default;
+
+//noinspection SassScssResolvedByNameOnly
+$g8-xml-text-dark: darken($g8-tree-bg, 20%);
+
+$g8-xml-border-color: darken($g8-xml-bg, 20%) !default;
+$g8-xml-border-color-inverse: lighten($g8-xml-fg, 10%) !default;
+
+$g8-xml-small-corner: 3px !default;
+
+$g8-xml-medium-corner: 6px !default;

@@ -4,6 +4,8 @@
  * Author: eidng8
  */
 
+@import './variables';
+
 %tag-name {
   display: flex;
 
@@ -15,9 +17,14 @@
     padding: 0 0.2em;
     display: block;
     text-align: center;
-    border-radius: 3px;
+    border-radius: $g8-xml-small-corner;
     font-size: 0.8em;
   }
+}
+
+.g8-xml__container {
+  width: 100%;
+  overflow: auto;
 }
 
 .g8-xml-tree {
