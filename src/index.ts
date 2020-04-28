@@ -4,8 +4,5 @@
  * Author: eidng8
  */
 
-import XmlTree from './components/xml-tree.vue';
-
-export { XmlTree };
-
 export * from './components/types';
+export { default as G8XmlTree } from './components/xml-tree.vue';

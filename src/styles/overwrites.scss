@@ -4,15 +4,32 @@
  * Author: eidng8
  */
 
-.g8-tree__branch_label {
+.g8-tree__node {
+  padding-top: 0.5em;
+  white-space: nowrap;
+}
+
+.g8-tree__node_entry {
+  width: unset;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
 }
 
 .g8-tree__node_entry_tags {
   display: inline-flex;
+  white-space: nowrap;
 }
 
 .g8-tree__node_entry_tags_tag {
+  font-size: 0.8em;
+  max-width: unset;
+  overflow: unset;
+}
+
+.g8-tree__node_branch_toggle,
+.g8-tree__node_entry_checker {
+  flex: 0 0 1em;
+  width: 1em;
   font-size: 0.8em;
 }

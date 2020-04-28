@@ -5,16 +5,17 @@
   -->
 
 <template>
-  <ul class="g8-tree-view g8-tree__dark g8-tree__highlight_hover">
-    <li v-if="tree.declaration">
-      <span>&lt;?</span>
-      <label
-        v-for="(a, i) in tree.declaration.attributes || []"
-        class="g8-tree__node_entry_tags_tag"
-        :key="i"
-        >{{ a.name }}={{ a.value }}</label
-      >
-      <span>?&gt;</span>
+  <ul class="g8-tree-view g8-tree__dark g8-tree__highlight_hover g8-xml-tree">
+    <li class="g8-tree__node" v-if="tree.declaration">
+      <div class="g8-tree__node_entry">
+        <span class="g8-xml-tree__declaration"><span></span></span>
+        <label
+          v-for="(a, i) in tree.declaration.attributes || []"
+          class="g8-tree__node_entry_tags_tag"
+          :key="i"
+          >{{ a.name }}={{ a.value }}</label
+        >
+      </div>
     </li>
     <g8-tree-view
       v-for="(node, index) in tree.nodes || []"
@@ -25,10 +26,23 @@
       tag-hint="value"
     >
       <template #default="{ item }">
-        <span>{{ item | tag }}</span>
+        <span
+          :class="{
+            'g8-xml-tree__cdata': 'cdata' == item.type,
+            'g8-xml-tree__comment': 'comment' == item.type,
+            'g8-xml-tree__doctype': 'doctype' == item.type,
+            'g8-xml-tree__element': 'element' == item.type,
+            'g8-xml-tree__instruction': 'instruction' == item.type,
+            'g8-xml-tree__text': 'text' == item.type,
+          }"
+          >{{ item | tag }}</span
+        >
       </template>
       <template #tag="{ item, tag }">
-        <span>{{ tag.name }}</span>
+        <span
+          ><span>{{ tag.name }}</span
+          ><span v-if="showAttrValue">="{{ tag.value }}"</span></span
+        >
       </template>
     </g8-tree-view>
   </ul>
@@ -41,20 +55,21 @@ import { G8TreeView } from 'g8-vue-tree';
 import { XmlNodeTypes, XmlTreeRoot } from './types';
 
 @Component({
-  name: 'xml-tree',
+  name: 'g8-xml-tree',
   components: { G8TreeView },
   filters: {
     tag(node: XmlNodeTypes) {
-      // editor treats string as xml tags, don't use backticks here
       switch (node.type) {
         case 'cdata':
-          return '<![CDATA[' + node.cdata + ']]>';
+          return node.cdata;
         case 'comment':
-          return '<!--' + node.comment + '-->';
+          return node.comment;
+        case 'doctype':
+          return node.doctype;
         case 'element':
-          return '<' + node.name + '>';
+          return node.name;
         case 'instruction':
-          return '<? ' + node.name + ' ?>';
+          return node.name;
         case 'text':
           return node.text;
         default:
@@ -63,10 +78,12 @@ import { XmlNodeTypes, XmlTreeRoot } from './types';
     },
   },
 })
-export default class XmlTree extends Vue {
+export default class G8XmlTree extends Vue {
   @Prop() private msg!: string;
 
   @Prop() xml!: string;
+
+  @Prop({ default: false }) showAttrValue!: boolean;
 
   tree!: XmlTreeRoot;
 

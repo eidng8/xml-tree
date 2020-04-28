@@ -29,6 +29,11 @@ export interface XmlTreeComment extends XmlTreeEntry {
   comment: string;
 }
 
+export interface XmlTreeDocType extends XmlTreeEntry {
+  type: 'doctype';
+  doctype: string;
+}
+
 export interface XmlTreeElement extends XmlTreeEntry {
   type: 'element';
   name: string;
@@ -55,6 +60,7 @@ export interface XmlTreeRoot {
 export type XmlNodeTypes =
   | XmlTreeCData
   | XmlTreeComment
+  | XmlTreeDocType
   | XmlTreeElement
   | XmlTreeInstruction
   | XmlTreeText;
