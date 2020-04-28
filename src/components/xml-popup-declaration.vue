@@ -17,16 +17,14 @@
           v-for="(attr, idx) in node.attributes"
           :key="idx"
         >
-          {{ attr.name }} =
-          <select
-            type="text"
-            v-model="attr.value"
-            v-if="'standalone' == attr.name"
-          >
-            <option value="no">no</option>
-            <option value="yes">yes</option>
-          </select>
-          <input type="text" v-model="attr.value" v-else />
+          <label
+            >{{ attr.name }} =
+            <select v-model="attr.value" v-if="'standalone' == attr.name">
+              <option value="no">no</option>
+              <option value="yes">yes</option>
+            </select>
+            <input type="text" v-model="attr.value" v-else />
+          </label>
         </div>
       </div>
     </template>

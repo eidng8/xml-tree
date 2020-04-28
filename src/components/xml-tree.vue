@@ -60,13 +60,9 @@
 import { xml2js } from 'xml-js';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8TreeView } from 'g8-vue-tree';
-import {
-  XmlNodeTypes,
-  XmlTreeDeclaration,
-  XmlTreeElement,
-  XmlTreeRoot,
-} from './types';
+import { XmlNodeTypes, XmlTreeDeclaration, XmlTreeRoot } from './types';
 import G8XmlPopupDeclaration from './xml-popup-declaration.vue';
+import { clone, kvpArray, kvpObject } from '../utils';
 
 @Component({
   name: 'g8-xml-tree',
@@ -101,7 +97,7 @@ export default class G8XmlTree extends Vue {
 
   currentNode?: XmlNodeTypes | XmlTreeDeclaration | null;
 
-  popupOpen = false;
+  popupOpen = true;
 
   // noinspection JSUnusedGlobalSymbols
   created() {
@@ -133,10 +129,7 @@ export default class G8XmlTree extends Vue {
     if ('string' == typeof attributes) {
       throw new Error(`Expected object, but got string '${attributes}'`);
     }
-    return Object.keys(attributes).map(name => ({
-      name,
-      value: attributes[name],
-    }));
+    return kvpArray(attributes, 'name') as { name: string; value: string }[];
   }
 
   /**
@@ -146,9 +139,7 @@ export default class G8XmlTree extends Vue {
   attributesAsObject(
     attributes: { name: string; value: string }[],
   ): { [key: string]: string } {
-    const obj = {} as { [key: string]: string };
-    attributes.forEach(a => (obj[a.name] = a.value));
-    return obj;
+    return kvpObject(attributes, 'name') as { [key: string]: string };
   }
 
   /**
@@ -158,15 +149,17 @@ export default class G8XmlTree extends Vue {
   cloneWithoutHierarchy(
     node: XmlNodeTypes | XmlTreeDeclaration,
   ): XmlNodeTypes | XmlTreeDeclaration {
-    const clone = Object.assign({}, node) as XmlTreeElement;
-    delete clone.parent;
-    delete clone.nodes;
-    return clone;
+    return clone((node as unknown) as { [key: string]: unknown }, [
+      'parent',
+      'nodes',
+    ]) as XmlNodeTypes | XmlTreeDeclaration;
   }
 
   saveDeclaration() {
-    this.currentNode!.parent = this.tree;
-    this.tree.declaration = this.currentNode as XmlTreeDeclaration;
+    if (this.currentNode) {
+      this.currentNode.parent = this.tree;
+      this.tree.declaration = this.currentNode as XmlTreeDeclaration;
+    }
     this.closePopup();
   }
 

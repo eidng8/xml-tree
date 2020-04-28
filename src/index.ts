@@ -5,4 +5,5 @@
  */
 
 export * from './components/types';
+export * from './utils';
 export { default as G8XmlTree } from './components/xml-tree.vue';
