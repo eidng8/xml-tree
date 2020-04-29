@@ -43,6 +43,7 @@ import { XmlTreeDeclaration } from './types';
 export default class G8XmlPopupDeclaration extends Vue {
   @Prop() node!: XmlTreeDeclaration;
 
+  // noinspection JSUnusedGlobalSymbols
   created() {
     if (!this.node.attributes || !this.node.attributes.length) {
       this.node.attributes = [

@@ -4,7 +4,7 @@
  * Author: eidng8
  */
 
-import { clone, kvpArray, kvpObject } from '../../src';
+import { cloneObject, kvpArray, kvpObject } from '../../src';
 
 describe('kvpArray', () => {
   it('coverts object to kvp array', () => {
@@ -86,7 +86,10 @@ describe('clone', () => {
         },
       },
     };
-    const actual = clone(fixture) as { a: { b: { c: string } }; e: string };
+    const actual = cloneObject(fixture) as {
+      a: { b: { c: string } };
+      e: string;
+    };
     expect(actual).not.toBe(fixture);
     expect(actual.a).not.toBe(fixture.a);
     expect(actual.a.b).not.toBe(fixture.a.b);
@@ -104,7 +107,7 @@ describe('clone', () => {
       },
       e: 'f',
     };
-    const actual = clone(fixture, ['e']) as {
+    const actual = cloneObject(fixture, ['e']) as {
       a: { b: { c: string } };
       e: string;
     };

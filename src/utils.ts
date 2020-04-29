@@ -1,3 +1,11 @@
+/*
+ * GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ * Author: eidng8
+ */
+
+import { assign, cloneDeep, each, filter, keys, map } from 'lodash';
+
 export interface KVPOptions {
   keepUndefined: boolean;
 }
@@ -19,13 +27,11 @@ export function kvpArray(
   value = 'value',
   options?: KVPOptions,
 ): { [key: string]: unknown }[] {
-  options = Object.assign({}, kvpDefaultOptions, options);
-  return Object.keys(obj)
-    .map(name => ({
-      [key]: name,
-      [value]: obj[name],
-    }))
-    .filter(p => options!.keepUndefined || p[value] !== undefined);
+  options = assign({}, kvpDefaultOptions, options);
+  return filter(
+    map(keys(obj), k => ({ [key]: k, [value]: obj[k] })),
+    p => options!.keepUndefined || p[value] !== undefined,
+  );
 }
 
 /**
@@ -41,9 +47,9 @@ export function kvpObject(
   value = 'value',
   options?: KVPOptions,
 ): { [key: string]: unknown; [key: number]: unknown } {
-  options = Object.assign({}, kvpDefaultOptions, options);
+  options = assign({}, kvpDefaultOptions, options);
   const obj = {} as { [key: string]: unknown; [key: number]: unknown };
-  array.forEach(a => {
+  each(array, a => {
     if (options!.keepUndefined || a[value] !== undefined) {
       obj[a[key] as string | number] = a[value];
     }
@@ -53,16 +59,16 @@ export function kvpObject(
 
 /**
  * Deep clones the given `obj`, `except` specific 1st-level keys.
- * @param obj
- * @param except
+ * @param obj object to be cloned.
+ * @param except keys in this array will be erased from the clone.
  */
-export function clone(
+export function cloneObject(
   obj: { [key: string]: unknown; [key: number]: unknown },
-  except?: string[],
+  except?: string[] | number[],
 ): object {
-  const clone = Object.assign({}, obj);
+  const shallow = Object.assign({}, obj);
   if (except) {
-    except.forEach(k => delete clone[k]);
+    each(except, k => delete shallow[k as string | number]);
   }
-  return JSON.parse(JSON.stringify(clone));
+  return cloneDeep(shallow);
 }

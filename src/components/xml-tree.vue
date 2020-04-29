@@ -36,6 +36,7 @@
               'g8-xml-tree__instruction': 'instruction' == item.type,
               'g8-xml-tree__text': 'text' == item.type,
             }"
+            @contextmenu="edit(item, $event)"
             >{{ item | tag }}</span
           >
         </template>
@@ -62,7 +63,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8TreeView } from 'g8-vue-tree';
 import { XmlNodeTypes, XmlTreeDeclaration, XmlTreeRoot } from './types';
 import G8XmlPopupDeclaration from './xml-popup-declaration.vue';
-import { clone, kvpArray, kvpObject } from '../utils';
+import { cloneObject, kvpArray, kvpObject } from '../utils';
 
 @Component({
   name: 'g8-xml-tree',
@@ -149,7 +150,7 @@ export default class G8XmlTree extends Vue {
   cloneWithoutHierarchy(
     node: XmlNodeTypes | XmlTreeDeclaration,
   ): XmlNodeTypes | XmlTreeDeclaration {
-    return clone((node as unknown) as { [key: string]: unknown }, [
+    return cloneObject((node as unknown) as { [key: string]: unknown }, [
       'parent',
       'nodes',
     ]) as XmlNodeTypes | XmlTreeDeclaration;
