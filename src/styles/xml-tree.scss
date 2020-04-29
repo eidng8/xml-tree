@@ -7,7 +7,7 @@
 @import './variables';
 
 %tag-name {
-  display: flex;
+  display: inline;
 
   &:before {
     color: #ccc;
@@ -15,11 +15,16 @@
     width: 0.8em;
     margin: 0 0.5em;
     padding: 0 0.2em;
-    display: block;
-    text-align: center;
-    border-radius: $g8-xml-small-corner;
     font-size: 0.8em;
+    text-align: center;
+    display: inline-block;
+    text-transform: lowercase;
+    border-radius: $g8-xml-small-corner;
   }
+}
+
+.g8-xml__large {
+  font-size: 1.2rem;
 }
 
 .g8-xml__container {
@@ -28,9 +33,17 @@
 }
 
 .g8-xml-tree {
-  .g8-tree__node_entry_label {
-    display: flex;
+  .g8-tree__node_entry > * {
+    display: block;
     align-items: center;
+  }
+
+  .g8-tree__node_entry_label,
+  .g8-tree__node_entry_tags {
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -40,6 +53,7 @@
   &:before {
     content: 'D';
     background: rgba(0, 0, 128, 0.8);
+    text-transform: uppercase;
   }
 }
 
@@ -67,6 +81,7 @@
   &:before {
     content: 'T';
     background: rgba(0, 0, 128, 0.8);
+    text-transform: uppercase;
   }
 }
 

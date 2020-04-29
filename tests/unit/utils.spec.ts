@@ -4,7 +4,16 @@
  * Author: eidng8
  */
 
-import { cloneObject, kvpArray, kvpObject } from '../../src';
+import {
+  cloneObject,
+  cloneWithoutHierarchy,
+  kvpArray,
+  kvpObject,
+  objXml,
+  xmlJs,
+  XmlTreeElement,
+  XmlTreeRoot,
+} from '../../src';
 
 describe('kvpArray', () => {
   it('coverts object to kvp array', () => {
@@ -76,7 +85,7 @@ describe('kvpObject', () => {
   });
 });
 
-describe('clone', () => {
+describe('cloneObject', () => {
   it('clones object deeply', () => {
     expect.assertions(5);
     const fixture = {
@@ -113,5 +122,111 @@ describe('clone', () => {
     };
     delete fixture.e;
     expect(actual).toEqual(fixture);
+  });
+});
+
+describe('cloneWithoutHierarchy', () => {
+  it('clones object without parents and nodes', () => {
+    expect.assertions(2);
+    const fixture = {
+      type: 'element',
+      name: 'e',
+      nodes: [],
+      attributes: [],
+      parent: {} as XmlTreeRoot,
+    };
+    const actual = cloneWithoutHierarchy(fixture);
+    expect(actual).not.toBe(fixture);
+    expect(actual).toEqual({
+      type: 'element',
+      name: 'e',
+      attributes: [],
+    });
+  });
+});
+
+describe('xmlJs', () => {
+  it('converts xml to object', () => {
+    expect.assertions(1);
+    const actual = xmlJs('<a><b c="d"><e/></b></a>') as XmlTreeElement;
+    delete actual.nodes![0].parent;
+    delete (actual.nodes![0] as XmlTreeElement).nodes![0].parent;
+    delete ((actual.nodes![0] as XmlTreeElement).nodes![0] as XmlTreeElement)
+      .nodes![0].parent;
+    expect(actual).toEqual({
+      nodes: [
+        {
+          name: 'a',
+          type: 'element',
+          nodes: [
+            {
+              name: 'b',
+              type: 'element',
+              attributes: [{ name: 'c', value: 'd' }],
+              nodes: [{ name: 'e', type: 'element' }],
+            },
+          ],
+        },
+      ],
+    });
+  });
+});
+
+describe('objXml', () => {
+  it('converts object to xml fragment', () => {
+    expect.assertions(1);
+    const fixture = {
+      nodes: [
+        {
+          name: 'a',
+          type: 'element',
+          attributes: [{ name: 'b', value: 'c' }],
+        },
+      ],
+    };
+    const actual = objXml(fixture);
+    expect(actual).toBe('<a b="c"/>');
+  });
+
+  it('converts object to xml', () => {
+    expect.assertions(1);
+    const fixture = {
+      declaration: {
+        attributes: [
+          {
+            name: 'version',
+            value: '1.0',
+          },
+          {
+            name: 'encoding',
+            value: 'utf-8',
+          },
+          {
+            name: 'standalone',
+          },
+        ],
+      },
+      nodes: [
+        {
+          name: 'a',
+          type: 'element',
+          nodes: [
+            {
+              name: 'b',
+              type: 'element',
+              attributes: [{ name: 'c', value: 'd' }],
+              nodes: [{ name: 'e', type: 'element' }],
+            },
+          ],
+        },
+      ],
+    };
+    const actual = objXml(fixture);
+    expect(actual).toBe(
+      `<?xml version="1.0" encoding="utf-8"?>
+<a>
+  <b c="d">
+    <e/></b></a>`,
+    );
   });
 });

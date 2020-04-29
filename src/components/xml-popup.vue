@@ -5,7 +5,7 @@
   -->
 
 <template>
-  <div class="g8-xml__popup" @click="close($event)">
+  <div class="g8-xml__popup" @click.self="close($event)">
     <div class="g8-xml__popup_box">
       <div class="g8-xml__popup_header">
         <div class="g8-xml__popup_header_title">

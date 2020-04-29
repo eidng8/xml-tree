@@ -5,11 +5,17 @@
   -->
 
 <template>
-  <g8-xml-popup @save="$emit('save', $event)" @close="$emit('close', $event)">
-    <template v-slot:title>Declaration</template>
+  <g8-xml-popup
+    class="g8-xml__popup_declaration"
+    @save="$emit('save', $event)"
+    @close="$emit('close', $event)"
+  >
+    <template v-slot:title>
+      <span class="g8-xml-tree__declaration">Declaration</span>
+    </template>
     <template>
       <div
-        class="g8-xml__popup_attributes g8-xml__popup_declaration"
+        class="g8-xml__popup_attributes"
         v-if="node.attributes && node.attributes.length"
       >
         <div
@@ -45,14 +51,6 @@ export default class G8XmlPopupDeclaration extends Vue {
 
   // noinspection JSUnusedGlobalSymbols
   created() {
-    if (!this.node.attributes || !this.node.attributes.length) {
-      this.node.attributes = [
-        { name: 'version', value: '1.0' },
-        { name: 'encoding', value: 'utf-8' },
-        { name: 'standalone', value: 'no' },
-      ];
-      return;
-    }
     const has = this.node.attributes.map(a => a.name);
     ['version', 'encoding', 'standalone']
       .filter(n => !has.includes(n))

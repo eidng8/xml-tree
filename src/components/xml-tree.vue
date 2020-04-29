@@ -6,15 +6,19 @@
 
 <template>
   <div class="g8-xml__container">
-    <ul class="g8-tree-view g8-tree__dark g8-tree__highlight_hover g8-xml-tree">
-      <li class="g8-tree__node" v-if="tree.declaration">
+    <ul class="g8-tree-view g8-tree__dark g8-xml-tree">
+      <li
+        class="g8-tree__node"
+        v-if="tree.declaration"
+        @contextmenu.prevent="edit(tree.declaration)"
+      >
         <div class="g8-tree__node_entry">
           <span class="g8-xml-tree__declaration"><span></span></span>
           <label
             v-for="(a, i) in tree.declaration.attributes || []"
             class="g8-tree__node_entry_tags_tag"
             :key="i"
-            >{{ a.name }}={{ a.value }}</label
+            >{{ a.name }}="{{ a.value }}"</label
           >
         </div>
       </li>
@@ -36,7 +40,7 @@
               'g8-xml-tree__instruction': 'instruction' == item.type,
               'g8-xml-tree__text': 'text' == item.type,
             }"
-            @contextmenu="edit(item, $event)"
+            @contextmenu.prevent="edit(item)"
             >{{ item | tag }}</span
           >
         </template>
@@ -49,25 +53,56 @@
       </g8-tree-view>
     </ul>
     <g8-xml-popup-declaration
-      v-if="popupOpen"
+      v-if="popupOpen && !currentNode.type"
       :node="currentNode"
       @save="saveDeclaration()"
       @close="closePopup()"
     ></g8-xml-popup-declaration>
+    <g8-xml-popup-element
+      v-else-if="popupOpen && 'element' == currentNode.type"
+      :node="currentNode"
+      @save="saveNode()"
+      @close="closePopup()"
+    ></g8-xml-popup-element>
+    <g8-xml-popup-instruction
+      v-else-if="popupOpen && 'instruction' == currentNode.type"
+      :node="currentNode"
+      @save="saveNode()"
+      @close="closePopup()"
+    ></g8-xml-popup-instruction>
+    <g8-xml-popup-textual
+      v-else-if="popupOpen"
+      :node="currentNode"
+      @save="saveNode()"
+      @close="closePopup()"
+    ></g8-xml-popup-textual>
   </div>
 </template>
 
 <script lang="ts">
-import { xml2js } from 'xml-js';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8TreeView } from 'g8-vue-tree';
-import { XmlNodeTypes, XmlTreeDeclaration, XmlTreeRoot } from './types';
+import {
+  XmlNodeTypes,
+  XmlTreeDeclaration,
+  XmlTreeElement,
+  XmlTreeRoot,
+} from './types';
 import G8XmlPopupDeclaration from './xml-popup-declaration.vue';
-import { cloneObject, kvpArray, kvpObject } from '../utils';
+import { cloneWithoutHierarchy, xmlJs } from '../utils';
+import G8XmlPopupTextual from './xml-popup-textual.vue';
+import G8XmlPopupElement from './xml-popup-element.vue';
+import G8XmlPopupInstruction from './xml-popup-instruction.vue';
 
 @Component({
   name: 'g8-xml-tree',
-  components: { G8XmlPopupDeclaration, G8TreeView },
+  components: {
+    G8XmlPopupInstruction,
+    G8XmlPopupElement,
+    G8XmlPopupTextual,
+    G8XmlPopupDeclaration,
+    G8TreeView,
+  },
   filters: {
     tag(node: XmlNodeTypes) {
       switch (node.type) {
@@ -98,16 +133,20 @@ export default class G8XmlTree extends Vue {
 
   currentNode?: XmlNodeTypes | XmlTreeDeclaration | null;
 
-  popupOpen = true;
+  currentNodeParent?: XmlTreeRoot | XmlTreeElement;
+
+  currentNodeIndex = -1;
+
+  popupOpen = false;
 
   // noinspection JSUnusedGlobalSymbols
   created() {
-    this.tree = xml2js(this.xml, {
-      addParent: true,
-      elementsKey: 'nodes',
-      attributesFn: this.attributesAsArray,
-    }) as XmlTreeRoot;
-    if (!this.tree.declaration) {
+    this.tree = xmlJs(this.xml) as XmlTreeRoot;
+    if (
+      !this.tree.declaration ||
+      !this.tree.declaration.attributes ||
+      !this.tree.declaration.attributes.length
+    ) {
       this.tree.declaration = {
         attributes: [
           { name: 'version', value: '1.0' },
@@ -117,43 +156,6 @@ export default class G8XmlTree extends Vue {
         parent: this.tree,
       };
     }
-    this.currentNode = this.cloneWithoutHierarchy(this.tree.declaration);
-  }
-
-  /**
-   * Convert attribute objects to array of name value pairs.
-   * @param attributes
-   */
-  attributesAsArray(
-    attributes: string | { [key: string]: string },
-  ): { name: string; value: string }[] {
-    if ('string' == typeof attributes) {
-      throw new Error(`Expected object, but got string '${attributes}'`);
-    }
-    return kvpArray(attributes, 'name') as { name: string; value: string }[];
-  }
-
-  /**
-   * Convert attribute array of name value pairs to objects.
-   * @param attributes
-   */
-  attributesAsObject(
-    attributes: { name: string; value: string }[],
-  ): { [key: string]: string } {
-    return kvpObject(attributes, 'name') as { [key: string]: string };
-  }
-
-  /**
-   * Clone the given node, without `parent` and `nodes`.
-   * @param node
-   */
-  cloneWithoutHierarchy(
-    node: XmlNodeTypes | XmlTreeDeclaration,
-  ): XmlNodeTypes | XmlTreeDeclaration {
-    return cloneObject((node as unknown) as { [key: string]: unknown }, [
-      'parent',
-      'nodes',
-    ]) as XmlNodeTypes | XmlTreeDeclaration;
   }
 
   saveDeclaration() {
@@ -166,6 +168,34 @@ export default class G8XmlTree extends Vue {
 
   closePopup() {
     this.popupOpen = false;
+  }
+
+  edit(item: XmlNodeTypes | XmlTreeDeclaration) {
+    this.currentNode = cloneWithoutHierarchy(item);
+    this.currentNodeParent = item.parent;
+    if ((item as XmlNodeTypes).type && this.currentNodeParent.nodes) {
+      this.currentNodeIndex = this.currentNodeParent.nodes.indexOf(
+        item as XmlNodeTypes,
+      );
+    } else {
+      this.currentNodeIndex = -1;
+    }
+    this.popupOpen = true;
+  }
+
+  saveNode() {
+    if (!this.currentNode) throw new Error('Invalid node');
+    if (!this.currentNodeParent) throw new Error('Invalid node parent');
+    this.currentNode.parent = this.currentNodeParent;
+    if (this.currentNodeIndex < 0) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.currentNodeParent.nodes!.push(this.currentNode as XmlNodeTypes);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.currentNodeParent.nodes![this.currentNodeIndex] = this
+        .currentNode as XmlNodeTypes;
+    }
+    this.closePopup();
   }
 }
 </script>

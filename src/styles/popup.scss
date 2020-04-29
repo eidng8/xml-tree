@@ -16,14 +16,6 @@
   position: absolute;
   background: rgba(0, 0, 0, 0.8);
 
-  button,
-  input,
-  select {
-    &:focus {
-      outline: none;
-    }
-  }
-
   button {
     padding: 0.5em;
     margin: 0 0 0 1em;
@@ -41,9 +33,20 @@
     border: none;
   }
 
-  select {
+  select,
+  textarea {
     border: solid 1px $g8-xml-border-color;
     background: transparent;
+  }
+
+  textarea {
+    resize: both;
+    min-height: 5em;
+    min-width: 20em;
+    max-width: 100%;
+    // only useful if the textarea is the only field in the box
+    // full viewport height - lines of text - padding - borders
+    max-height: calc(100vh - 12em - 4px);
   }
 }
 
@@ -60,6 +63,7 @@
 .g8-xml__popup_footer {
   width: 100%;
   padding: 1em;
+  flex: 0 0 0;
   box-sizing: border-box;
 }
 
@@ -74,8 +78,22 @@
   border-top: solid 1px $g8-xml-border-color;
 }
 
+.g8-xml__popup_body {
+  flex: 1 1 auto;
+  overflow: auto;
+  // full viewport height - lines of text - padding - borders
+  max-height: calc(100vh - 7em - 4px);
+}
+
 .g8-xml__popup_header_title {
   flex: 1;
+
+  .g8-xml-tree__declaration,
+  .g8-xml-tree__instruction {
+    &:before {
+      margin-left: 0;
+    }
+  }
 }
 
 .g8-xml__popup_header_close {
@@ -91,49 +109,62 @@
 }
 
 .g8-xml__popup_declaration {
-  text-align: right;
-
   input,
   select {
     width: 10em;
   }
+
+  .g8-xml__popup_attributes {
+    text-align: right;
+  }
 }
 
-.g8-tree__dark + .g8-xml__popup {
-  button,
-  input,
-  option,
-  select {
-    color: $g8-xml-text-dark;
-  }
+.g8-xml__popup_header_title {
+  text-transform: uppercase;
+}
 
-  button {
-    background: $g8-xml-fg;
-    border-color: $g8-xml-border-color-inverse;
-  }
+.g8-xml__popup_control_group {
+  width: 100%;
+  display: flex;
+  margin: 0;
+  align-items: center;
 
-  input {
-    border-bottom-color: $g8-xml-border-color-inverse;
+  &:not(:last-child) {
+    margin-bottom: 6px;
   }
+}
 
-  option {
-    background: $g8-xml-fg;
+.g8-xml__popup_control,
+.g8-xml__popup_control_label {
+  flex: 1 1 auto;
+  display: block;
+}
+
+.g8-xml__popup_control {
+  > input {
+    width: 100%;
   }
+}
 
-  select {
-    border: solid 1px $g8-xml-border-color-inverse;
+.g8-xml__popup_control_label {
+  text-align: right;
+  padding-right: 3px;
+}
+
+.g8-xml__popup_attributes {
+  width: 100%;
+  display: table;
+
+  &:not(:first-child) {
+    margin-top: 6px;
   }
+}
 
-  .g8-xml__popup_box {
-    background: $g8-xml-fg;
-    border-color: $g8-xml-border-color-inverse;
-  }
+.g8-xml__popup_attribute {
+  display: table-row;
 
-  .g8-xml__popup_header {
-    border-bottom-color: $g8-xml-border-color-inverse;
-  }
-
-  .g8-xml__popup_footer {
-    border-top-color: $g8-xml-border-color-inverse;
+  .g8-xml__popup_control,
+  .g8-xml__popup_control_label {
+    display: table-cell;
   }
 }

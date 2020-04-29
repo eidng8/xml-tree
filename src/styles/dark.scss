@@ -1,0 +1,47 @@
+/*!
+ * GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ * Author: eidng8
+ */
+@import './variables';
+
+.g8-tree__dark ~ .g8-xml__popup {
+  button,
+  input,
+  option,
+  select,
+  textarea {
+    color: $g8-xml-text-dark;
+  }
+
+  button {
+    background: $g8-xml-fg;
+    border-color: $g8-xml-border-color-inverse;
+  }
+
+  input {
+    border-bottom-color: $g8-xml-border-color-inverse;
+  }
+
+  option {
+    background: $g8-xml-fg;
+  }
+
+  select,
+  textarea {
+    border: solid 1px $g8-xml-border-color-inverse;
+  }
+
+  .g8-xml__popup_box {
+    background: $g8-xml-fg;
+    border-color: $g8-xml-border-color-inverse;
+  }
+
+  .g8-xml__popup_header {
+    border-bottom-color: $g8-xml-border-color-inverse;
+  }
+
+  .g8-xml__popup_footer {
+    border-top-color: $g8-xml-border-color-inverse;
+  }
+}

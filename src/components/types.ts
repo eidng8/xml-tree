@@ -11,12 +11,12 @@ export interface XmlAttribute {
 
 export interface XmlTreeDeclaration {
   attributes: XmlAttribute[];
-  parent: XmlTreeEntry | XmlTreeRoot;
+  parent: XmlTreeRoot;
 }
 
 export interface XmlTreeEntry {
   type: string;
-  parent: XmlTreeEntry | XmlTreeRoot;
+  parent: XmlTreeElement | XmlTreeRoot;
 }
 
 export interface XmlTreeCData extends XmlTreeEntry {
