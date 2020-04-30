@@ -22,7 +22,7 @@
           >
         </div>
       </li>
-      <g8-tree-view
+      <g8-vue-tree
         v-for="(node, index) in tree.nodes || []"
         :key="index"
         :item="node"
@@ -50,7 +50,7 @@
             ><span v-if="showAttrValue">="{{ tag.value }}"</span></span
           >
         </template>
-      </g8-tree-view>
+      </g8-vue-tree>
     </ul>
     <g8-xml-popup-declaration
       v-if="popupOpen && !currentNode.type"
@@ -81,7 +81,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { G8TreeView } from 'g8-vue-tree';
+import { G8VueTree } from 'g8-vue-tree';
 import {
   XmlNodeTypes,
   XmlTreeDeclaration,
@@ -101,7 +101,7 @@ import G8XmlPopupInstruction from './xml-popup-instruction.vue';
     G8XmlPopupElement,
     G8XmlPopupTextual,
     G8XmlPopupDeclaration,
-    G8TreeView,
+    G8VueTree,
   },
   filters: {
     tag(node: XmlNodeTypes) {
