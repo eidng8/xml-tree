@@ -11,20 +11,20 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span class="g8-xml-tree__instruction">{{ node.type }}</span>
+      <span class="g8-xml__instruction">{{ node.type }}</span>
     </template>
     <template>
       <div>
-        <label class="g8-xml__popup_control_group">
+        <label class="g8-xml__popup__control-group">
           <input
             type="text"
-            class="g8-xml__popup_control"
+            class="g8-xml__popup__control"
             v-model="node.name"
           />
         </label>
-        <label class="g8-xml__popup_control_group">
+        <label class="g8-xml__popup__control-group">
           <textarea
-            class="g8-xml__popup_control"
+            class="g8-xml__popup__control"
             v-model="node[node.type]"
           ></textarea>
         </label>

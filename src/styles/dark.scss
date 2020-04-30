@@ -32,16 +32,16 @@
     border: solid 1px $g8-xml-border-color-inverse;
   }
 
-  .g8-xml__popup_box {
+  .g8-xml__popup__box {
     background: $g8-xml-fg;
     border-color: $g8-xml-border-color-inverse;
   }
 
-  .g8-xml__popup_header {
+  .g8-xml__popup__header {
     border-bottom-color: $g8-xml-border-color-inverse;
   }
 
-  .g8-xml__popup_footer {
+  .g8-xml__popup__footer {
     border-top-color: $g8-xml-border-color-inverse;
   }
 }

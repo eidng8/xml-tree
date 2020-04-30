@@ -11,26 +11,26 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span class="g8-xml-tree__element">Element</span>
+      <span class="g8-xml__element">Element</span>
     </template>
     <template>
-      <div class="g8-xml__popup_control">
-        <input type="text" class="g8-xml__large" v-model="node.name" />
+      <div class="g8-xml__popup__control">
+        <input type="text" class="g8-xml--large" v-model="node.name" />
       </div>
       <div
-        class="g8-xml__popup_attributes"
+        class="g8-xml__popup__attributes"
         v-if="node.attributes && node.attributes.length"
       >
         <div
-          class="g8-xml__popup_attribute"
+          class="g8-xml__popup__attribute"
           v-for="(attr, idx) in node.attributes"
           :key="idx"
         >
-          <span class="g8-xml__popup_control_label">{{ attr.name }}</span>
-          <span class="g8-xml__popup_control">
+          <span class="g8-xml__popup__control-label">{{ attr.name }}</span>
+          <span class="g8-xml__popup__control">
             <input type="text" v-model="attr.value" @change="updateRaw()" />
           </span>
-          <span class="g8-xml__popup_control_accessories"></span>
+          <span class="g8-xml__popup__control_accessories"></span>
         </div>
       </div>
       <textarea v-model="raw" @change="rawChanged()"></textarea>

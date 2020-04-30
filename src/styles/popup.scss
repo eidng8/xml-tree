@@ -50,7 +50,7 @@
   }
 }
 
-.g8-xml__popup_box {
+.g8-xml__popup__box {
   max-width: 100%;
   max-height: 100%;
   border-radius: $g8-xml-medium-corner;
@@ -58,45 +58,45 @@
   border: solid 1px $g8-xml-border-color;
 }
 
-.g8-xml__popup_header,
-.g8-xml__popup_body,
-.g8-xml__popup_footer {
+.g8-xml__popup__header,
+.g8-xml__popup__body,
+.g8-xml__popup__footer {
   width: 100%;
   padding: 1em;
   flex: 0 0 0;
   box-sizing: border-box;
 }
 
-.g8-xml__popup_header {
+.g8-xml__popup__header {
   display: flex;
   border-bottom: solid 1px $g8-xml-border-color;
 }
 
-.g8-xml__popup_footer {
+.g8-xml__popup__footer {
   display: flex;
   justify-content: flex-end;
   border-top: solid 1px $g8-xml-border-color;
 }
 
-.g8-xml__popup_body {
+.g8-xml__popup__body {
   flex: 1 1 auto;
   overflow: auto;
   // full viewport height - lines of text - padding - borders
   max-height: calc(100vh - 7em - 4px);
 }
 
-.g8-xml__popup_header_title {
+.g8-xml__popup__header__title {
   flex: 1;
 
-  .g8-xml-tree__declaration,
-  .g8-xml-tree__instruction {
+  .g8-xml__declaration,
+  .g8-xml__instruction {
     &:before {
       margin-left: 0;
     }
   }
 }
 
-.g8-xml__popup_header_close {
+.g8-xml__popup__header__close {
   padding: 0 !important;
   margin: 0 0 0 18px;
   font-size: 32px;
@@ -104,26 +104,26 @@
   border: none !important;
 }
 
-.g8-xml__popup_attribute {
+.g8-xml__popup__attribute {
   line-height: 2em;
 }
 
-.g8-xml__popup_declaration {
+.g8-xml__popup__declaration {
   input,
   select {
     width: 10em;
   }
 
-  .g8-xml__popup_attributes {
+  .g8-xml__popup__attributes {
     text-align: right;
   }
 }
 
-.g8-xml__popup_header_title {
+.g8-xml__popup__header__title {
   text-transform: uppercase;
 }
 
-.g8-xml__popup_control_group {
+.g8-xml__popup__control-group {
   width: 100%;
   display: flex;
   margin: 0;
@@ -134,24 +134,24 @@
   }
 }
 
-.g8-xml__popup_control,
-.g8-xml__popup_control_label {
+.g8-xml__popup__control,
+.g8-xml__popup__control-label {
   flex: 1 1 auto;
   display: block;
 }
 
-.g8-xml__popup_control {
+.g8-xml__popup__control {
   > input {
     width: 100%;
   }
 }
 
-.g8-xml__popup_control_label {
+.g8-xml__popup__control-label {
   text-align: right;
   padding-right: 3px;
 }
 
-.g8-xml__popup_attributes {
+.g8-xml__popup__attributes {
   width: 100%;
   display: table;
 
@@ -160,7 +160,7 @@
   }
 }
 
-.g8-xml__popup_attribute {
+.g8-xml__popup__attribute {
   display: table-row;
 
   > * {

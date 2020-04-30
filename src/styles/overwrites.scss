@@ -9,7 +9,7 @@
   white-space: nowrap;
 }
 
-.g8-tree__node_entry {
+.g8-tree__node__entry {
   width: unset;
   display: flex;
   flex-wrap: nowrap;
@@ -17,19 +17,19 @@
   min-width: 10em;
 }
 
-.g8-tree__node_entry_tags {
+.g8-tree__node__entry__tags {
   display: inline-flex;
   white-space: nowrap;
 }
 
-.g8-tree__node_entry_tags_tag {
+.g8-tree__node__entry__tags__tag {
   font-size: 0.8em;
   max-width: unset;
   overflow: unset;
 }
 
-.g8-tree__node_branch_toggle,
-.g8-tree__node_entry_checker {
+.g8-tree__node__entry__toggle,
+.g8-tree__checker {
   flex: 0 0 1em;
   width: 1em;
   font-size: 0.8em;

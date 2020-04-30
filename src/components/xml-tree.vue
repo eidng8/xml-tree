@@ -6,17 +6,17 @@
 
 <template>
   <div class="g8-xml__container">
-    <ul class="g8-tree-view g8-tree__dark g8-xml-tree">
+    <ul class="g8-tree__view g8-tree__dark g8-xml__tree">
       <li
         class="g8-tree__node"
         v-if="tree.declaration"
         @contextmenu.prevent="edit(tree.declaration)"
       >
-        <div class="g8-tree__node_entry">
-          <span class="g8-xml-tree__declaration"><span></span></span>
+        <div class="g8-tree__node__entry">
+          <span class="g8-xml__declaration"><span></span></span>
           <label
             v-for="(a, i) in tree.declaration.attributes || []"
-            class="g8-tree__node_entry_tags_tag"
+            class="g8-tree__node__entry__tags__tag"
             :key="i"
             >{{ a.name }}="{{ a.value }}"</label
           >
@@ -33,12 +33,12 @@
         <template #default="{ item }">
           <span
             :class="{
-              'g8-xml-tree__cdata': 'cdata' == item.type,
-              'g8-xml-tree__comment': 'comment' == item.type,
-              'g8-xml-tree__doctype': 'doctype' == item.type,
-              'g8-xml-tree__element': 'element' == item.type,
-              'g8-xml-tree__instruction': 'instruction' == item.type,
-              'g8-xml-tree__text': 'text' == item.type,
+              'g8-xml__cdata': 'cdata' == item.type,
+              'g8-xml__comment': 'comment' == item.type,
+              'g8-xml__doctype': 'doctype' == item.type,
+              'g8-xml__element': 'element' == item.type,
+              'g8-xml__instruction': 'instruction' == item.type,
+              'g8-xml__text': 'text' == item.type,
             }"
             @contextmenu.prevent="edit(item)"
             >{{ item | tag }}</span

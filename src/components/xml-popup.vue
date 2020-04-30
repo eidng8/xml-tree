@@ -6,19 +6,19 @@
 
 <template>
   <div class="g8-xml__popup" @click.self="close($event)">
-    <div class="g8-xml__popup_box">
-      <div class="g8-xml__popup_header">
-        <div class="g8-xml__popup_header_title">
+    <div class="g8-xml__popup__box">
+      <div class="g8-xml__popup__header">
+        <div class="g8-xml__popup__header__title">
           <slot name="title">Popup</slot>
         </div>
-        <button class="g8-xml__popup_header_close" @click="close($event)">
+        <button class="g8-xml__popup__header__close" @click="close($event)">
           &#215;
         </button>
       </div>
-      <div class="g8-xml__popup_body">
+      <div class="g8-xml__popup__body">
         <slot>something here</slot>
       </div>
-      <div class="g8-xml__popup_footer">
+      <div class="g8-xml__popup__footer">
         <slot name="footer">
           <button @click="$emit('save', $event)">Save</button>
           <button @click="close($event)">Close</button>

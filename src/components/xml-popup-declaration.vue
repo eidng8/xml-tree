@@ -6,20 +6,20 @@
 
 <template>
   <g8-xml-popup
-    class="g8-xml__popup_declaration"
+    class="g8-xml__popup__declaration"
     @save="$emit('save', $event)"
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span class="g8-xml-tree__declaration">Declaration</span>
+      <span class="g8-xml__declaration">Declaration</span>
     </template>
     <template>
       <div
-        class="g8-xml__popup_attributes"
+        class="g8-xml__popup__attributes"
         v-if="node.attributes && node.attributes.length"
       >
         <div
-          class="g8-xml__popup_attribute"
+          class="g8-xml__popup__attribute"
           v-for="(attr, idx) in node.attributes"
           :key="idx"
         >

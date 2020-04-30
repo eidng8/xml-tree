@@ -23,7 +23,7 @@
   }
 }
 
-.g8-xml__large {
+.g8-xml--large {
   font-size: 1.2rem;
 }
 
@@ -32,14 +32,14 @@
   overflow: auto;
 }
 
-.g8-xml-tree {
-  .g8-tree__node_entry > * {
+.g8-xml__tree {
+  .g8-tree__node__entry > * {
     display: block;
     align-items: center;
   }
 
-  .g8-tree__node_entry_label,
-  .g8-tree__node_entry_tags {
+  .g8-tree__node__entry__label,
+  .g8-tree__node__entry__tags {
     min-width: 0;
     flex-shrink: 1;
     overflow: hidden;
@@ -47,7 +47,7 @@
   }
 }
 
-.g8-xml-tree__declaration {
+.g8-xml__declaration {
   @extend %tag-name;
 
   &:before {
@@ -57,7 +57,7 @@
   }
 }
 
-.g8-xml-tree__cdata {
+.g8-xml__cdata {
   @extend %tag-name;
 
   &:before {
@@ -66,7 +66,7 @@
   }
 }
 
-.g8-xml-tree__comment {
+.g8-xml__comment {
   @extend %tag-name;
 
   &:before {
@@ -75,7 +75,7 @@
   }
 }
 
-.g8-xml-tree__doctype {
+.g8-xml__doctype {
   @extend %tag-name;
 
   &:before {
@@ -85,7 +85,7 @@
   }
 }
 
-.g8-xml-tree__element {
+.g8-xml__element {
   @extend %tag-name;
 
   &:before {
@@ -94,7 +94,7 @@
   }
 }
 
-.g8-xml-tree__instruction {
+.g8-xml__instruction {
   @extend %tag-name;
 
   &:before {
@@ -103,7 +103,7 @@
   }
 }
 
-.g8-xml-tree__text {
+.g8-xml__text {
   @extend %tag-name;
 
   &:before {

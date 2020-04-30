@@ -13,16 +13,16 @@
     <template v-slot:title>
       <span
         :class="{
-          'g8-xml-tree__cdata': 'cdata' == node.type,
-          'g8-xml-tree__comment': 'comment' == node.type,
-          'g8-xml-tree__doctype': 'doctype' == node.type,
-          'g8-xml-tree__text': 'text' == node.type,
+          'g8-xml__cdata': 'cdata' == node.type,
+          'g8-xml__comment': 'comment' == node.type,
+          'g8-xml__doctype': 'doctype' == node.type,
+          'g8-xml__text': 'text' == node.type,
         }"
         >{{ node.type }}</span
       >
     </template>
     <template>
-      <label class="g8-xml__popup_control_group">
+      <label class="g8-xml__popup__control-group">
         <textarea v-model="node[node.type]"></textarea>
       </label>
     </template>
