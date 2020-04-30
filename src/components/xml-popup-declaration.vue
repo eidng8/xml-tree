@@ -7,7 +7,7 @@
 <template>
   <g8-xml-popup
     class="g8-xml__popup__declaration"
-    @save="$emit('save', $event)"
+    @save="save($event)"
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
@@ -38,23 +38,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
 import { XmlTreeDeclaration } from './types';
+import G8XmlPopupClass from './xml-popup-class';
 
 @Component({
   name: 'g8-xml-popup-declaration',
   components: { G8XmlPopup },
 })
-export default class G8XmlPopupDeclaration extends Vue {
+export default class G8XmlPopupDeclaration extends G8XmlPopupClass {
   @Prop() node!: XmlTreeDeclaration;
 
   // noinspection JSUnusedGlobalSymbols
-  created() {
+  created(): void {
     const has = this.node.attributes.map(a => a.name);
     ['version', 'encoding', 'standalone']
       .filter(n => !has.includes(n))
       .forEach(n => this.node.attributes.push({ name: n, value: undefined }));
+  }
+
+  // noinspection JSUnusedGlobalSymbols
+  mounted(): void {
+    this.$nextTick(() => this.$el.querySelector('input').focus());
   }
 }
 </script>

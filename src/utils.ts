@@ -126,3 +126,14 @@ export function cloneWithoutHierarchy(
     'nodes',
   ]) as XmlNodeTypes | XmlTreeDeclaration;
 }
+
+/**
+ * Makes sure there is no hierarchy data. This function mutates the given
+ * `node`.
+ */
+export function removeHierarchyFromNode(
+  node: XmlNodeTypes | XmlTreeDeclaration,
+): void {
+  delete node.parent;
+  delete node.nodes;
+}

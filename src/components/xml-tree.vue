@@ -55,7 +55,7 @@
     <g8-xml-popup-declaration
       v-if="popupOpen && !currentNode.type"
       :node="popupItem"
-      @save="saveDeclaration()"
+      @save="saveElement($event)"
       @close="closePopup()"
     ></g8-xml-popup-declaration>
     <g8-xml-popup-element
@@ -67,13 +67,13 @@
     <g8-xml-popup-instruction
       v-else-if="popupOpen && 'instruction' == currentNode.type"
       :node="popupItem"
-      @save="saveNode()"
+      @save="saveElement($event)"
       @close="closePopup()"
     ></g8-xml-popup-instruction>
     <g8-xml-popup-textual
       v-else-if="popupOpen"
       :node="popupItem"
-      @save="saveNode()"
+      @save="saveElement($event)"
       @close="closePopup()"
     ></g8-xml-popup-textual>
   </div>
@@ -83,7 +83,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8VueTree } from 'g8-vue-tree';
 import {
-  SaveNodeEvent,
+  isDeclarationNode,
+  SaveNodeKeyboardEvent,
+  SaveNodeMouseEvent,
   XmlNodeTypes,
   XmlTreeDeclaration,
   XmlTreeElement,
@@ -105,7 +107,7 @@ import G8XmlPopupInstruction from './xml-popup-instruction.vue';
     G8VueTree,
   },
   filters: {
-    tag(node: XmlNodeTypes) {
+    tag(node: XmlNodeTypes): string {
       switch (node.type) {
         case 'cdata':
           return node.cdata;
@@ -143,7 +145,7 @@ export default class G8XmlTree extends Vue {
   popupOpen = false;
 
   // noinspection JSUnusedGlobalSymbols
-  created() {
+  created(): void {
     this.tree = xmlJs(this.xml) as XmlTreeRoot;
     if (
       !this.tree.declaration ||
@@ -161,19 +163,11 @@ export default class G8XmlTree extends Vue {
     }
   }
 
-  saveDeclaration() {
-    if (this.currentNode) {
-      this.currentNode.parent = this.tree;
-      this.tree.declaration = this.currentNode as XmlTreeDeclaration;
-    }
-    this.closePopup();
-  }
-
-  closePopup() {
+  closePopup(): void {
     this.popupOpen = false;
   }
 
-  edit(item: XmlNodeTypes | XmlTreeDeclaration) {
+  edit(item: XmlNodeTypes | XmlTreeDeclaration): void {
     this.currentNode = item;
     this.currentNodeParent = item.parent;
     if ((item as XmlNodeTypes).type && this.currentNodeParent.nodes) {
@@ -187,23 +181,19 @@ export default class G8XmlTree extends Vue {
     this.popupOpen = true;
   }
 
-  saveNode() {
-    if (!this.currentNode) throw new Error('Invalid node');
+  saveElement(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+    if (!this.currentNode) throw new Error('There is no node being edited.');
     if (!this.currentNodeParent) throw new Error('Invalid node parent');
-    this.currentNode.parent = this.currentNodeParent;
-    if (this.currentNodeIndex < 0) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.currentNodeParent.nodes!.push(this.currentNode as XmlNodeTypes);
+    const newNode = Object.assign({}, this.currentNode, evt.data);
+    if (isDeclarationNode(newNode)) {
+      this.tree.declaration = newNode;
+    } else if (this.currentNodeIndex < 0) {
+      if (!this.currentNodeParent.nodes) this.currentNodeParent.nodes = [];
+      this.currentNodeParent.nodes.push(newNode);
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.currentNodeParent.nodes![this.currentNodeIndex] = this
-        .currentNode as XmlNodeTypes;
+      this.currentNodeParent.nodes![this.currentNodeIndex] = newNode;
     }
     this.closePopup();
-  }
-
-  saveElement(evt: SaveNodeEvent) {
-    console.log(evt);
   }
 }
 </script>

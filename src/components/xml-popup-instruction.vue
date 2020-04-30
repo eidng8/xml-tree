@@ -7,7 +7,7 @@
 <template>
   <g8-xml-popup
     class="g8-xml__popup_instruction"
-    @save="$emit('save', $event)"
+    @save="save($event)"
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
@@ -34,15 +34,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
 import { XmlTreeInstruction } from './types';
+import G8XmlPopupWithRaw from './xml-popup-with-raw';
 
 @Component({
   name: 'g8-xml-popup-instruction',
   components: { G8XmlPopup },
 })
-export default class G8XmlPopupInstruction extends Vue {
+export default class G8XmlPopupInstruction extends G8XmlPopupWithRaw {
   @Prop() node!: XmlTreeInstruction;
+
+  // noinspection JSUnusedGlobalSymbols
+  created(): void {
+    this.updateRaw();
+  }
 }
 </script>

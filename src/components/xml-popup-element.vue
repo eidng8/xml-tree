@@ -42,34 +42,18 @@
 import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
 import { XmlTreeElement } from './types';
-import { objXml, xmlJs } from '../utils';
-import G8XmlPopupClass from './xml-popup-class';
+import G8XmlPopupWithRaw from './xml-popup-with-raw';
 
 @Component({
   name: 'g8-xml-popup-element',
   components: { G8XmlPopup },
 })
-export default class G8XmlPopupElement extends G8XmlPopupClass {
+export default class G8XmlPopupElement extends G8XmlPopupWithRaw {
   @Prop() node!: XmlTreeElement;
 
-  raw = '';
-
-  created() {
+  // noinspection JSUnusedGlobalSymbols
+  created(): void {
     this.updateRaw();
-  }
-
-  updateRaw() {
-    delete this.node.parent;
-    delete this.node.nodes;
-    this.raw = objXml({ nodes: [this.node] });
-  }
-
-  rawChanged() {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const obj = (xmlJs(this.raw) as XmlTreeElement).nodes![0] as XmlTreeElement;
-    this.node.name = obj.name;
-    this.node.attributes = obj.attributes;
-    this.$forceUpdate();
   }
 }
 </script>

@@ -5,16 +5,22 @@
  */
 
 import { Vue } from 'vue-property-decorator';
-import { SaveNodeEvent, XmlTreeElement } from './types';
+import {
+  SaveNodeKeyboardEvent,
+  SaveNodeMouseEvent,
+  XmlTreeElement,
+} from './types';
+import { removeHierarchyFromNode } from '../utils';
 
 export default abstract class G8XmlPopupClass extends Vue {
   abstract node: XmlTreeElement;
 
-  save(evt: SaveNodeEvent) {
+  save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     evt.data = this.node;
+    removeHierarchyFromNode(this.node);
     /**
      * The node passed in the `data` field shall be saved.
-     * @param {SaveNodeEvent} event
+     * @param {SaveNodeMouseEvent|SaveNodeKeyboardEvent} event
      */
     this.$emit('save', evt);
   }

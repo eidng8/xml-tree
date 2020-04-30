@@ -7,7 +7,7 @@
 <template>
   <g8-xml-popup
     class="g8-xml__popup_textual"
-    @save="$emit('save', $event)"
+    @save="save($event)"
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
@@ -30,26 +30,25 @@
 </template>
 
 <script lang="ts">
-import { each } from 'lodash';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
 import { XmlTreeCData, XmlTreeComment, XmlTreeText } from './types';
+import G8XmlPopupClass from './xml-popup-class';
 
 @Component({
   name: 'g8-xml-popup-textual',
   components: { G8XmlPopup },
 })
-export default class G8XmlPopupTextual extends Vue {
+export default class G8XmlPopupTextual extends G8XmlPopupClass {
   @Prop() node!: XmlTreeCData | XmlTreeComment | XmlTreeText;
 
   // noinspection JSUnusedGlobalSymbols
-  mounted() {
+  mounted(): void {
     this.$nextTick(() => {
-      // only useful if the textarea is the only field in the box
-      each(
-        this.$el.getElementsByTagName('textarea'),
-        e => (e.style.height = `${e.scrollHeight}px`),
-      );
+      this.$el.querySelector('textarea').focus();
+      // only useful if there is only one textarea in the box
+      const e = this.$el.getElementsByTagName('textarea')[0];
+      if (e) e.style.height = `${e.scrollHeight}px`;
     });
   }
 }

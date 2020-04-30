@@ -65,6 +65,20 @@ export type XmlNodeTypes =
   | XmlTreeInstruction
   | XmlTreeText;
 
-export class SaveNodeEvent extends MouseEvent {
-  data!: XmlTreeElement;
+export class SaveNodeMouseEvent extends MouseEvent {
+  /**
+   * This node will not have `parent` or `nodes`.
+   */
+  data!: XmlNodeTypes | XmlTreeDeclaration;
+}
+
+export class SaveNodeKeyboardEvent extends KeyboardEvent {
+  /**
+   * This node will not have `parent` or `nodes`.
+   */
+  data!: XmlNodeTypes | XmlTreeDeclaration;
+}
+
+export function isDeclarationNode(node: any): node is XmlTreeDeclaration {
+  return !node.type;
 }
