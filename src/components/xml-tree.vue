@@ -54,25 +54,25 @@
     </ul>
     <g8-xml-popup-declaration
       v-if="popupOpen && !currentNode.type"
-      :node="currentNode"
+      :node="popupItem"
       @save="saveDeclaration()"
       @close="closePopup()"
     ></g8-xml-popup-declaration>
     <g8-xml-popup-element
       v-else-if="popupOpen && 'element' == currentNode.type"
-      :node="currentNode"
-      @save="saveNode()"
+      :node="popupItem"
+      @save="saveElement($event)"
       @close="closePopup()"
     ></g8-xml-popup-element>
     <g8-xml-popup-instruction
       v-else-if="popupOpen && 'instruction' == currentNode.type"
-      :node="currentNode"
+      :node="popupItem"
       @save="saveNode()"
       @close="closePopup()"
     ></g8-xml-popup-instruction>
     <g8-xml-popup-textual
       v-else-if="popupOpen"
-      :node="currentNode"
+      :node="popupItem"
       @save="saveNode()"
       @close="closePopup()"
     ></g8-xml-popup-textual>
@@ -83,6 +83,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8VueTree } from 'g8-vue-tree';
 import {
+  SaveNodeEvent,
   XmlNodeTypes,
   XmlTreeDeclaration,
   XmlTreeElement,
@@ -137,6 +138,8 @@ export default class G8XmlTree extends Vue {
 
   currentNodeIndex = -1;
 
+  popupItem?: XmlNodeTypes | XmlTreeDeclaration | null;
+
   popupOpen = false;
 
   // noinspection JSUnusedGlobalSymbols
@@ -171,7 +174,7 @@ export default class G8XmlTree extends Vue {
   }
 
   edit(item: XmlNodeTypes | XmlTreeDeclaration) {
-    this.currentNode = cloneWithoutHierarchy(item);
+    this.currentNode = item;
     this.currentNodeParent = item.parent;
     if ((item as XmlNodeTypes).type && this.currentNodeParent.nodes) {
       this.currentNodeIndex = this.currentNodeParent.nodes.indexOf(
@@ -180,6 +183,7 @@ export default class G8XmlTree extends Vue {
     } else {
       this.currentNodeIndex = -1;
     }
+    this.popupItem = cloneWithoutHierarchy(item);
     this.popupOpen = true;
   }
 
@@ -196,6 +200,10 @@ export default class G8XmlTree extends Vue {
         .currentNode as XmlNodeTypes;
     }
     this.closePopup();
+  }
+
+  saveElement(evt: SaveNodeEvent) {
+    console.log(evt);
   }
 }
 </script>

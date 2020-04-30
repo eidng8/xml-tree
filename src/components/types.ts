@@ -64,3 +64,7 @@ export type XmlNodeTypes =
   | XmlTreeElement
   | XmlTreeInstruction
   | XmlTreeText;
+
+export class SaveNodeEvent extends MouseEvent {
+  data!: XmlTreeElement;
+}

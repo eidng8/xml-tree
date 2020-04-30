@@ -7,7 +7,7 @@
 <template>
   <g8-xml-popup
     class="g8-xml__popup_element"
-    @save="$emit('save', $event)"
+    @save="save($event)"
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
@@ -39,16 +39,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
 import { XmlTreeElement } from './types';
 import { objXml, xmlJs } from '../utils';
+import G8XmlPopupClass from './xml-popup-class';
 
 @Component({
   name: 'g8-xml-popup-element',
   components: { G8XmlPopup },
 })
-export default class G8XmlPopupElement extends Vue {
+export default class G8XmlPopupElement extends G8XmlPopupClass {
   @Prop() node!: XmlTreeElement;
 
   raw = '';
@@ -58,13 +59,14 @@ export default class G8XmlPopupElement extends Vue {
   }
 
   updateRaw() {
+    delete this.node.parent;
+    delete this.node.nodes;
     this.raw = objXml({ nodes: [this.node] });
   }
 
   rawChanged() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const obj = (xmlJs(this.raw) as XmlTreeElement).nodes![0] as XmlTreeElement;
-    delete obj.parent;
     this.node.name = obj.name;
     this.node.attributes = obj.attributes;
     this.$forceUpdate();
