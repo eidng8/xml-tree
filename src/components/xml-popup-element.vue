@@ -30,6 +30,7 @@
           <span class="g8-xml__popup_control">
             <input type="text" v-model="attr.value" @change="updateRaw()" />
           </span>
+          <span class="g8-xml__popup_control_accessories"></span>
         </div>
       </div>
       <textarea v-model="raw" @change="rawChanged()"></textarea>

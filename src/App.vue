@@ -46,7 +46,7 @@ export default class App extends Vue {
     '  <color> Light&nbsp;blue and white </color>\n' +
     '</plane>';
 
-  showAttrValue = false;
+  showAttrValue = true;
 }
 </script>
 

@@ -163,8 +163,7 @@
 .g8-xml__popup_attribute {
   display: table-row;
 
-  .g8-xml__popup_control,
-  .g8-xml__popup_control_label {
+  > * {
     display: table-cell;
   }
 }
