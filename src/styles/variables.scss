@@ -5,17 +5,17 @@
  */
 
 //noinspection SassScssResolvedByNameOnly
-$g8-xml-bg: #fff !default;
+$g8-xml__bg: #fff !default;
 
 //noinspection SassScssResolvedByNameOnly
-$g8-xml-fg: $g8-tree-fg !default;
+$g8-xml__fg: $g8-tree__fg !default;
 
 //noinspection SassScssResolvedByNameOnly
-$g8-xml-text-dark: darken($g8-tree-bg, 20%);
+$g8-xml__text--dark: darken($g8-tree__bg, 20%);
 
-$g8-xml-border-color: darken($g8-xml-bg, 20%) !default;
-$g8-xml-border-color-inverse: lighten($g8-xml-fg, 10%) !default;
+$g8-xml__border-color: darken($g8-xml__bg, 20%) !default;
+$g8-xml__border-color--inverse: lighten($g8-xml__fg, 10%) !default;
 
-$g8-xml-small-corner: 3px !default;
+$g8-xml__corner--small: 3px !default;
 
-$g8-xml-medium-corner: 6px !default;
+$g8-xml__corner--medium: 6px !default;

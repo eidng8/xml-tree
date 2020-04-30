@@ -6,7 +6,7 @@
 
 <template>
   <div class="g8-xml__container">
-    <ul class="g8-tree__view g8-tree__dark g8-xml__tree">
+    <ul class="g8-tree__view g8-tree--dark g8-xml__tree">
       <li
         class="g8-tree__node"
         v-if="tree.declaration"

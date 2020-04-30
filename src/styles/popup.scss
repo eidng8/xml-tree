@@ -19,14 +19,14 @@
   button {
     padding: 0.5em;
     margin: 0 0 0 1em;
-    border-radius: $g8-xml-small-corner;
-    border: solid 1px $g8-xml-border-color;
+    border-radius: $g8-xml__corner--small;
+    border: solid 1px $g8-xml__border-color;
   }
 
   input {
     border: none;
     background: transparent;
-    border-bottom: solid 1px $g8-xml-border-color;
+    border-bottom: solid 1px $g8-xml__border-color;
   }
 
   option {
@@ -35,7 +35,7 @@
 
   select,
   textarea {
-    border: solid 1px $g8-xml-border-color;
+    border: solid 1px $g8-xml__border-color;
     background: transparent;
   }
 
@@ -53,9 +53,9 @@
 .g8-xml__popup__box {
   max-width: 100%;
   max-height: 100%;
-  border-radius: $g8-xml-medium-corner;
-  background: $g8-xml-bg;
-  border: solid 1px $g8-xml-border-color;
+  border-radius: $g8-xml__corner--medium;
+  background: $g8-xml__bg;
+  border: solid 1px $g8-xml__border-color;
 }
 
 .g8-xml__popup__header,
@@ -69,13 +69,13 @@
 
 .g8-xml__popup__header {
   display: flex;
-  border-bottom: solid 1px $g8-xml-border-color;
+  border-bottom: solid 1px $g8-xml__border-color;
 }
 
 .g8-xml__popup__footer {
   display: flex;
   justify-content: flex-end;
-  border-top: solid 1px $g8-xml-border-color;
+  border-top: solid 1px $g8-xml__border-color;
 }
 
 .g8-xml__popup__body {

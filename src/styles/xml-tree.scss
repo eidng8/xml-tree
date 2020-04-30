@@ -6,7 +6,7 @@
 
 @import './variables';
 
-%tag-name {
+%tag-type {
   display: inline;
 
   &:before {
@@ -19,7 +19,7 @@
     text-align: center;
     display: inline-block;
     text-transform: lowercase;
-    border-radius: $g8-xml-small-corner;
+    border-radius: $g8-xml__corner--small;
   }
 }
 
@@ -48,7 +48,7 @@
 }
 
 .g8-xml__declaration {
-  @extend %tag-name;
+  @extend %tag-type;
 
   &:before {
     content: 'D';
@@ -58,7 +58,7 @@
 }
 
 .g8-xml__cdata {
-  @extend %tag-name;
+  @extend %tag-type;
 
   &:before {
     content: 'd';
@@ -67,7 +67,7 @@
 }
 
 .g8-xml__comment {
-  @extend %tag-name;
+  @extend %tag-type;
 
   &:before {
     content: 'c';
@@ -76,7 +76,7 @@
 }
 
 .g8-xml__doctype {
-  @extend %tag-name;
+  @extend %tag-type;
 
   &:before {
     content: 'T';
@@ -86,7 +86,7 @@
 }
 
 .g8-xml__element {
-  @extend %tag-name;
+  @extend %tag-type;
 
   &:before {
     content: 'e';
@@ -95,7 +95,7 @@
 }
 
 .g8-xml__instruction {
-  @extend %tag-name;
+  @extend %tag-type;
 
   &:before {
     content: 'i';
@@ -104,7 +104,7 @@
 }
 
 .g8-xml__text {
-  @extend %tag-name;
+  @extend %tag-type;
 
   &:before {
     content: 't';
