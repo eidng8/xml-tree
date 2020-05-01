@@ -45,7 +45,8 @@ export default class G8XmlPopupTextual extends G8XmlPopupClass {
   // noinspection JSUnusedGlobalSymbols
   mounted(): void {
     this.$nextTick(() => {
-      this.$el.querySelector('textarea').focus();
+      const ta = this.$el.querySelector('textarea');
+      if (ta) ta.focus();
       // only useful if there is only one textarea in the box
       const e = this.$el.getElementsByTagName('textarea')[0];
       if (e) e.style.height = `${e.scrollHeight}px`;

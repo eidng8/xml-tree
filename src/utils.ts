@@ -9,6 +9,7 @@ import { js2xml, xml2js } from 'xml-js';
 import {
   XmlNodeTypes,
   XmlTreeDeclaration,
+  XmlTreeElement,
   XmlTreeRoot,
 } from './components/types';
 
@@ -135,5 +136,5 @@ export function removeHierarchyFromNode(
   node: XmlNodeTypes | XmlTreeDeclaration,
 ): void {
   delete node.parent;
-  delete node.nodes;
+  delete (node as XmlTreeElement).nodes;
 }

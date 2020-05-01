@@ -60,7 +60,10 @@ export default class G8XmlPopupDeclaration extends G8XmlPopupClass {
 
   // noinspection JSUnusedGlobalSymbols
   mounted(): void {
-    this.$nextTick(() => this.$el.querySelector('input').focus());
+    this.$nextTick(() => {
+      const e = this.$el.querySelector('input');
+      if (e) e.focus();
+    });
   }
 }
 </script>

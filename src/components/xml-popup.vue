@@ -46,7 +46,7 @@ export default class G8XmlPopup extends Vue {
     if (evt.defaultPrevented) return;
     if ('Escape' == evt.key) this.close(evt);
     else if ('Enter' == evt.key) {
-      const tag = evt.target.localName;
+      const tag = (evt.target as HTMLElement).localName;
       if (!evt.ctrlKey && ('textarea' == tag || 'select' == tag)) return;
       this.save(evt);
     } else return;

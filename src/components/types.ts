@@ -79,6 +79,8 @@ export class SaveNodeKeyboardEvent extends KeyboardEvent {
   data!: XmlNodeTypes | XmlTreeDeclaration;
 }
 
-export function isDeclarationNode(node: any): node is XmlTreeDeclaration {
-  return !node.type;
+export function isDeclarationNode(
+  node: XmlNodeTypes | XmlTreeDeclaration,
+): node is XmlTreeDeclaration {
+  return !(node as XmlNodeTypes).type;
 }

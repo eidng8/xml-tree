@@ -8,12 +8,13 @@ import { Vue } from 'vue-property-decorator';
 import {
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
-  XmlTreeElement,
+  XmlNodeTypes,
+  XmlTreeDeclaration,
 } from './types';
 import { removeHierarchyFromNode } from '../utils';
 
 export default abstract class G8XmlPopupClass extends Vue {
-  abstract node: XmlTreeElement;
+  abstract node: XmlNodeTypes | XmlTreeDeclaration;
 
   save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     evt.data = this.node;
