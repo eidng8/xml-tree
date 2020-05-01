@@ -89,6 +89,10 @@
 
 .g8-xml__popup__header__title {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
 }
 
 .g8-xml__popup__header__close {
@@ -112,10 +116,6 @@
   .g8-xml__popup__attributes {
     text-align: right;
   }
-}
-
-.g8-xml__popup__header__title {
-  text-transform: uppercase;
 }
 
 .g8-xml__popup__control-group {
