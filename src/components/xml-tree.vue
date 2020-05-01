@@ -18,8 +18,9 @@
             v-for="(a, i) in tree.declaration.attributes || []"
             class="g8-tree__node__entry__tags__tag"
             :key="i"
-            >{{ a.name }}="{{ a.value }}"</label
           >
+            {{ a.name }}="{{ a.value }}"
+          </label>
         </div>
       </li>
       <g8-vue-tree
@@ -39,10 +40,10 @@
           </span>
         </template>
         <template #tag="{ item, tag }">
-          <span
-            ><span>{{ tag.name }}</span
-            ><span v-if="showAttrValue">="{{ tag.value }}"</span></span
-          >
+          <span>
+            <span>{{ tag.name }}</span>
+            <span v-if="showAttrValue">="{{ tag.value }}"</span>
+          </span>
         </template>
       </g8-vue-tree>
     </ul>
