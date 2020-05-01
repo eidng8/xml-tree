@@ -42,14 +42,20 @@ export default class G8XmlPopup extends Vue {
   }
 
   keyup(evt: KeyboardEvent): void {
-    console.log(evt);
-    if (evt.defaultPrevented) return;
-    if ('Escape' == evt.key) this.close(evt);
-    else if ('Enter' == evt.key) {
+    if (evt.defaultPrevented) {
+      return;
+    }
+    if ('Escape' == evt.key) {
+      this.close(evt);
+    } else if ('Enter' == evt.key) {
       const tag = (evt.target as HTMLElement).localName;
-      if (!evt.ctrlKey && ('textarea' == tag || 'select' == tag)) return;
+      if (!evt.ctrlKey && ('textarea' == tag || 'select' == tag)) {
+        return;
+      }
       this.save(evt);
-    } else return;
+    } else {
+      return;
+    }
     evt.preventDefault();
     evt.stopImmediatePropagation();
   }

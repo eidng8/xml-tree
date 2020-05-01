@@ -44,7 +44,8 @@ export interface XmlTreeElement extends XmlTreeEntry {
 export interface XmlTreeInstruction extends XmlTreeEntry {
   type: 'instruction';
   name: string;
-  instruction: string;
+  instruction?: string;
+  attributes?: XmlAttribute[];
 }
 
 export interface XmlTreeText extends XmlTreeEntry {

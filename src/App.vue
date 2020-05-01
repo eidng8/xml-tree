@@ -11,9 +11,22 @@
         <label for="show-attr-value">Show attribute values</label>
         <input id="show-attr-value" type="checkbox" v-model="showAttrValue" />
       </div>
+      <div class="control-group">
+        <label for="pi-attr">Processing instructions use attributes</label>
+        <input
+          id="pi-attr"
+          type="checkbox"
+          v-model="piAttr"
+          @change="piChanged()"
+        />
+      </div>
     </div>
     <hr />
-    <g8-xml-tree :xml="xml" :show-attr-value="showAttrValue" />
+    <g8-xml-tree
+      :xml="xml"
+      :show-attr-value="showAttrValue"
+      :pi-use-attribute="piAttr"
+    />
   </div>
 </template>
 
@@ -47,6 +60,16 @@ export default class App extends Vue {
     '</plane>';
 
   showAttrValue = true;
+
+  piAttr = true;
+
+  piChanged(): void {
+    this.$nextTick(() => {
+      const tree = this.$children[0] as G8XmlTree;
+      tree.reloadXml();
+      tree.$forceUpdate();
+    });
+  }
 }
 </script>
 
@@ -78,6 +101,10 @@ hr {
   > .controls {
     padding: 2px 6px;
     height: 1.4em;
+
+    > * {
+      margin-right: 1em;
+    }
   }
 
   > .g8-xml__container {

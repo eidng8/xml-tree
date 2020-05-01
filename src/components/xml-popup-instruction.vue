@@ -14,20 +14,34 @@
       <span class="g8-xml__instruction">{{ node.type }}</span>
     </template>
     <template>
-      <div>
-        <label class="g8-xml__popup__control-group">
-          <input
-            type="text"
-            class="g8-xml__popup__control"
-            v-model="node.name"
-          />
-        </label>
-        <label class="g8-xml__popup__control-group">
-          <textarea
-            class="g8-xml__popup__control"
-            v-model="node[node.type]"
-          ></textarea>
-        </label>
+      <div class="g8-xml__popup__control-group">
+        <div class="g8-xml__popup__control">
+          <input type="text" class="g8-xml--large" v-model="node.name" />
+        </div>
+      </div>
+      <div
+        class="g8-xml__popup__control-group"
+        v-if="node.attributes && node.attributes.length"
+      >
+        <div class="g8-xml__popup__attributes">
+          <div
+            class="g8-xml__popup__attribute"
+            v-for="(attr, idx) in node.attributes"
+            :key="idx"
+          >
+            <span class="g8-xml__popup__control-label">{{ attr.name }}</span>
+            <span class="g8-xml__popup__control">
+              <input type="text" v-model="attr.value" @change="updateRaw()" />
+            </span>
+            <span class="g8-xml__popup__control_accessories"></span>
+          </div>
+        </div>
+      </div>
+      <div class="g8-xml__popup__control-group" v-else>
+        <textarea
+          class="g8-xml__popup__control"
+          v-model="node[node.type]"
+        ></textarea>
       </div>
     </template>
   </g8-xml-popup>

@@ -41,7 +41,7 @@
               'g8-xml__text': 'text' == item.type,
             }"
             @contextmenu.prevent="edit(item)"
-            >{{ item | tag }}</span
+            >{{ item | tag(piUseAttribute) }}</span
           >
         </template>
         <template #tag="{ item, tag }">
@@ -107,7 +107,7 @@ import G8XmlPopupInstruction from './xml-popup-instruction.vue';
     G8VueTree,
   },
   filters: {
-    tag(node: XmlNodeTypes): string {
+    tag(node: XmlNodeTypes, piUseAttribute: boolean): string {
       switch (node.type) {
         case 'cdata':
           return node.cdata;
@@ -118,7 +118,8 @@ import G8XmlPopupInstruction from './xml-popup-instruction.vue';
         case 'element':
           return node.name;
         case 'instruction':
-          return node.name;
+          if (piUseAttribute) return node.name;
+          return `${node.name} ${node.instruction}`;
         case 'text':
           return node.text;
         default:
@@ -131,6 +132,8 @@ export default class G8XmlTree extends Vue {
   @Prop() xml!: string;
 
   @Prop({ default: false }) showAttrValue!: boolean;
+
+  @Prop({ default: false }) piUseAttribute!: boolean;
 
   tree!: XmlTreeRoot;
 
@@ -146,7 +149,13 @@ export default class G8XmlTree extends Vue {
 
   // noinspection JSUnusedGlobalSymbols
   created(): void {
-    this.tree = xmlJs(this.xml) as XmlTreeRoot;
+    this.reloadXml();
+  }
+
+  reloadXml(): void {
+    this.tree = xmlJs(this.xml, {
+      instructionHasAttributes: this.piUseAttribute,
+    }) as XmlTreeRoot;
     if (
       !this.tree.declaration ||
       !this.tree.declaration.attributes ||

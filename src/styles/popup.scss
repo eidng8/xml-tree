@@ -62,23 +62,25 @@
 .g8-xml__popup__body,
 .g8-xml__popup__footer {
   width: 100%;
-  padding: 1em;
   flex: 0 0 0;
   box-sizing: border-box;
 }
 
 .g8-xml__popup__header {
   display: flex;
+  padding: 1em 0.5em 1em 0.1em;
   border-bottom: solid 1px $g8-xml__border-color;
 }
 
 .g8-xml__popup__footer {
+  padding: 1em;
   display: flex;
   justify-content: flex-end;
   border-top: solid 1px $g8-xml__border-color;
 }
 
 .g8-xml__popup__body {
+  padding: 1em;
   flex: 1 1 auto;
   overflow: auto;
   // full viewport height - lines of text - padding - borders

@@ -5,7 +5,7 @@
  */
 
 import { assign, cloneDeep, each, filter, keys, map } from 'lodash';
-import { js2xml, xml2js } from 'xml-js';
+import { js2xml, Options, xml2js } from 'xml-js';
 import {
   XmlNodeTypes,
   XmlTreeDeclaration,
@@ -89,30 +89,41 @@ export function cloneObject(
 
 export function xmlJs(
   xml: string,
+  options?: Options.XML2JS,
 ): XmlTreeRoot | XmlTreeDeclaration | XmlNodeTypes {
-  return xml2js(xml, {
-    addParent: true,
-    elementsKey: 'nodes',
-    attributesFn: (attrs: string | AnyObject) => {
-      if ('string' == typeof attrs) {
-        throw new Error(`Expected object, but got string '${attrs}'`);
-      }
-      return (kvpArray(attrs, 'name') as unknown) as NVP[];
+  const opts = Object.assign(
+    {},
+    {
+      addParent: true,
+      elementsKey: 'nodes',
+      attributesFn: (attrs: string | AnyObject) => {
+        if ('string' == typeof attrs) {
+          throw new Error(`Expected object, but got string '${attrs}'`);
+        }
+        return (kvpArray(attrs, 'name') as unknown) as NVP[];
+      },
     },
-  }) as XmlTreeRoot | XmlTreeDeclaration | XmlNodeTypes;
+    options,
+  );
+  return xml2js(xml, opts) as XmlTreeRoot | XmlTreeDeclaration | XmlNodeTypes;
 }
 
-export function objXml(obj: object): string {
-  return js2xml(obj, {
-    spaces: 2,
-    elementsKey: 'nodes',
-    attributesFn: (attrs: string | AnyObject[]) => {
-      if ('string' == typeof attrs) {
-        throw new Error(`Expected array, but got string '${attrs}'`);
-      }
-      return kvpObject(attrs, 'name');
+export function objXml(obj: object, options?: Options.JS2XML): string {
+  const opts = Object.assign(
+    {},
+    {
+      spaces: 2,
+      elementsKey: 'nodes',
+      attributesFn: (attrs: string | AnyObject[]) => {
+        if ('string' == typeof attrs) {
+          throw new Error(`Expected array, but got string '${attrs}'`);
+        }
+        return kvpObject(attrs, 'name');
+      },
     },
-  });
+    options,
+  );
+  return js2xml(obj, opts);
 }
 
 /**

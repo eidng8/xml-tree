@@ -13,3 +13,7 @@
 .g8-tree__node__entry__tags__tag {
   font-size: 0.8em;
 }
+
+.g8-tree__node__entry__toggle:before {
+  content: '\2218';
+}
