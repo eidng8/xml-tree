@@ -7,6 +7,7 @@
 import { assign, cloneDeep, each, filter, keys, map } from 'lodash';
 import { js2xml, Options, xml2js } from 'xml-js';
 import {
+  XmlAttribute,
   XmlNodeTypes,
   XmlTreeDeclaration,
   XmlTreeElement,
@@ -148,4 +149,12 @@ export function removeHierarchyFromNode(
 ): void {
   delete node.parent;
   delete (node as XmlTreeElement).nodes;
+}
+
+export function rectifyNodeAttributes(
+  node: XmlNodeTypes | XmlTreeDeclaration,
+): void {
+  node = node as XmlTreeElement;
+  if (!node.attributes) return;
+  node.attributes = filter(node.attributes, n => n.name) as XmlAttribute[];
 }

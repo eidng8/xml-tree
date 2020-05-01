@@ -52,9 +52,10 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': [
           'error',
           {
-            allowExpressions: false,
-            allowTypedFunctionExpressions: false,
+            allowExpressions: true,
+            allowTypedFunctionExpressions: true,
             allowHigherOrderFunctions: true,
+            allowConciseArrowFunctionExpressionsStartingWithVoid: true,
           },
         ],
         '@typescript-eslint/no-unused-vars': [

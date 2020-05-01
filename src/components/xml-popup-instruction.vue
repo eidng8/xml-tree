@@ -33,7 +33,7 @@
             <span class="g8-xml__popup__control">
               <input type="text" v-model="attr.value" @change="updateRaw()" />
             </span>
-            <span class="g8-xml__popup__control_accessories"></span>
+            <span class="g8-xml__popup__control__accessories"></span>
           </div>
         </div>
       </div>

@@ -19,23 +19,31 @@
           <input type="text" class="g8-xml--large" v-model="node.name" />
         </div>
       </div>
-      <div class="g8-xml__popup__control-group">
+      <div
+        class="g8-xml__popup__attributes"
+        v-if="node.attributes && node.attributes.length"
+      >
         <div
-          class="g8-xml__popup__attributes"
-          v-if="node.attributes && node.attributes.length"
+          class="g8-xml__popup__control-group g8-xml__popup__attribute"
+          v-for="(attr, idx) in node.attributes"
+          :key="idx"
         >
-          <div
-            class="g8-xml__popup__attribute"
-            v-for="(attr, idx) in node.attributes"
-            :key="idx"
-          >
-            <span class="g8-xml__popup__control-label">{{ attr.name }}</span>
-            <span class="g8-xml__popup__control">
-              <input type="text" v-model="attr.value" @change="updateRaw()" />
-            </span>
-            <span class="g8-xml__popup__control_accessories"></span>
-          </div>
+          <span class="g8-xml__popup__control-label">
+            <input type="text" v-model="attr.name" @change="updateRaw()" />
+          </span>
+          <span>=</span>
+          <span class="g8-xml__popup__control">
+            <input type="text" v-model="attr.value" @change="updateRaw()" />
+          </span>
+          <span class="g8-xml__popup__control__accessories">
+            <button class="g8-xml__popup__control__accessory">&#215;</button>
+          </span>
         </div>
+      </div>
+      <div class="g8-xml__popup__control-group">
+        <button class="g8-xml__popup__control" @click="newAttribute()">
+          Add Attribute
+        </button>
       </div>
       <div class="g8-xml__popup__control-group">
         <textarea v-model="raw" @change="rawChanged()"></textarea>
@@ -60,6 +68,12 @@ export default class G8XmlPopupElement extends G8XmlPopupWithRaw {
   // noinspection JSUnusedGlobalSymbols
   created(): void {
     this.updateRaw();
+  }
+
+  newAttribute(): void {
+    if (!this.node.attributes) this.node.attributes = [];
+    this.node.attributes.push({ name: '', value: '' });
+    this.$forceUpdate();
   }
 }
 </script>

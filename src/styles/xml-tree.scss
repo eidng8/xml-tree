@@ -30,6 +30,10 @@
 .g8-xml__container {
   width: 100%;
   overflow: auto;
+
+  * {
+    box-sizing: border-box;
+  }
 }
 
 .g8-xml__tree {
