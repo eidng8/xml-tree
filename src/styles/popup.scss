@@ -89,13 +89,6 @@
 
 .g8-xml__popup__header__title {
   flex: 1;
-
-  .g8-xml__declaration,
-  .g8-xml__instruction {
-    &:before {
-      margin-left: 0;
-    }
-  }
 }
 
 .g8-xml__popup__header__close {
