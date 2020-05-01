@@ -14,26 +14,32 @@
       <span class="g8-xml__element">Element</span>
     </template>
     <template>
-      <div class="g8-xml__popup__control">
-        <input type="text" class="g8-xml--large" v-model="node.name" />
-      </div>
-      <div
-        class="g8-xml__popup__attributes"
-        v-if="node.attributes && node.attributes.length"
-      >
-        <div
-          class="g8-xml__popup__attribute"
-          v-for="(attr, idx) in node.attributes"
-          :key="idx"
-        >
-          <span class="g8-xml__popup__control-label">{{ attr.name }}</span>
-          <span class="g8-xml__popup__control">
-            <input type="text" v-model="attr.value" @change="updateRaw()" />
-          </span>
-          <span class="g8-xml__popup__control_accessories"></span>
+      <div class="g8-xml__popup__control-group">
+        <div class="g8-xml__popup__control">
+          <input type="text" class="g8-xml--large" v-model="node.name" />
         </div>
       </div>
-      <textarea v-model="raw" @change="rawChanged()"></textarea>
+      <div class="g8-xml__popup__control-group">
+        <div
+          class="g8-xml__popup__attributes"
+          v-if="node.attributes && node.attributes.length"
+        >
+          <div
+            class="g8-xml__popup__attribute"
+            v-for="(attr, idx) in node.attributes"
+            :key="idx"
+          >
+            <span class="g8-xml__popup__control-label">{{ attr.name }}</span>
+            <span class="g8-xml__popup__control">
+              <input type="text" v-model="attr.value" @change="updateRaw()" />
+            </span>
+            <span class="g8-xml__popup__control_accessories"></span>
+          </div>
+        </div>
+      </div>
+      <div class="g8-xml__popup__control-group">
+        <textarea v-model="raw" @change="rawChanged()"></textarea>
+      </div>
     </template>
   </g8-xml-popup>
 </template>
