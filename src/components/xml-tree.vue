@@ -32,17 +32,11 @@
       >
         <template #default="{ item }">
           <span
-            :class="{
-              'g8-xml__cdata': 'cdata' == item.type,
-              'g8-xml__comment': 'comment' == item.type,
-              'g8-xml__doctype': 'doctype' == item.type,
-              'g8-xml__element': 'element' == item.type,
-              'g8-xml__instruction': 'instruction' == item.type,
-              'g8-xml__text': 'text' == item.type,
-            }"
+            :class="[`g8-xml__${item.type}`]"
             @contextmenu.prevent="edit(item)"
-            >{{ item | tag(piUseAttribute) }}</span
           >
+            {{ item | tag(piUseAttribute) }}
+          </span>
         </template>
         <template #tag="{ item, tag }">
           <span
