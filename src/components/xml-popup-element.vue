@@ -36,7 +36,12 @@
             <input type="text" v-model="attr.value" @change="updateRaw()" />
           </span>
           <span class="g8-xml__popup__control__accessories">
-            <button class="g8-xml__popup__control__accessory">&#215;</button>
+            <button
+              class="g8-xml__popup__control__accessory"
+              @click="deleteAttribute(idx)"
+            >
+              &#215;
+            </button>
           </span>
         </div>
       </div>
@@ -46,7 +51,11 @@
         </button>
       </div>
       <div class="g8-xml__popup__control-group">
-        <textarea v-model="raw" @change="rawChanged()"></textarea>
+        <textarea
+          class="g8-xml__popup__control"
+          v-model="raw"
+          @change="rawChanged()"
+        ></textarea>
       </div>
     </template>
   </g8-xml-popup>
@@ -73,6 +82,13 @@ export default class G8XmlPopupElement extends G8XmlPopupWithRaw {
   newAttribute(): void {
     if (!this.node.attributes) this.node.attributes = [];
     this.node.attributes.push({ name: '', value: '' });
+    this.$forceUpdate();
+  }
+
+  deleteAttribute(idx: number): void {
+    if (!this.node.attributes) return;
+    this.node.attributes.splice(idx, 1);
+    this.updateRaw();
     this.$forceUpdate();
   }
 }
