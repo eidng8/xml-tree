@@ -55,25 +55,25 @@
     <g8-xml-popup-declaration
       v-if="popupOpen && !currentNode.type"
       :node="popupItem"
-      @save="saveElement($event)"
+      @save="saveNode($event)"
       @close="closePopup()"
     ></g8-xml-popup-declaration>
     <g8-xml-popup-element
       v-else-if="popupOpen && 'element' == currentNode.type"
       :node="popupItem"
-      @save="saveElement($event)"
+      @save="saveNode($event)"
       @close="closePopup()"
     ></g8-xml-popup-element>
     <g8-xml-popup-instruction
       v-else-if="popupOpen && 'instruction' == currentNode.type"
       :node="popupItem"
-      @save="saveElement($event)"
+      @save="saveNode($event)"
       @close="closePopup()"
     ></g8-xml-popup-instruction>
     <g8-xml-popup-textual
       v-else-if="popupOpen"
       :node="popupItem"
-      @save="saveElement($event)"
+      @save="saveNode($event)"
       @close="closePopup()"
     ></g8-xml-popup-textual>
   </div>
@@ -190,7 +190,7 @@ export default class G8XmlTree extends Vue {
     this.popupOpen = true;
   }
 
-  saveElement(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+  saveNode(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     if (!this.currentNode) throw new Error('There is no node being edited.');
     if (!this.currentNodeParent) throw new Error('Invalid node parent');
     const newNode = Object.assign({}, this.currentNode, evt.data);
