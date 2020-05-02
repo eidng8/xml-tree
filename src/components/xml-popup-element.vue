@@ -83,6 +83,12 @@ export default class G8XmlPopupElement extends G8XmlPopupWithRaw {
     if (!this.node.attributes) this.node.attributes = [];
     this.node.attributes.push({ name: '', value: '' });
     this.$forceUpdate();
+    this.$nextTick(() => {
+      const input = this.$el.querySelector(
+        '.g8-xml__popup__attributes .g8-xml__popup__attribute:last-child input',
+      ) as HTMLInputElement;
+      if (input) input.focus();
+    });
   }
 
   deleteAttribute(idx: number): void {
