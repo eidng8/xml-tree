@@ -11,13 +11,20 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span class="g8-xml__element">{{ texts.element }}</span>
+      <span :class="[`g8-xml__${node.type || 'declaration'}`]">
+        {{ texts[node.type || 'declaration'] }}
+      </span>
     </template>
     <template>
       <div class="g8-xml__popup__name" v-if="node.name">
         <div class="g8-xml__popup__control-group">
           <div class="g8-xml__popup__control">
-            <input type="text" class="g8-xml--large" v-model="node.name" />
+            <input
+              type="text"
+              tabindex="999"
+              class="g8-xml--large"
+              v-model="node.name"
+            />
           </div>
         </div>
       </div>
@@ -32,15 +39,26 @@
             :key="idx"
           >
             <span class="g8-xml__popup__control-label">
-              <input type="text" v-model="attr.name" @change="updateRaw()" />
+              <input
+                type="text"
+                :tabindex="1000 + idx * 3"
+                v-model="attr.name"
+                @change="updateRaw()"
+              />
             </span>
             <span>=</span>
             <span class="g8-xml__popup__control">
-              <input type="text" v-model="attr.value" @change="updateRaw()" />
+              <input
+                type="text"
+                :tabindex="1001 + idx * 3"
+                v-model="attr.value"
+                @change="updateRaw()"
+              />
             </span>
             <span class="g8-xml__popup__control__accessories">
               <button
                 class="g8-xml__popup__control__accessory"
+                :tabindex="1002 + idx * 3"
                 @click="deleteAttribute(idx)"
               >
                 &#215;
@@ -49,7 +67,11 @@
           </div>
         </div>
         <div class="g8-xml__popup__control-group">
-          <button class="g8-xml__popup__control" @click="newAttribute()">
+          <button
+            class="g8-xml__popup__control"
+            tabindex="9997"
+            @click="newAttribute()"
+          >
             {{ texts.addAttribute }}
           </button>
         </div>
@@ -67,6 +89,7 @@
         </div>
         <div class="g8-xml__popup__control-group">
           <textarea
+            tabindex="9998"
             class="g8-xml__popup__control"
             v-model="raw"
             @change="rawChanged()"
