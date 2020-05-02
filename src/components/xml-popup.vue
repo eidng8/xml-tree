@@ -33,6 +33,18 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component({ name: 'g8-xml-popup' })
 export default class G8XmlPopup extends Vue {
+  // noinspection JSUnusedGlobalSymbols
+  mounted(): void {
+    this.$nextTick(() => this.initFocus());
+  }
+
+  initFocus(): void {
+    const input = this.$el.querySelector(
+      '.g8-xml__popup__attributes .g8-xml__popup__control input,textarea',
+    ) as HTMLInputElement | HTMLTextAreaElement;
+    if (input) input.focus();
+  }
+
   close(evt: Event): void {
     this.$emit('close', evt);
   }
