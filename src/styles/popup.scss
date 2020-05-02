@@ -59,6 +59,33 @@
   border: solid 1px $g8-xml__border__color;
 }
 
+.g8-xml__popup__separator {
+  margin-top: 1em;
+  font-size: 0.8em;
+  text-align: right;
+  position: relative;
+
+  &:before {
+    left: 0;
+    top: 60%;
+    height: 1px;
+    width: 100%;
+    z-index: 0;
+    content: '\a0';
+    position: absolute;
+    display: inline-block;
+    border-bottom: dotted 1px $g8-xml__border__color;
+  }
+
+  > * {
+    z-index: 1;
+    padding-left: 3px;
+    position: relative;
+    font-family: monospace;
+    background: $g8-xml__bg;
+  }
+}
+
 .g8-xml__popup__header,
 .g8-xml__popup__body,
 .g8-xml__popup__footer {
@@ -166,6 +193,10 @@
 
   &:not(:first-child) {
     margin-top: 6px;
+  }
+
+  .g8-xml__popup__separator {
+    display: table-caption;
   }
 }
 

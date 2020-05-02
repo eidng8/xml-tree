@@ -1,11 +1,13 @@
 const texts = {
   attribute: 'attribute',
-  declaration: 'declaration',
+  attributes: 'attributes',
   cdata: 'cdata',
   comment: 'comment',
+  declaration: 'declaration',
   doctype: 'doctype',
   element: 'element',
   instruction: 'instruction',
+  raw: 'raw',
   text: 'text',
   // UI elements
   addAttribute: 'Add Attribute',

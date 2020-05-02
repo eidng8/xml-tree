@@ -59,18 +59,18 @@
       @save="saveNode($event)"
       @close="closePopup()"
     ></g8-xml-popup-element>
-    <g8-xml-popup-instruction
+    <g8-xml-popup-element
       v-else-if="popupOpen && 'instruction' == currentNode.type"
       :node="popupItem"
       @save="saveNode($event)"
       @close="closePopup()"
-    ></g8-xml-popup-instruction>
-    <g8-xml-popup-textual
+    ></g8-xml-popup-element>
+    <g8-xml-popup-element
       v-else-if="popupOpen"
       :node="popupItem"
       @save="saveNode($event)"
       @close="closePopup()"
-    ></g8-xml-popup-textual>
+    ></g8-xml-popup-element>
   </div>
 </template>
 

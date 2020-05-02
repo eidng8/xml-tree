@@ -5,7 +5,7 @@
  */
 
 //noinspection SassScssResolvedByNameOnly
-$g8-xml__bg: #fff !default;
+$g8-xml__bg: $g8-tree__bg !default;
 
 //noinspection SassScssResolvedByNameOnly
 $g8-xml__fg: $g8-tree__fg !default;
@@ -13,8 +13,11 @@ $g8-xml__fg: $g8-tree__fg !default;
 //noinspection SassScssResolvedByNameOnly
 $g8-xml__text--dark: darken($g8-tree__bg, 20%);
 
-$g8-xml__border__color: darken($g8-xml__bg, 20%) !default;
-$g8-xml__border__color--inverse: lighten($g8-xml__fg, 10%) !default;
+$g8-xml__fg--inverse: $g8-xml__bg;
+$g8-xml__bg--inverse: $g8-xml__fg;
+
+$g8-xml__border__color: darken($g8-xml__fg--inverse, 20%) !default;
+$g8-xml__border__color--inverse: lighten($g8-xml__bg--inverse, 10%) !default;
 
 $g8-xml__corner--small: 3px !default;
 

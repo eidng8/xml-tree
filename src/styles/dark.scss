@@ -15,7 +15,7 @@
   }
 
   button {
-    background: $g8-xml__fg;
+    background: $g8-xml__bg--inverse;
     border-color: $g8-xml__border__color--inverse;
   }
 
@@ -24,7 +24,7 @@
   }
 
   option {
-    background: $g8-xml__fg;
+    background: $g8-xml__bg--inverse;
   }
 
   select,
@@ -33,7 +33,7 @@
   }
 
   .g8-xml__popup__box {
-    background: $g8-xml__fg;
+    background: $g8-xml__bg--inverse;
     border-color: $g8-xml__border__color--inverse;
   }
 
@@ -43,5 +43,15 @@
 
   .g8-xml__popup__footer {
     border-top-color: $g8-xml__border__color--inverse;
+  }
+
+  .g8-xml__popup__separator {
+    &:before {
+      border-bottom-color: $g8-xml__border__color--inverse;
+    }
+
+    > * {
+      background: $g8-xml__bg--inverse;
+    }
   }
 }
