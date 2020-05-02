@@ -23,4 +23,25 @@ export default abstract class G8XmlPopupWithRaw extends G8XmlPopupClass {
     rectifyNodeAttributes(obj);
     Object.assign(this.node, obj);
   }
+
+  newAttribute(): void {
+    const node = this.node as XmlTreeElement;
+    if (!node.attributes) node.attributes = [];
+    node.attributes.push({ name: '', value: '' });
+    this.$forceUpdate();
+    this.$nextTick(() => {
+      const input = this.$el.querySelector(
+        '.g8-xml__popup__attributes .g8-xml__popup__attribute:last-child input',
+      ) as HTMLInputElement;
+      if (input) input.focus();
+    });
+  }
+
+  deleteAttribute(idx: number): void {
+    const node = this.node as XmlTreeElement;
+    if (!node.attributes) return;
+    node.attributes.splice(idx, 1);
+    this.updateRaw();
+    this.$forceUpdate();
+  }
 }

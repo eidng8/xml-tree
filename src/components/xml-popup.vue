@@ -11,7 +11,11 @@
         <div class="g8-xml__popup__header__title">
           <slot name="title">Popup</slot>
         </div>
-        <button class="g8-xml__popup__header__close" @click="close($event)">
+        <button
+          class="g8-xml__popup__header__close"
+          tabindex="-1"
+          @click="close($event)"
+        >
           &#215;
         </button>
       </div>
@@ -20,8 +24,12 @@
       </div>
       <div class="g8-xml__popup__footer">
         <slot name="footer">
-          <button @click="save($event)">Save</button>
-          <button @click="close($event)">Close</button>
+          <button tabindex="9999" @click="save($event)">
+            {{ texts.save }}
+          </button>
+          <button tabindex="9999" @click="close($event)">
+            {{ texts.close }}
+          </button>
         </slot>
       </div>
     </div>
@@ -30,9 +38,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { getTexts } from '../translations/translation';
 
 @Component({ name: 'g8-xml-popup' })
 export default class G8XmlPopup extends Vue {
+  texts = getTexts();
+
   // noinspection JSUnusedGlobalSymbols
   mounted(): void {
     this.$nextTick(() => this.initFocus());

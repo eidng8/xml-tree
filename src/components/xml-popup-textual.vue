@@ -11,19 +11,11 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span
-        :class="{
-          'g8-xml__cdata': 'cdata' == node.type,
-          'g8-xml__comment': 'comment' == node.type,
-          'g8-xml__doctype': 'doctype' == node.type,
-          'g8-xml__text': 'text' == node.type,
-        }"
-        >{{ node.type }}</span
-      >
+      <span :class="[`g8-xml__${node.type}`]">{{ texts[node.type] }}</span>
     </template>
     <template>
       <label class="g8-xml__popup__control-group">
-        <textarea v-model="node[node.type]"></textarea>
+        <textarea tabindex="1000" v-model="node[node.type]"></textarea>
       </label>
     </template>
   </g8-xml-popup>

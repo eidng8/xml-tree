@@ -11,7 +11,7 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span class="g8-xml__element">Element</span>
+      <span class="g8-xml__element">{{ texts.element }}</span>
     </template>
     <template>
       <div class="g8-xml__popup__control-group">
@@ -47,7 +47,7 @@
       </div>
       <div class="g8-xml__popup__control-group">
         <button class="g8-xml__popup__control" @click="newAttribute()">
-          Add Attribute
+          {{ texts.addAttribute }}
         </button>
       </div>
       <div class="g8-xml__popup__control-group">
@@ -77,25 +77,6 @@ export default class G8XmlPopupElement extends G8XmlPopupWithRaw {
   // noinspection JSUnusedGlobalSymbols
   created(): void {
     this.updateRaw();
-  }
-
-  newAttribute(): void {
-    if (!this.node.attributes) this.node.attributes = [];
-    this.node.attributes.push({ name: '', value: '' });
-    this.$forceUpdate();
-    this.$nextTick(() => {
-      const input = this.$el.querySelector(
-        '.g8-xml__popup__attributes .g8-xml__popup__attribute:last-child input',
-      ) as HTMLInputElement;
-      if (input) input.focus();
-    });
-  }
-
-  deleteAttribute(idx: number): void {
-    if (!this.node.attributes) return;
-    this.node.attributes.splice(idx, 1);
-    this.updateRaw();
-    this.$forceUpdate();
   }
 }
 </script>

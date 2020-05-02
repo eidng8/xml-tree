@@ -11,7 +11,7 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span class="g8-xml__instruction">{{ node.type }}</span>
+      <span class="g8-xml__instruction">{{ texts[node.type] }}</span>
     </template>
     <template>
       <div class="g8-xml__popup__control-group">
@@ -31,7 +31,12 @@
           >
             <span class="g8-xml__popup__control-label">{{ attr.name }}</span>
             <span class="g8-xml__popup__control">
-              <input type="text" v-model="attr.value" @change="updateRaw()" />
+              <input
+                type="text"
+                :tabindex="1000 + idx"
+                v-model="attr.value"
+                @change="updateRaw()"
+              />
             </span>
             <span class="g8-xml__popup__control__accessories"></span>
           </div>
@@ -39,6 +44,7 @@
       </div>
       <div class="g8-xml__popup__control-group" v-else>
         <textarea
+          tabindex="1000"
           class="g8-xml__popup__control"
           v-model="node[node.type]"
         ></textarea>

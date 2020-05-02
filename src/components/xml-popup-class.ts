@@ -12,9 +12,12 @@ import {
   XmlTreeDeclaration,
 } from './types';
 import { removeHierarchyFromNode } from '../utils';
+import { getTexts } from '../translations/translation';
 
 export default abstract class G8XmlPopupClass extends Vue {
   abstract node: XmlNodeTypes | XmlTreeDeclaration;
+
+  texts = getTexts();
 
   save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     evt.data = this.node;

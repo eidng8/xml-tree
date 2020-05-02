@@ -11,7 +11,7 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span class="g8-xml__declaration">Declaration</span>
+      <span class="g8-xml__declaration">{{ texts.declaration }}</span>
     </template>
     <template>
       <div

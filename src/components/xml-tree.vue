@@ -91,6 +91,7 @@ import { cloneWithoutHierarchy, xmlJs } from '../utils';
 import G8XmlPopupTextual from './xml-popup-textual.vue';
 import G8XmlPopupElement from './xml-popup-element.vue';
 import G8XmlPopupInstruction from './xml-popup-instruction.vue';
+import { getTexts } from '../translations/translation';
 
 @Component({
   name: 'g8-xml-tree',
@@ -142,6 +143,8 @@ export default class G8XmlTree extends Vue {
 
   popupOpen = false;
 
+  texts = getTexts();
+
   // noinspection JSUnusedGlobalSymbols
   created(): void {
     this.reloadXml();
@@ -186,8 +189,8 @@ export default class G8XmlTree extends Vue {
   }
 
   saveNode(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
-    if (!this.currentNode) throw new Error('There is no node being edited.');
-    if (!this.currentNodeParent) throw new Error('Invalid node parent');
+    if (!this.currentNode) throw new Error(this.texts.errNotEditing);
+    if (!this.currentNodeParent) throw new Error(this.texts.errNodeParent);
     const newNode = Object.assign({}, this.currentNode, evt.data);
     if (isDeclarationNode(newNode)) {
       this.tree.declaration = newNode;
