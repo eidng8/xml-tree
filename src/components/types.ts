@@ -85,3 +85,14 @@ export function isDeclarationNode(
 ): node is XmlTreeDeclaration {
   return !(node as XmlNodeTypes).type;
 }
+
+export function defaultDeclaration(parent?: XmlTreeRoot): XmlTreeDeclaration {
+  return {
+    attributes: [
+      { name: 'version', value: '1.0' },
+      { name: 'encoding', value: 'utf-8' },
+      { name: 'standalone', value: 'no' },
+    ],
+    parent: parent!,
+  };
+}

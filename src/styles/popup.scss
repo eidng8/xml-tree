@@ -198,6 +198,12 @@
   .g8-xml__popup__separator {
     display: table-caption;
   }
+
+  .g8-xml__popup__body > :first-child & {
+    .g8-xml__popup__separator {
+      display: none;
+    }
+  }
 }
 
 .g8-xml__popup__attribute {

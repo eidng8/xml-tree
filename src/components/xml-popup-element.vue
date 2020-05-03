@@ -103,19 +103,93 @@
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
-import { XmlTreeElement } from './types';
-import G8XmlPopupWithRaw from './xml-popup-with-raw';
+import { defaultDeclaration, XmlNodeTypes, XmlTreeElement } from './types';
+import { differenceWith, each } from 'lodash';
+import {
+  objXml,
+  rectifyNodeAttributes,
+  removeHierarchyFromNode,
+  xmlJs,
+} from '../utils';
+import G8XmlPopupClass from './xml-popup-class';
 
 @Component({
   name: 'g8-xml-popup-element',
   components: { G8XmlPopup },
 })
-export default class G8XmlPopupElement extends G8XmlPopupWithRaw {
+export default class G8XmlPopupElement extends G8XmlPopupClass {
   @Prop() node!: XmlTreeElement;
+
+  raw = '';
 
   // noinspection JSUnusedGlobalSymbols
   created(): void {
+    if (!this.node.type) {
+      const attrs = defaultDeclaration().attributes;
+      if (!this.node.attributes || !this.node.attributes.length) {
+        this.node.attributes = attrs;
+      }
+      each(
+        differenceWith(attrs, this.node.attributes, (a, b) => a.name == b.name),
+        a => this.node.attributes!.push({ name: a.name, value: undefined }),
+      );
+    }
     this.updateRaw();
+  }
+
+  // noinspection JSUnusedGlobalSymbols
+  mounted(): void {
+    this.$nextTick(() => this.initRawSize());
+  }
+
+  /**
+   * A rough approximate height estimation of text areas. Gaps and heights of
+   * other elements are not considered.
+   */
+  initRawSize(): void {
+    const areas = this.$el.getElementsByTagName('textarea');
+    const area = areas[0] as HTMLTextAreaElement;
+    if (!area) return;
+    const styles = window.getComputedStyle(area);
+    const mh = parseInt(styles.getPropertyValue('max-height')) / areas.length;
+    // remember to count borders
+    const ah = (mh > area.scrollHeight ? area.scrollHeight : mh) + 2;
+    each(areas, a => (a.style.height = `${ah}px`));
+  }
+
+  updateRaw(): void {
+    removeHierarchyFromNode(this.node);
+    rectifyNodeAttributes(this.node);
+    this.raw = objXml({ nodes: [this.node] });
+  }
+
+  rawChanged(): void {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const obj = (xmlJs(this.raw) as XmlTreeElement).nodes![0] as XmlNodeTypes;
+    removeHierarchyFromNode(obj);
+    rectifyNodeAttributes(obj);
+    Object.assign(this.node, obj);
+  }
+
+  newAttribute(): void {
+    const node = this.node as XmlTreeElement;
+    if (!node.attributes) node.attributes = [];
+    node.attributes.push({ name: '', value: '' });
+    this.$forceUpdate();
+    this.$nextTick(() => {
+      const input = this.$el.querySelector(
+        '.g8-xml__popup__attributes .g8-xml__popup__attribute:last-child input',
+      ) as HTMLInputElement;
+      if (input) input.focus();
+    });
+  }
+
+  deleteAttribute(idx: number): void {
+    const node = this.node as XmlTreeElement;
+    if (!node.attributes) return;
+    node.attributes.splice(idx, 1);
+    this.updateRaw();
+    this.$forceUpdate();
   }
 }
 </script>

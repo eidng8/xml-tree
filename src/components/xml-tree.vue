@@ -54,18 +54,6 @@
       @close="closePopup()"
     ></g8-xml-popup-declaration>
     <g8-xml-popup-element
-      v-else-if="popupOpen && 'element' == currentNode.type"
-      :node="popupItem"
-      @save="saveNode($event)"
-      @close="closePopup()"
-    ></g8-xml-popup-element>
-    <g8-xml-popup-element
-      v-else-if="popupOpen && 'instruction' == currentNode.type"
-      :node="popupItem"
-      @save="saveNode($event)"
-      @close="closePopup()"
-    ></g8-xml-popup-element>
-    <g8-xml-popup-element
       v-else-if="popupOpen"
       :node="popupItem"
       @save="saveNode($event)"
@@ -78,6 +66,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8VueTree } from 'g8-vue-tree';
 import {
+  defaultDeclaration,
   isDeclarationNode,
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
@@ -88,17 +77,13 @@ import {
 } from './types';
 import G8XmlPopupDeclaration from './xml-popup-declaration.vue';
 import { cloneWithoutHierarchy, xmlJs } from '../utils';
-import G8XmlPopupTextual from './xml-popup-textual.vue';
 import G8XmlPopupElement from './xml-popup-element.vue';
-import G8XmlPopupInstruction from './xml-popup-instruction.vue';
 import { getTexts } from '../translations/translation';
 
 @Component({
   name: 'g8-xml-tree',
   components: {
-    G8XmlPopupInstruction,
     G8XmlPopupElement,
-    G8XmlPopupTextual,
     G8XmlPopupDeclaration,
     G8VueTree,
   },
@@ -159,14 +144,7 @@ export default class G8XmlTree extends Vue {
       !this.tree.declaration.attributes ||
       !this.tree.declaration.attributes.length
     ) {
-      this.tree.declaration = {
-        attributes: [
-          { name: 'version', value: '1.0' },
-          { name: 'encoding', value: 'utf-8' },
-          { name: 'standalone', value: 'no' },
-        ],
-        parent: this.tree,
-      };
+      this.tree.declaration = defaultDeclaration(this.tree);
     }
   }
 
