@@ -8,14 +8,14 @@ import { Vue } from 'vue-property-decorator';
 import {
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
+  XmlEditDeclaration,
   XmlNodeTypes,
-  XmlTreeDeclaration,
 } from './types';
 import { removeHierarchyFromNode } from '../utils';
 import { getTexts } from '../translations/translation';
 
 export default abstract class G8XmlPopupClass extends Vue {
-  abstract node: XmlNodeTypes | XmlTreeDeclaration;
+  abstract node: XmlNodeTypes | XmlEditDeclaration;
 
   texts = getTexts();
 

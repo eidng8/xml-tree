@@ -70,10 +70,10 @@ import {
   isDeclarationNode,
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
+  XmlEditDeclaration,
+  XmlEditElement,
+  XmlEditRoot,
   XmlNodeTypes,
-  XmlTreeDeclaration,
-  XmlTreeElement,
-  XmlTreeRoot,
 } from './types';
 import G8XmlPopupDeclaration from './xml-popup-declaration.vue';
 import { cloneWithoutHierarchy, xmlJs } from '../utils';
@@ -81,7 +81,7 @@ import G8XmlPopupElement from './xml-popup-element.vue';
 import { getTexts } from '../translations/translation';
 
 @Component({
-  name: 'g8-xml-tree',
+  name: 'g8-xml-edit',
   components: {
     G8XmlPopupElement,
     G8XmlPopupDeclaration,
@@ -109,22 +109,22 @@ import { getTexts } from '../translations/translation';
     },
   },
 })
-export default class G8XmlTree extends Vue {
+export default class G8XmlEdit extends Vue {
   @Prop() xml!: string;
 
   @Prop({ default: false }) showAttrValue!: boolean;
 
   @Prop({ default: false }) piUseAttribute!: boolean;
 
-  tree!: XmlTreeRoot;
+  tree!: XmlEditRoot;
 
-  currentNode?: XmlNodeTypes | XmlTreeDeclaration | null;
+  currentNode?: XmlNodeTypes | XmlEditDeclaration | null;
 
-  currentNodeParent?: XmlTreeRoot | XmlTreeElement;
+  currentNodeParent?: XmlEditRoot | XmlEditElement;
 
   currentNodeIndex = -1;
 
-  popupItem?: XmlNodeTypes | XmlTreeDeclaration | null;
+  popupItem?: XmlNodeTypes | XmlEditDeclaration | null;
 
   popupOpen = false;
 
@@ -138,7 +138,7 @@ export default class G8XmlTree extends Vue {
   reloadXml(): void {
     this.tree = xmlJs(this.xml, {
       instructionHasAttributes: this.piUseAttribute,
-    }) as XmlTreeRoot;
+    }) as XmlEditRoot;
     if (
       !this.tree.declaration ||
       !this.tree.declaration.attributes ||
@@ -152,7 +152,7 @@ export default class G8XmlTree extends Vue {
     this.popupOpen = false;
   }
 
-  edit(item: XmlNodeTypes | XmlTreeDeclaration): void {
+  edit(item: XmlNodeTypes | XmlEditDeclaration): void {
     this.currentNode = item;
     this.currentNodeParent = item.parent;
     if ((item as XmlNodeTypes).type && this.currentNodeParent.nodes) {

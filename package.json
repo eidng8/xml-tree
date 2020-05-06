@@ -1,12 +1,12 @@
 {
-  "name": "g8-xml-tree",
+  "name": "g8-xml-edit",
   "version": "0.0.1",
   "description": "A Vue.js tree view component showing XML structure.",
-  "repository": "git@github.com:eidng8/xml-tree.git",
-  "bugs": "git@github.com:eidng8/xml-tree/issues",
+  "repository": "git@github.com:eidng8/xml-edit.git",
+  "bugs": "git@github.com:eidng8/xml-edit/issues",
   "author": "eidng8",
   "license": "GPL-3.0",
-  "main": "./dist/g8-xml-tree.umd.min.js",
+  "main": "./dist/g8-xml-edit.umd.min.js",
   "typings": "./typings/index.d.ts",
   "files": [
     "/dist/*.js",

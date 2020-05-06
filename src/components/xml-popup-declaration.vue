@@ -40,7 +40,7 @@
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
-import { XmlTreeDeclaration } from './types';
+import { XmlEditDeclaration } from './types';
 import G8XmlPopupClass from './xml-popup-class';
 
 @Component({
@@ -48,7 +48,7 @@ import G8XmlPopupClass from './xml-popup-class';
   components: { G8XmlPopup },
 })
 export default class G8XmlPopupDeclaration extends G8XmlPopupClass {
-  @Prop() node!: XmlTreeDeclaration;
+  @Prop() node!: XmlEditDeclaration;
 
   // noinspection JSUnusedGlobalSymbols
   created(): void {

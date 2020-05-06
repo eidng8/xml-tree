@@ -103,7 +103,7 @@
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
-import { defaultDeclaration, XmlNodeTypes, XmlTreeElement } from './types';
+import { defaultDeclaration, XmlEditElement, XmlNodeTypes } from './types';
 import { differenceWith, each } from 'lodash';
 import {
   objXml,
@@ -118,7 +118,7 @@ import G8XmlPopupClass from './xml-popup-class';
   components: { G8XmlPopup },
 })
 export default class G8XmlPopupElement extends G8XmlPopupClass {
-  @Prop() node!: XmlTreeElement;
+  @Prop() node!: XmlEditElement;
 
   raw = '';
 
@@ -165,14 +165,14 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
 
   rawChanged(): void {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const obj = (xmlJs(this.raw) as XmlTreeElement).nodes![0] as XmlNodeTypes;
+    const obj = (xmlJs(this.raw) as XmlEditElement).nodes![0] as XmlNodeTypes;
     removeHierarchyFromNode(obj);
     rectifyNodeAttributes(obj);
     Object.assign(this.node, obj);
   }
 
   newAttribute(): void {
-    const node = this.node as XmlTreeElement;
+    const node = this.node as XmlEditElement;
     if (!node.attributes) node.attributes = [];
     node.attributes.push({ name: '', value: '' });
     this.$forceUpdate();
@@ -185,7 +185,7 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
   }
 
   deleteAttribute(idx: number): void {
-    const node = this.node as XmlTreeElement;
+    const node = this.node as XmlEditElement;
     if (!node.attributes) return;
     node.attributes.splice(idx, 1);
     this.updateRaw();

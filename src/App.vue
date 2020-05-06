@@ -22,7 +22,7 @@
       </div>
     </div>
     <hr />
-    <g8-xml-tree
+    <g8-xml-edit
       :xml="xml"
       :show-attr-value="showAttrValue"
       :pi-use-attribute="piAttr"
@@ -32,9 +32,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { G8XmlTree } from '.';
+import { G8XmlEdit } from '.';
 
-@Component({ components: { G8XmlTree } })
+@Component({ components: { G8XmlEdit } })
 export default class App extends Vue {
   xml =
     '<?xml version="1.0" encoding="utf-8"?>\n' +
@@ -65,7 +65,7 @@ export default class App extends Vue {
 
   piChanged(): void {
     this.$nextTick(() => {
-      const tree = this.$children[0] as G8XmlTree;
+      const tree = this.$children[0] as G8XmlEdit;
       tree.reloadXml();
       tree.$forceUpdate();
     });

@@ -4,9 +4,9 @@
  * Author: eidng8
  */
 
-import G8XmlTree from './components/xml-tree.vue';
+import G8XmlEdit from './components/xml-edit.vue';
 
 export * from './components/types';
 export * from './utils';
 
-export { G8XmlTree };
+export { G8XmlEdit };

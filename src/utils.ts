@@ -8,10 +8,10 @@ import { assign, cloneDeep, each, filter, keys, map } from 'lodash';
 import { js2xml, Options, xml2js } from 'xml-js';
 import {
   XmlAttribute,
+  XmlEditDeclaration,
+  XmlEditElement,
+  XmlEditRoot,
   XmlNodeTypes,
-  XmlTreeDeclaration,
-  XmlTreeElement,
-  XmlTreeRoot,
 } from './components/types';
 
 export type AnyObject = { [key: string]: unknown; [key: number]: unknown };
@@ -91,7 +91,7 @@ export function cloneObject(
 export function xmlJs(
   xml: string,
   options?: Options.XML2JS,
-): XmlTreeRoot | XmlTreeDeclaration | XmlNodeTypes {
+): XmlEditRoot | XmlEditDeclaration | XmlNodeTypes {
   const opts = Object.assign(
     {},
     {
@@ -106,7 +106,7 @@ export function xmlJs(
     },
     options,
   );
-  return xml2js(xml, opts) as XmlTreeRoot | XmlTreeDeclaration | XmlNodeTypes;
+  return xml2js(xml, opts) as XmlEditRoot | XmlEditDeclaration | XmlNodeTypes;
 }
 
 export function objXml(obj: object, options?: Options.JS2XML): string {
@@ -132,12 +132,12 @@ export function objXml(obj: object, options?: Options.JS2XML): string {
  * @param node
  */
 export function cloneWithoutHierarchy(
-  node: XmlNodeTypes | XmlTreeDeclaration,
-): XmlNodeTypes | XmlTreeDeclaration {
+  node: XmlNodeTypes | XmlEditDeclaration,
+): XmlNodeTypes | XmlEditDeclaration {
   return cloneObject((node as unknown) as { [key: string]: unknown }, [
     'parent',
     'nodes',
-  ]) as XmlNodeTypes | XmlTreeDeclaration;
+  ]) as XmlNodeTypes | XmlEditDeclaration;
 }
 
 /**
@@ -145,16 +145,16 @@ export function cloneWithoutHierarchy(
  * `node`.
  */
 export function removeHierarchyFromNode(
-  node: XmlNodeTypes | XmlTreeDeclaration,
+  node: XmlNodeTypes | XmlEditDeclaration,
 ): void {
   delete node.parent;
-  delete (node as XmlTreeElement).nodes;
+  delete (node as XmlEditElement).nodes;
 }
 
 export function rectifyNodeAttributes(
-  node: XmlNodeTypes | XmlTreeDeclaration,
+  node: XmlNodeTypes | XmlEditDeclaration,
 ): void {
-  node = node as XmlTreeElement;
+  node = node as XmlEditElement;
   if (!node.attributes) return;
   node.attributes = filter(node.attributes, n => n.name) as XmlAttribute[];
 }

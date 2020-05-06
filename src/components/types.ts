@@ -9,84 +9,84 @@ export interface XmlAttribute {
   value: string | undefined;
 }
 
-export interface XmlTreeDeclaration {
+export interface XmlEditDeclaration {
   attributes: XmlAttribute[];
-  parent: XmlTreeRoot;
+  parent: XmlEditRoot;
 }
 
-export interface XmlTreeEntry {
+export interface XmlEditEntry {
   type: string;
-  parent: XmlTreeElement | XmlTreeRoot;
+  parent: XmlEditElement | XmlEditRoot;
 }
 
-export interface XmlTreeCData extends XmlTreeEntry {
+export interface XmlEditCData extends XmlEditEntry {
   type: 'cdata';
   cdata: string;
 }
 
-export interface XmlTreeComment extends XmlTreeEntry {
+export interface XmlEditComment extends XmlEditEntry {
   type: 'comment';
   comment: string;
 }
 
-export interface XmlTreeDocType extends XmlTreeEntry {
+export interface XmlEditDocType extends XmlEditEntry {
   type: 'doctype';
   doctype: string;
 }
 
-export interface XmlTreeElement extends XmlTreeEntry {
+export interface XmlEditElement extends XmlEditEntry {
   type: 'element';
   name: string;
   attributes?: XmlAttribute[];
-  nodes?: XmlTreeEntry[];
+  nodes?: XmlEditEntry[];
 }
 
-export interface XmlTreeInstruction extends XmlTreeEntry {
+export interface XmlEditInstruction extends XmlEditEntry {
   type: 'instruction';
   name: string;
   instruction?: string;
   attributes?: XmlAttribute[];
 }
 
-export interface XmlTreeText extends XmlTreeEntry {
+export interface XmlEditText extends XmlEditEntry {
   type: 'text';
   text: string;
 }
 
-export interface XmlTreeRoot {
-  declaration: XmlTreeDeclaration;
-  nodes?: XmlTreeEntry[];
+export interface XmlEditRoot {
+  declaration: XmlEditDeclaration;
+  nodes?: XmlEditEntry[];
 }
 
 export type XmlNodeTypes =
-  | XmlTreeCData
-  | XmlTreeComment
-  | XmlTreeDocType
-  | XmlTreeElement
-  | XmlTreeInstruction
-  | XmlTreeText;
+  | XmlEditCData
+  | XmlEditComment
+  | XmlEditDocType
+  | XmlEditElement
+  | XmlEditInstruction
+  | XmlEditText;
 
 export class SaveNodeMouseEvent extends MouseEvent {
   /**
    * This node will not have `parent` or `nodes`.
    */
-  data!: XmlNodeTypes | XmlTreeDeclaration;
+  data!: XmlNodeTypes | XmlEditDeclaration;
 }
 
 export class SaveNodeKeyboardEvent extends KeyboardEvent {
   /**
    * This node will not have `parent` or `nodes`.
    */
-  data!: XmlNodeTypes | XmlTreeDeclaration;
+  data!: XmlNodeTypes | XmlEditDeclaration;
 }
 
 export function isDeclarationNode(
-  node: XmlNodeTypes | XmlTreeDeclaration,
-): node is XmlTreeDeclaration {
+  node: XmlNodeTypes | XmlEditDeclaration,
+): node is XmlEditDeclaration {
   return !(node as XmlNodeTypes).type;
 }
 
-export function defaultDeclaration(parent?: XmlTreeRoot): XmlTreeDeclaration {
+export function defaultDeclaration(parent?: XmlEditRoot): XmlEditDeclaration {
   return {
     attributes: [
       { name: 'version', value: '1.0' },
