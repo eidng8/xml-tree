@@ -6,7 +6,7 @@
 
 <template>
   <div class="g8-xml__container">
-    <ul class="g8-tree__view g8-tree--dark g8-xml__tree">
+    <ul class="g8-tree__view g8-xml__tree" :class="treeTheme">
       <li
         class="g8-tree__node"
         v-if="tree.declaration"
@@ -34,7 +34,7 @@
         <template #default="{ item }">
           <span
             :class="[`g8-xml__${item.type}`]"
-            @contextmenu.prevent="edit(item)"
+            @contextmenu.prevent="menu(item, $event)"
           >
             {{ item | tag(piUseAttribute) }}
           </span>
@@ -59,12 +59,19 @@
       @save="saveNode($event)"
       @close="closePopup()"
     ></g8-xml-popup-element>
+    <g8-popup-menu
+      class="g8-menu g8-menu--off"
+      ref="menu"
+      :class="menuTheme"
+      @select="action($event)"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8VueTree } from 'g8-vue-tree';
+import { G8MenuItem, G8PopupMenu } from 'g8-popup-menu';
 import {
   defaultDeclaration,
   isDeclarationNode,
@@ -78,7 +85,8 @@ import {
 import G8XmlPopupDeclaration from './xml-popup-declaration.vue';
 import { cloneWithoutHierarchy, xmlJs } from '../utils';
 import G8XmlPopupElement from './xml-popup-element.vue';
-import { getTexts } from '../translations/translation';
+import { getTexts, interpolate } from '../translations/translation';
+import { each, map } from 'lodash';
 
 @Component({
   name: 'g8-xml-edit',
@@ -86,6 +94,7 @@ import { getTexts } from '../translations/translation';
     G8XmlPopupElement,
     G8XmlPopupDeclaration,
     G8VueTree,
+    G8PopupMenu,
   },
   filters: {
     tag(node: XmlNodeTypes, piUseAttribute: boolean): string {
@@ -116,6 +125,8 @@ export default class G8XmlEdit extends Vue {
 
   @Prop({ default: false }) piUseAttribute!: boolean;
 
+  @Prop({ default: '' }) theme!: boolean;
+
   tree!: XmlEditRoot;
 
   currentNode?: XmlNodeTypes | XmlEditDeclaration | null;
@@ -130,9 +141,41 @@ export default class G8XmlEdit extends Vue {
 
   texts = getTexts();
 
+  nodeMenu = [
+    { id: 'edit', label: this.texts.menuEdit },
+    { id: 'insert-after', label: this.texts.menuInsertAfter },
+    { id: 'insert-before', label: this.texts.menuInsertBefore },
+    { id: 'append-child', label: this.texts.menuAppend },
+    { id: 'prepend-child', label: this.texts.menuPrepend },
+    { id: 'remove', label: this.texts.menuRemove },
+  ] as G8MenuItem[];
+
+  get treeTheme(): string[] {
+    if (!this.theme) return [];
+    return [`g8-tree--${this.theme}`];
+  }
+
+  get menuTheme(): string[] {
+    if (!this.theme) return [];
+    return [`g8--${this.theme}`];
+  }
+
   // noinspection JSUnusedGlobalSymbols
   created(): void {
     this.reloadXml();
+    const elements = ['CData', 'comment', 'element', 'instruction', 'text'];
+    const actions = ['after', 'before', 'append', 'prepend'];
+    const labels = ['insert', 'insert', 'append', 'prepend'];
+    each(actions, (action, idx) => {
+      this.nodeMenu[idx + 1].children = map(
+        elements,
+        e =>
+          ({
+            id: `${action}-${e}`,
+            label: interpolate(`${labels[idx]}What`, e),
+          } as G8MenuItem),
+      );
+    });
   }
 
   reloadXml(): void {
@@ -150,6 +193,19 @@ export default class G8XmlEdit extends Vue {
 
   closePopup(): void {
     this.popupOpen = false;
+  }
+
+  menu(item: XmlNodeTypes, evt: MouseEvent): void {
+    this.currentNode = item;
+    (this.$refs.menu as G8PopupMenu).open(this.nodeMenu, evt);
+  }
+
+  action(menu: G8MenuItem): void {
+    switch (menu.id) {
+      case 'edit':
+        this.edit(this.currentNode!);
+        break;
+    }
   }
 
   edit(item: XmlNodeTypes | XmlEditDeclaration): void {

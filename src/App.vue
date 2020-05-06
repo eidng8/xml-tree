@@ -20,10 +20,15 @@
           @change="piChanged()"
         />
       </div>
+      <div class="control-group">
+        <label for="dark-theme">Use dark theme</label>
+        <input id="dark-theme" type="checkbox" v-model="darkTheme" />
+      </div>
     </div>
     <hr />
     <g8-xml-edit
       :xml="xml"
+      :theme="darkTheme ? 'dark' : ''"
       :show-attr-value="showAttrValue"
       :pi-use-attribute="piAttr"
     />
@@ -62,6 +67,8 @@ export default class App extends Vue {
   showAttrValue = true;
 
   piAttr = true;
+
+  darkTheme = true;
 
   piChanged(): void {
     this.$nextTick(() => {

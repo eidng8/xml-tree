@@ -4,14 +4,11 @@
  * Author: eidng8
  */
 
-//noinspection SassScssResolvedByNameOnly
-$g8-xml__bg: $g8-tree__bg !default;
+$g8-xml__bg: #cccccc !default;
 
-//noinspection SassScssResolvedByNameOnly
-$g8-xml__fg: $g8-tree__fg !default;
+$g8-xml__fg: #333333 !default;
 
-//noinspection SassScssResolvedByNameOnly
-$g8-xml__text--dark: darken($g8-tree__bg, 20%);
+$g8-xml__text--dark: darken($g8-xml__bg, 20%);
 
 $g8-xml__fg--inverse: $g8-xml__bg;
 $g8-xml__bg--inverse: $g8-xml__fg;

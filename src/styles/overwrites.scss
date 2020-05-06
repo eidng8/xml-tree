@@ -17,3 +17,8 @@
 .g8-tree__node__entry__toggle:before {
   content: '\2218';
 }
+
+.g8-menu__label,
+.g8-menu__go-back {
+  text-transform: capitalize;
+}
