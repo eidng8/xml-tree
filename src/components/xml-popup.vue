@@ -28,7 +28,7 @@
             {{ texts.save }}
           </button>
           <button tabindex="9999" @click="close($event)">
-            {{ texts.close }}
+            {{ texts.cancel }}
           </button>
         </slot>
       </div>

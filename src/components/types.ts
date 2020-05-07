@@ -70,14 +70,14 @@ export class SaveNodeMouseEvent extends MouseEvent {
   /**
    * This node will not have `parent` or `nodes`.
    */
-  data!: XmlNodeTypes | XmlEditDeclaration;
+  data!: XmlNodeTypes | XmlEditDeclaration | XmlAttribute;
 }
 
 export class SaveNodeKeyboardEvent extends KeyboardEvent {
   /**
    * This node will not have `parent` or `nodes`.
    */
-  data!: XmlNodeTypes | XmlEditDeclaration;
+  data!: XmlNodeTypes | XmlEditDeclaration | XmlAttribute;
 }
 
 export function isDeclarationNode(

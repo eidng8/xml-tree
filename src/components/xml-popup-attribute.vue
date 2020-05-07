@@ -1,0 +1,87 @@
+<!--
+  - GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
+  -
+  - Author: eidng8
+  -->
+
+<template>
+  <g8-xml-popup
+    class="g8-xml__popup_element"
+    @save="save($event)"
+    @close="cancel($event)"
+  >
+    <template v-slot:title>
+      <span class="g8-xml__attribute">
+        {{ texts.attribute }}
+      </span>
+    </template>
+    <template>
+      <div class="g8-xml__popup__name">
+        <div class="g8-xml__popup__control-group">
+          <div class="g8-xml__popup__control">
+            <input
+              type="text"
+              tabindex="998"
+              class="g8-xml--large"
+              v-model="attribute.name"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="g8-xml__popup__raw">
+        <div class="g8-xml__popup__control-group">
+          <textarea
+            tabindex="999"
+            class="g8-xml__popup__control"
+            v-model="attribute.value"
+          ></textarea>
+        </div>
+      </div>
+    </template>
+  </g8-xml-popup>
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import G8XmlPopup from './xml-popup.vue';
+import {
+  SaveNodeKeyboardEvent,
+  SaveNodeMouseEvent,
+  XmlAttribute,
+} from './types';
+import G8XmlPopupInterface from './xml-popup-interface';
+import { getTexts } from '../translations/translation';
+
+@Component({
+  name: 'g8-xml-popup-attribute',
+  components: { G8XmlPopup },
+})
+export default class G8XmlPopupAttribute extends Vue
+  implements G8XmlPopupInterface {
+  @Prop() attribute!: XmlAttribute;
+
+  texts = getTexts();
+
+  safe!: XmlAttribute;
+
+  // noinspection JSUnusedGlobalSymbols
+  created(): void {
+    this.safe = Object.assign({}, this.attribute);
+  }
+
+  save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+    evt.data = this.attribute;
+    this.$emit('save', evt);
+    this.close(evt);
+  }
+
+  cancel(evt: Event): void {
+    Object.assign(this.attribute, this.safe);
+    this.close(evt);
+  }
+
+  close(evt: Event): void {
+    this.$emit('close', evt);
+  }
+}
+</script>

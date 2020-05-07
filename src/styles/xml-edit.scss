@@ -51,6 +51,15 @@
   }
 }
 
+.g8-xml__attribute {
+  @extend %tag-type;
+
+  &:before {
+    content: '@';
+    color: #393;
+  }
+}
+
 .g8-xml__declaration {
   @extend %tag-type;
 
