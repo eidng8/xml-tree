@@ -10,7 +10,7 @@
       <li
         class="g8-tree__node"
         v-if="tree.declaration"
-        @contextmenu.prevent="edit(tree.declaration)"
+        @contextmenu.prevent="editNode(tree.declaration)"
       >
         <div class="g8-tree__node__entry">
           <span class="g8-xml__declaration"><span></span></span>
@@ -34,7 +34,7 @@
         <template #default="{ item }">
           <span
             :class="[`g8-xml__${item.type}`]"
-            @contextmenu.prevent="menu(item, $event)"
+            @contextmenu.prevent.stop="openMenu(item, $event)"
           >
             {{ item | tag(piUseAttribute) }}
           </span>
@@ -83,16 +83,17 @@ import {
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
   XmlAttribute,
-  XmlEditDeclaration,
-  XmlEditElement,
-  XmlEditRoot,
+  XmlDeclaration,
+  XmlElement,
+  XmlNode,
   XmlNodeTypes,
+  XmlRoot,
 } from './types';
 import G8XmlPopupDeclaration from './xml-popup-declaration.vue';
-import { cloneWithoutHierarchy, xmlJs } from '../utils';
+import { cloneWithoutHierarchy, createEmptyNode, xmlJs } from '../utils';
 import G8XmlPopupElement from './xml-popup-element.vue';
 import { getTexts } from '../translations/translation';
-import { map, remove } from 'lodash';
+import { findIndex, map, remove } from 'lodash';
 import G8XmlPopupAttribute from './xml-popup-attribute.vue';
 
 @Component({
@@ -105,7 +106,7 @@ import G8XmlPopupAttribute from './xml-popup-attribute.vue';
     G8PopupMenu,
   },
   filters: {
-    tag(node: XmlNodeTypes, piUseAttribute: boolean): string {
+    tag(node: XmlNode, piUseAttribute: boolean): string {
       switch (node.type) {
         case 'cdata':
           return node.cdata;
@@ -135,15 +136,17 @@ export default class G8XmlEdit extends Vue {
 
   @Prop({ default: '' }) theme!: boolean;
 
-  tree!: XmlEditRoot;
+  tree!: XmlRoot;
 
-  currentNode?: XmlNodeTypes | XmlEditDeclaration | null;
+  currentNode?: XmlNode | XmlDeclaration | null;
 
-  currentNodeParent?: XmlEditRoot | XmlEditElement;
+  currentNodeParent?: XmlRoot | XmlElement | null;
 
   currentNodeIndex = -1;
 
-  popupItem?: XmlNodeTypes | XmlEditDeclaration | null;
+  creatingNode = false;
+
+  popupItem?: XmlNode | XmlDeclaration | null;
 
   popupOpen = false;
 
@@ -166,7 +169,7 @@ export default class G8XmlEdit extends Vue {
   reloadXml(): void {
     this.tree = xmlJs(this.xml, {
       instructionHasAttributes: this.piUseAttribute,
-    }) as XmlEditRoot;
+    }) as XmlRoot;
     if (
       !this.tree.declaration ||
       !this.tree.declaration.attributes ||
@@ -178,10 +181,23 @@ export default class G8XmlEdit extends Vue {
 
   closePopup(): void {
     this.popupOpen = false;
+    this.popupItem = null;
+    this.currentNode = null;
+    this.currentNodeIndex = -1;
+    this.currentNodeParent = null;
   }
 
-  menu(item: XmlNodeTypes, evt: MouseEvent): void {
+  openMenu(item: XmlNode, evt: MouseEvent): void {
     this.currentNode = item;
+    this.currentNodeParent = item.parent!;
+    if (this.currentNodeParent.nodes) {
+      this.currentNodeIndex = findIndex(
+        this.currentNodeParent.nodes,
+        n => n === item,
+      );
+    } else {
+      this.currentNodeIndex = -1;
+    }
     this.nodeMenu = this.generateNodeMenu(item);
     (this.$refs.menu as G8PopupMenu).open(this.nodeMenu, evt);
   }
@@ -189,42 +205,56 @@ export default class G8XmlEdit extends Vue {
   action(menu: G8MenuItem): void {
     switch (menu.id) {
       case 'edit':
-        this.edit(this.currentNode!);
+        this.editNode(this.currentNode!);
         break;
 
       case 'remove':
         this.deleteNode();
         break;
+
+      default:
+        this.insertNode(menu.id!);
     }
   }
 
-  edit(item: XmlNodeTypes | XmlEditDeclaration): void {
-    this.currentNode = item;
-    this.currentNodeParent = item.parent;
-    if ((item as XmlNodeTypes).type && this.currentNodeParent.nodes) {
-      this.currentNodeIndex = this.currentNodeParent.nodes.indexOf(
-        item as XmlNodeTypes,
-      );
-    } else {
-      this.currentNodeIndex = -1;
-    }
-    this.popupItem = cloneWithoutHierarchy(item);
+  editNode(node: XmlNode | XmlDeclaration): void {
+    this.popupItem = cloneWithoutHierarchy(node);
     this.popupOpen = true;
   }
 
   saveNode(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     if (!this.currentNode) throw new Error(this.texts.errNotEditing);
     if (!this.currentNodeParent) throw new Error(this.texts.errNodeParent);
-    const newNode = Object.assign({}, this.currentNode, evt.data);
+    const newNode = Object.assign(
+      {},
+      this.creatingNode ? { parent: this.currentNodeParent } : this.currentNode,
+      evt.data,
+    ) as XmlNode | XmlDeclaration;
     if (isDeclarationNode(newNode)) {
       this.tree.declaration = newNode;
-    } else if (this.currentNodeIndex < 0) {
-      if (!this.currentNodeParent.nodes) this.currentNodeParent.nodes = [];
-      this.currentNodeParent.nodes.push(newNode);
+    } else if (this.creatingNode) {
+      this.saveNewNode(newNode);
     } else {
       this.currentNodeParent.nodes![this.currentNodeIndex] = newNode;
     }
     this.closePopup();
+  }
+
+  saveNewNode(node: XmlNode): void {
+    const p = this.currentNodeParent! as XmlElement;
+    if (!p.nodes) p.nodes = [];
+    p.nodes.splice(Math.max(this.currentNodeIndex, 0), 0, node);
+    // mutation doesn't trigger rendering, calling `$forceUpdate()` on the whole
+    // component may be too costly, so we just force the corresponding node
+    // to render by placing a new instance at the spot.
+    const gp = p.parent;
+    if (gp) {
+      gp.nodes!.splice(
+        findIndex(gp.nodes, n => n === p),
+        1,
+        Object.assign({}, p),
+      );
+    }
   }
 
   editAttribute(attr: XmlAttribute): void {
@@ -235,8 +265,8 @@ export default class G8XmlEdit extends Vue {
     this.editingAttribute = null;
   }
 
-  generateNodeMenu(node: XmlNodeTypes): G8MenuItem[] {
-    const subtitle = `< ${(node as XmlEditElement).name || node.type} >`;
+  generateNodeMenu(node: XmlNode): G8MenuItem[] {
+    const subtitle = `< ${(node as XmlElement).name || node.type} >`;
     const menu = [
       { id: 'edit', label: this.texts.menuEdit, subtitle },
       { id: 'remove', label: this.texts.menuRemove, subtitle },
@@ -264,9 +294,39 @@ export default class G8XmlEdit extends Vue {
   }
 
   deleteNode(): void {
-    const item = this.currentNode! as XmlNodeTypes;
+    const item = this.currentNode! as XmlNode;
     remove(item.parent!.nodes!, n => n === item);
     this.$forceUpdate();
+  }
+
+  insertNode(action: string): void {
+    const actions = action.split('-');
+    this.creatingNode = true;
+    if ('insert' == actions[0]) {
+      this.currentNodeParent = this.currentNode!.parent! as
+        | XmlElement
+        | XmlRoot;
+      this.currentNodeIndex = findIndex(
+        this.currentNodeParent.nodes,
+        n => n === this.currentNode!,
+      );
+      if ('after' == actions[1]) this.currentNodeIndex++;
+    } else {
+      this.currentNodeParent = this.currentNode! as XmlElement | XmlRoot;
+      if ('prepend' == actions[0]) {
+        this.currentNodeIndex = -1;
+      } else {
+        this.currentNodeIndex = this.currentNodeParent.nodes
+          ? this.currentNodeParent.nodes.length
+          : -1;
+      }
+    }
+    this.editNode(
+      createEmptyNode(
+        actions[2].toLowerCase() as XmlNodeTypes,
+        this.piUseAttribute,
+      ),
+    );
   }
 }
 </script>

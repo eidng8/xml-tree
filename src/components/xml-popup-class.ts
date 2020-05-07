@@ -8,8 +8,8 @@ import { Vue } from 'vue-property-decorator';
 import {
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
-  XmlEditDeclaration,
-  XmlNodeTypes,
+  XmlDeclaration,
+  XmlNode,
 } from './types';
 import { removeHierarchyFromNode } from '../utils';
 import { getTexts } from '../translations/translation';
@@ -17,7 +17,7 @@ import G8XmlPopupInterface from './xml-popup-interface';
 
 export default abstract class G8XmlPopupClass extends Vue
   implements G8XmlPopupInterface {
-  abstract node: XmlNodeTypes | XmlEditDeclaration;
+  abstract node: XmlNode | XmlDeclaration;
 
   texts = getTexts();
 

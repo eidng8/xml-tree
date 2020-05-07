@@ -10,9 +10,9 @@ import {
   kvpArray,
   kvpObject,
   objXml,
-  XmlEditElement,
-  XmlEditRoot,
+  XmlElement,
   xmlJs,
+  XmlRoot,
 } from '../../src';
 
 describe('kvpArray', () => {
@@ -133,7 +133,7 @@ describe('cloneWithoutHierarchy', () => {
       name: 'e',
       nodes: [],
       attributes: [],
-      parent: {} as XmlEditRoot,
+      parent: {} as XmlRoot,
     };
     const actual = cloneWithoutHierarchy(fixture);
     expect(actual).not.toBe(fixture);
@@ -148,11 +148,11 @@ describe('cloneWithoutHierarchy', () => {
 describe('xmlJs', () => {
   it('converts xml to object', () => {
     expect.assertions(1);
-    const actual = xmlJs('<a><b c="d"><e/></b></a>') as XmlEditElement;
+    const actual = xmlJs('<a><b c="d"><e/></b></a>') as XmlElement;
     delete actual.nodes![0].parent;
-    delete (actual.nodes![0] as XmlEditElement).nodes![0].parent;
-    delete ((actual.nodes![0] as XmlEditElement).nodes![0] as XmlEditElement)
-      .nodes![0].parent;
+    delete (actual.nodes![0] as XmlElement).nodes![0].parent;
+    delete ((actual.nodes![0] as XmlElement).nodes![0] as XmlElement).nodes![0]
+      .parent;
     expect(actual).toEqual({
       nodes: [
         {

@@ -24,6 +24,7 @@
               tabindex="999"
               class="g8-xml--large"
               v-model="node.name"
+              @focus="$event.target.select()"
             />
           </div>
         </div>
@@ -44,6 +45,7 @@
                 :tabindex="1000 + idx * 3"
                 v-model="attr.name"
                 @change="updateRaw()"
+                @focus="$event.target.select()"
               />
             </span>
             <span>=</span>
@@ -53,6 +55,7 @@
                 :tabindex="1001 + idx * 3"
                 v-model="attr.value"
                 @change="updateRaw()"
+                @focus="$event.target.select()"
               />
             </span>
             <span class="g8-xml__popup__control__accessories">
@@ -81,6 +84,7 @@
           tabindex="1000"
           class="g8-xml__popup__control"
           v-model="node[node.type]"
+          @focus="$event.target.select()"
         ></textarea>
       </div>
       <div class="g8-xml__popup__raw">
@@ -93,6 +97,7 @@
             class="g8-xml__popup__control"
             v-model="raw"
             @change="rawChanged()"
+            @focus="$event.target.select()"
           ></textarea>
         </div>
       </div>
@@ -103,7 +108,7 @@
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
-import { defaultDeclaration, XmlEditElement, XmlNodeTypes } from './types';
+import { defaultDeclaration, XmlElement, XmlNode } from './types';
 import { differenceWith, each } from 'lodash';
 import {
   objXml,
@@ -118,7 +123,7 @@ import G8XmlPopupClass from './xml-popup-class';
   components: { G8XmlPopup },
 })
 export default class G8XmlPopupElement extends G8XmlPopupClass {
-  @Prop() node!: XmlEditElement;
+  @Prop() node!: XmlElement;
 
   raw = '';
 
@@ -128,11 +133,16 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
       const attrs = defaultDeclaration().attributes;
       if (!this.node.attributes || !this.node.attributes.length) {
         this.node.attributes = attrs;
+      } else {
+        each(
+          differenceWith(
+            attrs,
+            this.node.attributes,
+            (a, b) => a.name == b.name,
+          ),
+          a => this.node.attributes!.push({ name: a.name, value: undefined }),
+        );
       }
-      each(
-        differenceWith(attrs, this.node.attributes, (a, b) => a.name == b.name),
-        a => this.node.attributes!.push({ name: a.name, value: undefined }),
-      );
     }
     this.updateRaw();
   }
@@ -165,14 +175,14 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
 
   rawChanged(): void {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const obj = (xmlJs(this.raw) as XmlEditElement).nodes![0] as XmlNodeTypes;
+    const obj = (xmlJs(this.raw) as XmlElement).nodes![0] as XmlNode;
     removeHierarchyFromNode(obj);
     rectifyNodeAttributes(obj);
     Object.assign(this.node, obj);
   }
 
   newAttribute(): void {
-    const node = this.node as XmlEditElement;
+    const node = this.node as XmlElement;
     if (!node.attributes) node.attributes = [];
     node.attributes.push({ name: '', value: '' });
     this.$forceUpdate();
@@ -185,7 +195,7 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
   }
 
   deleteAttribute(idx: number): void {
-    const node = this.node as XmlEditElement;
+    const node = this.node as XmlElement;
     if (!node.attributes) return;
     node.attributes.splice(idx, 1);
     this.updateRaw();

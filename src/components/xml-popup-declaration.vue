@@ -29,7 +29,12 @@
               <option value="no">no</option>
               <option value="yes">yes</option>
             </select>
-            <input type="text" v-model="attr.value" v-else />
+            <input
+              type="text"
+              v-else
+              v-model="attr.value"
+              @focus="$event.target.select()"
+            />
           </label>
         </div>
       </div>
@@ -40,7 +45,7 @@
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator';
 import G8XmlPopup from './xml-popup.vue';
-import { XmlEditDeclaration } from './types';
+import { XmlDeclaration } from './types';
 import G8XmlPopupClass from './xml-popup-class';
 
 @Component({
@@ -48,7 +53,7 @@ import G8XmlPopupClass from './xml-popup-class';
   components: { G8XmlPopup },
 })
 export default class G8XmlPopupDeclaration extends G8XmlPopupClass {
-  @Prop() node!: XmlEditDeclaration;
+  @Prop() node!: XmlDeclaration;
 
   // noinspection JSUnusedGlobalSymbols
   created(): void {

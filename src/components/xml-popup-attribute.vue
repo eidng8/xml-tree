@@ -24,6 +24,7 @@
               tabindex="998"
               class="g8-xml--large"
               v-model="attribute.name"
+              @focus="$event.target.select()"
             />
           </div>
         </div>
@@ -34,6 +35,7 @@
             tabindex="999"
             class="g8-xml__popup__control"
             v-model="attribute.value"
+            @focus="$event.target.select()"
           ></textarea>
         </div>
       </div>

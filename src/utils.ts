@@ -8,10 +8,11 @@ import { assign, cloneDeep, each, filter, keys, map } from 'lodash';
 import { js2xml, Options, xml2js } from 'xml-js';
 import {
   XmlAttribute,
-  XmlEditDeclaration,
-  XmlEditElement,
-  XmlEditRoot,
+  XmlDeclaration,
+  XmlElement,
+  XmlNode,
   XmlNodeTypes,
+  XmlRoot,
 } from './components/types';
 
 export type AnyObject = { [key: string]: unknown; [key: number]: unknown };
@@ -91,7 +92,7 @@ export function cloneObject(
 export function xmlJs(
   xml: string,
   options?: Options.XML2JS,
-): XmlEditRoot | XmlEditDeclaration | XmlNodeTypes {
+): XmlRoot | XmlDeclaration | XmlNode {
   const opts = Object.assign(
     {},
     {
@@ -106,7 +107,7 @@ export function xmlJs(
     },
     options,
   );
-  return xml2js(xml, opts) as XmlEditRoot | XmlEditDeclaration | XmlNodeTypes;
+  return xml2js(xml, opts) as XmlRoot | XmlDeclaration | XmlNode;
 }
 
 export function objXml(obj: object, options?: Options.JS2XML): string {
@@ -132,29 +133,37 @@ export function objXml(obj: object, options?: Options.JS2XML): string {
  * @param node
  */
 export function cloneWithoutHierarchy(
-  node: XmlNodeTypes | XmlEditDeclaration,
-): XmlNodeTypes | XmlEditDeclaration {
+  node: XmlNode | XmlDeclaration,
+): XmlNode | XmlDeclaration {
   return cloneObject((node as unknown) as { [key: string]: unknown }, [
     'parent',
     'nodes',
-  ]) as XmlNodeTypes | XmlEditDeclaration;
+  ]) as XmlNode | XmlDeclaration;
 }
 
 /**
  * Makes sure there is no hierarchy data. This function mutates the given
  * `node`.
  */
-export function removeHierarchyFromNode(
-  node: XmlNodeTypes | XmlEditDeclaration,
-): void {
+export function removeHierarchyFromNode(node: XmlNode | XmlDeclaration): void {
   delete node.parent;
-  delete (node as XmlEditElement).nodes;
+  delete (node as XmlElement).nodes;
 }
 
-export function rectifyNodeAttributes(
-  node: XmlNodeTypes | XmlEditDeclaration,
-): void {
-  node = node as XmlEditElement;
+export function rectifyNodeAttributes(node: XmlNode | XmlDeclaration): void {
+  node = node as XmlElement;
   if (!node.attributes) return;
   node.attributes = filter(node.attributes, n => n.name) as XmlAttribute[];
+}
+
+export function createEmptyNode(type: XmlNodeTypes, ia = false): XmlNode {
+  const node = { type } as XmlNode;
+  if ('element' == type || 'instruction' == type) {
+    (node as XmlElement).name = `new-${type}`;
+    if (ia || 'element' == type) (node as XmlElement).attributes = [];
+  } else {
+    // eslint-disable-next-line
+    (node as any)[type] = `new ${type}`;
+  }
+  return node;
 }
