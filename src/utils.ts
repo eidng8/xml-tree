@@ -89,6 +89,11 @@ export function cloneObject(
   return cloneDeep(shallow);
 }
 
+/**
+ * Converts XML string to object.
+ * @param xml
+ * @param options
+ */
 export function xmlJs(
   xml: string,
   options?: Options.XML2JS,
@@ -110,6 +115,11 @@ export function xmlJs(
   return xml2js(xml, opts) as XmlRoot | XmlDeclaration | XmlNode;
 }
 
+/**
+ * Converts object to XML string
+ * @param obj
+ * @param options
+ */
 export function objXml(obj: object, options?: Options.JS2XML): string {
   const opts = Object.assign(
     {},
@@ -150,12 +160,21 @@ export function removeHierarchyFromNode(node: XmlNode | XmlDeclaration): void {
   delete (node as XmlElement).nodes;
 }
 
+/**
+ * Removes any object that has no name.
+ * @param node
+ */
 export function rectifyNodeAttributes(node: XmlNode | XmlDeclaration): void {
   node = node as XmlElement;
   if (!node.attributes) return;
   node.attributes = filter(node.attributes, n => n.name) as XmlAttribute[];
 }
 
+/**
+ * Creates an empty XML node.
+ * @param type
+ * @param ia `true` if processing instruction should use attributes.
+ */
 export function createEmptyNode(type: XmlNodeTypes, ia = false): XmlNode {
   const node = { type } as XmlNode;
   if ('element' == type || 'instruction' == type) {
