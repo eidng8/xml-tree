@@ -38,8 +38,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.4",
-    "g8-popup-menu": "0.0.4",
-    "g8-vue-tree": "^0.2.2",
+    "g8-popup-menu": "0.0.6",
+    "g8-vue-tree": "^0.2.3",
     "lodash": "^4.17.15",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",

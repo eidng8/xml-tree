@@ -5,7 +5,7 @@
   -->
 
 <template>
-  <div id="app">
+  <div id="app" :class="{ 'g8--dark': darkTheme }">
     <div class="controls">
       <div class="control-group">
         <label for="show-attr-value">Show attribute values</label>
@@ -28,7 +28,6 @@
     <hr />
     <g8-xml-edit
       :xml="xml"
-      :theme="darkTheme ? 'dark' : ''"
       :show-attr-value="showAttrValue"
       :pi-use-attribute="piAttr"
     />
@@ -72,7 +71,8 @@ export default class App extends Vue {
 
   piChanged(): void {
     this.$nextTick(() => {
-      const tree = this.$children[0] as G8XmlEdit;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const tree = this.$children[0] as any;
       tree.reloadXml();
       tree.$forceUpdate();
     });
@@ -86,8 +86,6 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  color: #888;
-  background: #333333;
 }
 
 hr {
@@ -105,9 +103,13 @@ hr {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  &.g8--dark {
+    color: #888;
+    background: #333;
+  }
+
   > .controls {
     padding: 2px 6px;
-    height: 1.4em;
 
     > * {
       margin-right: 1em;

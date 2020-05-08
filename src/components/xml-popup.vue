@@ -42,29 +42,29 @@ import { getTexts } from '../translations/translation';
 
 @Component({ name: 'g8-xml-popup' })
 export default class G8XmlPopup extends Vue {
-  texts = getTexts();
+  private texts = getTexts();
 
-  // noinspection JSUnusedGlobalSymbols
-  mounted(): void {
+  // noinspection JSUnusedLocalSymbols
+  private mounted(): void {
     this.$nextTick(() => this.initFocus());
   }
 
-  initFocus(): void {
+  private initFocus(): void {
     const input = this.$el.querySelector(
       '.g8-xml__popup__attributes .g8-xml__popup__control input,textarea',
     ) as HTMLInputElement | HTMLTextAreaElement;
     if (input) input.focus();
   }
 
-  close(evt: Event): void {
+  private close(evt: Event): void {
     this.$emit('close', evt);
   }
 
-  save(evt: Event): void {
+  private save(evt: Event): void {
     this.$emit('save', evt);
   }
 
-  keyup(evt: KeyboardEvent): void {
+  private keyup(evt: KeyboardEvent): void {
     if (evt.defaultPrevented) {
       return;
     }

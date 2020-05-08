@@ -125,10 +125,10 @@ import G8XmlPopupClass from './xml-popup-class';
 export default class G8XmlPopupElement extends G8XmlPopupClass {
   @Prop() node!: XmlElement;
 
-  raw = '';
+  private raw = '';
 
-  // noinspection JSUnusedGlobalSymbols
-  created(): void {
+  // noinspection JSUnusedLocalSymbols
+  private created(): void {
     if (!this.node.type) {
       const attrs = defaultDeclaration().attributes;
       if (!this.node.attributes || !this.node.attributes.length) {
@@ -147,8 +147,8 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
     this.updateRaw();
   }
 
-  // noinspection JSUnusedGlobalSymbols
-  mounted(): void {
+  // noinspection JSUnusedLocalSymbols
+  private mounted(): void {
     this.$nextTick(() => this.initRawSize());
   }
 
@@ -156,7 +156,7 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
    * A rough approximate height estimation of text areas. Gaps and heights of
    * other elements are not considered.
    */
-  initRawSize(): void {
+  private initRawSize(): void {
     const areas = this.$el.getElementsByTagName('textarea');
     const area = areas[0] as HTMLTextAreaElement;
     if (!area) return;
@@ -167,13 +167,13 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
     each(areas, a => (a.style.height = `${ah}px`));
   }
 
-  updateRaw(): void {
+  private updateRaw(): void {
     removeHierarchyFromNode(this.node);
     rectifyNodeAttributes(this.node);
     this.raw = objXml({ nodes: [this.node] });
   }
 
-  rawChanged(): void {
+  private rawChanged(): void {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const obj = (xmlJs(this.raw) as XmlElement).nodes![0] as XmlNode;
     removeHierarchyFromNode(obj);
@@ -181,7 +181,7 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
     Object.assign(this.node, obj);
   }
 
-  newAttribute(): void {
+  private newAttribute(): void {
     const node = this.node as XmlElement;
     if (!node.attributes) node.attributes = [];
     node.attributes.push({ name: '', value: '' });
@@ -194,7 +194,7 @@ export default class G8XmlPopupElement extends G8XmlPopupClass {
     });
   }
 
-  deleteAttribute(idx: number): void {
+  private deleteAttribute(idx: number): void {
     const node = this.node as XmlElement;
     if (!node.attributes) return;
     node.attributes.splice(idx, 1);

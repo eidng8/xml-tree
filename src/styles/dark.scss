@@ -5,7 +5,8 @@
  */
 @import './variables';
 
-.g8--dark ~ .g8-xml__popup {
+.g8-xml__popup.g8--dark,
+.g8--dark .g8-xml__popup {
   button,
   input,
   option,

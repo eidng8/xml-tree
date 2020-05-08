@@ -55,16 +55,16 @@ import G8XmlPopupClass from './xml-popup-class';
 export default class G8XmlPopupDeclaration extends G8XmlPopupClass {
   @Prop() node!: XmlDeclaration;
 
-  // noinspection JSUnusedGlobalSymbols
-  created(): void {
+  // noinspection JSUnusedLocalSymbols
+  private created(): void {
     const has = this.node.attributes.map(a => a.name);
     ['version', 'encoding', 'standalone']
       .filter(n => !has.includes(n))
       .forEach(n => this.node.attributes.push({ name: n, value: undefined }));
   }
 
-  // noinspection JSUnusedGlobalSymbols
-  mounted(): void {
+  // noinspection JSUnusedLocalSymbols
+  private mounted(): void {
     this.$nextTick(() => {
       const e = this.$el.querySelector('input');
       if (e) e.focus();

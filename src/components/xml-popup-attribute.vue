@@ -60,14 +60,14 @@ import { getTexts } from '../translations/translation';
 })
 export default class G8XmlPopupAttribute extends Vue
   implements G8XmlPopupInterface {
-  @Prop() attribute!: XmlAttribute;
+  @Prop() private attribute!: XmlAttribute;
 
-  texts = getTexts();
+  private texts = getTexts();
 
-  safe!: XmlAttribute;
+  private safe!: XmlAttribute;
 
-  // noinspection JSUnusedGlobalSymbols
-  created(): void {
+  // noinspection JSUnusedLocalSymbols
+  private created(): void {
     this.safe = Object.assign({}, this.attribute);
   }
 
@@ -77,12 +77,12 @@ export default class G8XmlPopupAttribute extends Vue
     this.close(evt);
   }
 
-  cancel(evt: Event): void {
+  private cancel(evt: Event): void {
     Object.assign(this.attribute, this.safe);
     this.close(evt);
   }
 
-  close(evt: Event): void {
+  private close(evt: Event): void {
     this.$emit('close', evt);
   }
 }
