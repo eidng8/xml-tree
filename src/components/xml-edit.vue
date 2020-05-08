@@ -253,17 +253,33 @@ export default class G8XmlEdit extends Vue {
   private generateNodeMenu(node: XmlNode): G8MenuItem[] {
     const subtitle = `< ${(node as XmlElement).name || node.type} >`;
     const menu = [
-      { id: 'edit', label: this.texts.menuEdit, subtitle },
+      { id: 'g8-xml-menu-edit', label: this.texts.menuEdit, subtitle },
       { label: '---' },
-      { id: 'remove', label: this.texts.menuRemove, subtitle },
+      { id: 'g8-xml-menu-remove', label: this.texts.menuRemove, subtitle },
       { label: '---' },
-      { id: 'insert-after', label: this.texts.menuInsertAfter, subtitle },
-      { id: 'insert-before', label: this.texts.menuInsertBefore, subtitle },
+      {
+        id: 'g8-xml-menu-insert-after',
+        label: this.texts.menuInsertAfter,
+        subtitle,
+      },
+      {
+        id: 'g8-xml-menu-insert-before',
+        label: this.texts.menuInsertBefore,
+        subtitle,
+      },
     ] as G8MenuItem[];
     if ('element' == node.type) {
       menu.push(
-        { id: 'append-child', label: this.texts.menuAppend, subtitle },
-        { id: 'prepend-child', label: this.texts.menuPrepend, subtitle },
+        {
+          id: 'g8-xml-menu-append-child',
+          label: this.texts.menuAppend,
+          subtitle,
+        },
+        {
+          id: 'g8-xml-menu-prepend-child',
+          label: this.texts.menuPrepend,
+          subtitle,
+        },
       );
     }
     for (let idx = 4; idx < menu.length; idx++) {

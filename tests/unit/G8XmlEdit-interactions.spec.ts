@@ -98,7 +98,7 @@ describe('XML interactions', () => {
       propsData: { xml: '<root></root>' },
     });
     await rightClick(wrapper, root);
-    wrapper.find('#insert-after').trigger('click');
+    wrapper.find('#g8-xml-menu-insert-after').trigger('click');
     await wrapper.vm.$nextTick();
     expect(wrapper.find('.g8-menu').text()).not.toContain('element');
   });
@@ -109,7 +109,7 @@ describe('XML interactions', () => {
       propsData: { xml: '<root></root>' },
     });
     await rightClick(wrapper, root);
-    wrapper.find('#insert-before').trigger('click');
+    wrapper.find('#g8-xml-menu-insert-before').trigger('click');
     await wrapper.vm.$nextTick();
     expect(wrapper.find('.g8-menu').text()).not.toContain('element');
   });
@@ -120,7 +120,7 @@ describe('XML interactions', () => {
       propsData: { xml: '<root></root>' },
     });
     await rightClick(wrapper, root);
-    wrapper.find('#insert-before').trigger('click');
+    wrapper.find('#g8-xml-menu-insert-before').trigger('click');
     await wrapper.vm.$nextTick();
     expect(wrapper.find('.g8-menu').text()).not.toContain('text');
   });
