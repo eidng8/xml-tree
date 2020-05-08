@@ -18,3 +18,8 @@ export async function rightClick(wrapper: Wrapper<G8XmlEdit>, node: string) {
     .trigger('contextmenu');
   await wrapper.vm.$nextTick();
 }
+
+export async function chooseMenu(wrapper: Wrapper<G8XmlEdit>, item: string) {
+  wrapper.find(item).trigger('click');
+  await wrapper.vm.$nextTick();
+}

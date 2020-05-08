@@ -307,11 +307,11 @@ export default class G8XmlEdit extends Vue {
    */
   private action(menu: G8MenuItem): void {
     switch (menu.id) {
-      case 'edit':
+      case 'g8-xml-menu-edit':
         this.editNode(this.currentNode!);
         break;
 
-      case 'remove':
+      case 'g8-xml-menu-remove':
         this.deleteNode();
         break;
 
@@ -401,7 +401,7 @@ export default class G8XmlEdit extends Vue {
    * @param action
    */
   private insertNode(action: string): void {
-    const actions = action.split('-');
+    const actions = action.split('-').slice(3);
     this.creatingNode = true;
     if ('insert' == actions[0]) {
       this.currentNodeParent = this.currentNode!.parent! as
