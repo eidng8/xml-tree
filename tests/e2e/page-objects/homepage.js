@@ -1,3 +1,9 @@
+/*
+ * GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ * Author: eidng8
+ */
+
 /**
  * A Nightwatch page object. The page object name is the filename.
  *
@@ -10,43 +16,44 @@
  */
 
 module.exports = {
-  url: "/",
+  url: '/',
   commands: [],
 
   // A page object can have elements
   elements: {
-    appContainer: "#app"
+    appContainer: '#app',
   },
 
   // Or a page objects can also have sections
   sections: {
-    app: {
-      selector: "#app",
+    xml: {
+      selector: '.g8-xml__container',
 
       elements: {
-        logo: "img"
+        tree: '.g8-xml__tree',
+        nodes: '.g8-tree__node',
       },
 
       // - a page object section can also have sub-sections
       // - elements or sub-sections located here are retrieved using the "app" section as the base
       sections: {
-        headline: {
-          selector: "h1"
+        declaration: {
+          selector: 'li:first-child',
         },
 
-        welcome: {
+        nodes: {
           // the equivalent css selector for the "welcome" sub-section would be:
           //  '#app div.hello'
-          selector: "div.hello",
+          selector: 'li:nth-child(n+2)',
 
           elements: {
-            cliPluginLinks: {
-              selector: "ul",
-              index: 0
-            }
-          }
-        }
-      }
-    }
-  }
+            doctype: {
+              selector: '.g8-tree__node',
+              index: 0,
+            },
+          },
+        },
+      },
+    },
+  },
 };
