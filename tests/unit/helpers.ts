@@ -5,17 +5,16 @@
  */
 
 import { Wrapper } from '@vue/test-utils';
-import { G8XmlEdit } from '../../src';
 
 export async function expandTreeNode(
-  wrapper: Wrapper<G8XmlEdit>,
+  wrapper: Wrapper<any>,
   node: string,
 ): Promise<void> {
   return wrapper.find(`${node} .g8-tree__node__entry`).trigger('click');
 }
 
 export async function rightClick(
-  wrapper: Wrapper<G8XmlEdit>,
+  wrapper: Wrapper<any>,
   node: string,
 ): Promise<void> {
   return wrapper
@@ -24,14 +23,14 @@ export async function rightClick(
 }
 
 export async function click(
-  wrapper: Wrapper<G8XmlEdit>,
+  wrapper: Wrapper<any>,
   item: string,
 ): Promise<void> {
   return wrapper.find(item).trigger('click');
 }
 
 export async function keyup(
-  wrapper: Wrapper<G8XmlEdit>,
+  wrapper: Wrapper<any>,
   key: string,
   opts = {} as KeyboardEventInit,
   element?: Document | Element,
