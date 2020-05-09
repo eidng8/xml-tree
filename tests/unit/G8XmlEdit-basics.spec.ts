@@ -6,7 +6,7 @@
 
 import { mount } from '@vue/test-utils';
 import { G8XmlEdit } from '../../src';
-import { click } from './helpers';
+import { expandTreeNode } from './helpers';
 
 const xml =
   '<?xml version="1.0" encoding="utf-8"?>\n' +
@@ -40,7 +40,7 @@ describe('XML view', () => {
     expect.assertions(2);
     const wrapper = mount(G8XmlEdit, { propsData });
     expect(wrapper.find('.g8-tree__view').exists()).toBe(true);
-    await click(wrapper, '.g8-tree__node:last-child');
+    await expandTreeNode(wrapper, '.g8-tree__node:last-child');
     expect(wrapper.findAll('.g8-tree__node').length).toBe(11);
   });
 

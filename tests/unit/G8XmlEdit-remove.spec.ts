@@ -6,7 +6,7 @@
 
 import { mount } from '@vue/test-utils';
 import { G8XmlEdit } from '../../src';
-import { chooseMenu, click, rightClick } from './helpers';
+import { click, expandTreeNode, rightClick } from './helpers';
 
 describe('Node removal', () => {
   const root = '.g8-tree__node:nth-child(2)';
@@ -18,7 +18,7 @@ describe('Node removal', () => {
     });
     expect(wrapper.findAll('.g8-tree__node').length).toBe(3);
     await rightClick(wrapper, root);
-    await chooseMenu(wrapper, '#g8-xml-menu-remove');
+    await click(wrapper, '#g8-xml-menu-remove');
     expect(wrapper.findAll('.g8-tree__node').length).toBe(2);
   });
 
@@ -29,7 +29,7 @@ describe('Node removal', () => {
     });
     expect(wrapper.findAll('.g8-tree__node').length).toBe(3);
     await rightClick(wrapper, root);
-    await chooseMenu(wrapper, '#g8-xml-menu-remove');
+    await click(wrapper, '#g8-xml-menu-remove');
     expect(wrapper.findAll('.g8-tree__node').length).toBe(2);
   });
 
@@ -40,7 +40,7 @@ describe('Node removal', () => {
     });
     expect(wrapper.findAll('.g8-tree__node').length).toBe(3);
     await rightClick(wrapper, root);
-    await chooseMenu(wrapper, '#g8-xml-menu-remove');
+    await click(wrapper, '#g8-xml-menu-remove');
     expect(wrapper.findAll('.g8-tree__node').length).toBe(2);
   });
 
@@ -51,7 +51,7 @@ describe('Node removal', () => {
     });
     expect(wrapper.findAll('.g8-tree__node').length).toBe(3);
     await rightClick(wrapper, root);
-    await chooseMenu(wrapper, '#g8-xml-menu-remove');
+    await click(wrapper, '#g8-xml-menu-remove');
     expect(wrapper.findAll('.g8-tree__node').length).toBe(2);
   });
 
@@ -60,10 +60,10 @@ describe('Node removal', () => {
     const wrapper = mount(G8XmlEdit, {
       propsData: { xml: '<root>abc</root>' },
     });
-    await click(wrapper, root);
+    await expandTreeNode(wrapper, root);
     expect(wrapper.findAll('.g8-tree__node').length).toBe(3);
     await rightClick(wrapper, `${root} .g8-tree__node`);
-    await chooseMenu(wrapper, '#g8-xml-menu-remove');
+    await click(wrapper, '#g8-xml-menu-remove');
     expect(wrapper.findAll('.g8-tree__node').length).toBe(2);
   });
 
@@ -72,10 +72,10 @@ describe('Node removal', () => {
     const wrapper = mount(G8XmlEdit, {
       propsData: { xml: '<root><abc/></root>' },
     });
-    await click(wrapper, root);
+    await expandTreeNode(wrapper, root);
     expect(wrapper.findAll('.g8-tree__node').length).toBe(3);
     await rightClick(wrapper, `${root} .g8-tree__node`);
-    await chooseMenu(wrapper, '#g8-xml-menu-remove');
+    await click(wrapper, '#g8-xml-menu-remove');
     expect(wrapper.findAll('.g8-tree__node').length).toBe(2);
   });
 });

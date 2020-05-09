@@ -7,19 +7,36 @@
 import { Wrapper } from '@vue/test-utils';
 import { G8XmlEdit } from '../../src';
 
-export async function click(wrapper: Wrapper<G8XmlEdit>, node: string) {
-  wrapper.find(`${node} .g8-tree__node__entry`).trigger('click');
-  await wrapper.vm.$nextTick();
+export async function expandTreeNode(
+  wrapper: Wrapper<G8XmlEdit>,
+  node: string,
+): Promise<void> {
+  return wrapper.find(`${node} .g8-tree__node__entry`).trigger('click');
 }
 
-export async function rightClick(wrapper: Wrapper<G8XmlEdit>, node: string) {
-  wrapper
+export async function rightClick(
+  wrapper: Wrapper<G8XmlEdit>,
+  node: string,
+): Promise<void> {
+  return wrapper
     .find(`${node} .g8-tree__node__entry__label>:first-child`)
     .trigger('contextmenu');
-  await wrapper.vm.$nextTick();
 }
 
-export async function chooseMenu(wrapper: Wrapper<G8XmlEdit>, item: string) {
-  wrapper.find(item).trigger('click');
-  await wrapper.vm.$nextTick();
+export async function click(
+  wrapper: Wrapper<G8XmlEdit>,
+  item: string,
+): Promise<void> {
+  return wrapper.find(item).trigger('click');
+}
+
+export async function keyup(
+  wrapper: Wrapper<G8XmlEdit>,
+  key: string,
+  opts = {} as KeyboardEventInit,
+  element?: Document | Element,
+): Promise<void> {
+  const evt = new KeyboardEvent('keyup', Object.assign({ key }, opts));
+  (element || document).dispatchEvent(evt);
+  return wrapper.vm.$nextTick();
 }

@@ -6,7 +6,7 @@
 
 import G8XmlEdit from './components/xml-edit.vue';
 
-export * from './components/types';
+export * from './types/types';
 export * from './utils';
 
 export { G8XmlEdit };

@@ -63,6 +63,7 @@ jobs:
         provider: releases
         edge: true
         file: ${PACKAGE}
+        release_notes_file: RELEASE.md
         token:
           secure: dgcb5HRqM4zQwFFPby1ybKRLovbN3Tj1z8gqGL1jm2EG182XM0QUIofV+DE6ujSVIv4E49K0klpc5WiNgN5G6FvmP4FYVdixYT94XlbRfCccgmIwDl++ldJSHny5CfpVeR3Uc4ikkhY0PYH+xJ4+y0nkASc/Z88EiNYS+mTZW5Cp0I3eY4ooMv8daJEpDoGv8ykpPspiLFaHGk1OZL0gHbwpICnElLePw6QxG7seSlYLcXC6J5/+tWv5x4jmpVH9PKG7L7COmPhATM2nMMS3J3Z/sybXDLeldERlPTR3kE639D5PT2xcRCuH5oUmQo88VEnmVawcVA3nieyWJDK9TxnTmHtgBaxw58BNybKCxcT8Z8M34EqrEIdtodTmsxqtj2Om52Arnyu1EHLh062cEI0dE6WSo+HV0xX3TsicFeCFKz/eoFGnK1rTNlSRRgHrnQNF2lTb44FVB3fV24YS3D4j0NmgHHbeo3ASRHc5JqFJdIGQlx0lJGTPCLFXm0MzQc273OOxgi5Jsa9Fca0UvqIHfeSKNTH7WBGjBkRHti6o5BnElvBIgNaKC3PnKiaIcwIWbFwnP19UIGMMoLn7doYUbkl6IBSaFJqTaaPum6PNECSzIxibnuSq0ZvKAH2jKO6B6cOzu2D9pM7COvd79RVH+0JcNTqDDEtzh+gJ7zs=
         on:

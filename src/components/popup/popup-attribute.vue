@@ -5,7 +5,7 @@
   -->
 
 <template>
-  <g8-xml-popup
+  <popup-box
     class="g8-xml__popup_element"
     @save="save($event)"
     @close="cancel($event)"
@@ -40,26 +40,25 @@
         </div>
       </div>
     </template>
-  </g8-xml-popup>
+  </popup-box>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import G8XmlPopup from './xml-popup.vue';
+import PopupBox from './popup-box.vue';
 import {
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
   XmlAttribute,
-} from './types';
-import G8XmlPopupInterface from './xml-popup-interface';
-import { getTexts } from '../translations/translation';
+} from '../../types/types';
+import G8XmlPopupInterface from '../../types/xml-popup-interface';
+import { getTexts } from '../../translations/translation';
 
 @Component({
-  name: 'g8-xml-popup-attribute',
-  components: { G8XmlPopup },
+  name: 'popup-attribute',
+  components: { PopupBox },
 })
-export default class G8XmlPopupAttribute extends Vue
-  implements G8XmlPopupInterface {
+export default class PopupAttribute extends Vue implements G8XmlPopupInterface {
   @Prop() private attribute!: XmlAttribute;
 
   private texts = getTexts();

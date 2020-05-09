@@ -5,7 +5,7 @@
   -->
 
 <template>
-  <g8-xml-popup
+  <popup-box
     class="g8-xml__popup_element"
     @save="save($event)"
     @close="$emit('close', $event)"
@@ -102,48 +102,48 @@
         </div>
       </div>
     </template>
-  </g8-xml-popup>
+  </popup-box>
 </template>
 
 <script lang="ts">
-import { Component, Prop } from 'vue-property-decorator';
-import G8XmlPopup from './xml-popup.vue';
-import { defaultDeclaration, XmlElement, XmlNode } from './types';
-import { differenceWith, each } from 'lodash';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+import PopupBox from './popup-box.vue';
+import { XmlElement, XmlNode } from '../../types/types';
+import { each } from 'lodash';
 import {
   objXml,
   rectifyNodeAttributes,
   removeHierarchyFromNode,
   xmlJs,
-} from '../utils';
-import G8XmlPopupClass from './xml-popup-class';
+} from '../../utils';
+import PopupBoxMixin from '../../mixins/popup-box';
 
 @Component({
-  name: 'g8-xml-popup-element',
-  components: { G8XmlPopup },
+  name: 'popup-node',
+  components: { PopupBox },
 })
-export default class G8XmlPopupElement extends G8XmlPopupClass {
-  @Prop() node!: XmlElement;
+export default class PopupNode extends Mixins(PopupBoxMixin) {
+  @Prop() protected node!: XmlNode;
 
   private raw = '';
 
   // noinspection JSUnusedLocalSymbols
   private created(): void {
-    if (!this.node.type) {
-      const attrs = defaultDeclaration().attributes;
-      if (!this.node.attributes || !this.node.attributes.length) {
-        this.node.attributes = attrs;
-      } else {
-        each(
-          differenceWith(
-            attrs,
-            this.node.attributes,
-            (a, b) => a.name == b.name,
-          ),
-          a => this.node.attributes!.push({ name: a.name, value: undefined }),
-        );
-      }
-    }
+    // if (!this.node.type) {
+    //   const attrs = defaultDeclaration().attributes;
+    //   if (!this.node.attributes || !this.node.attributes.length) {
+    //     this.node.attributes = attrs;
+    //   } else {
+    //     each(
+    //       differenceWith(
+    //         attrs,
+    //         this.node.attributes,
+    //         (a, b) => a.name == b.name,
+    //       ),
+    //       a => this.node.attributes!.push({ name: a.name, value: undefined }),
+    //     );
+    //   }
+    // }
     this.updateRaw();
   }
 

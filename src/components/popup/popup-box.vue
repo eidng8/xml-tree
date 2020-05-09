@@ -5,7 +5,7 @@
   -->
 
 <template>
-  <div class="g8-xml__popup" @click.self="close($event)" @keyup="keyup($event)">
+  <div class="g8-xml__popup" @click.self="close($event)">
     <div class="g8-xml__popup__box">
       <div class="g8-xml__popup__header">
         <div class="g8-xml__popup__header__title">
@@ -38,15 +38,25 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { getTexts } from '../translations/translation';
+import { getTexts } from '../../translations/translation';
 
-@Component({ name: 'g8-xml-popup' })
-export default class G8XmlPopup extends Vue {
+@Component({ name: 'popup-box' })
+export default class PopupBox extends Vue {
   private texts = getTexts();
+
+  // noinspection JSUnusedLocalSymbols
+  private created(): void {
+    document.addEventListener('keyup', this.keyup);
+  }
 
   // noinspection JSUnusedLocalSymbols
   private mounted(): void {
     this.$nextTick(() => this.initFocus());
+  }
+
+  // noinspection JSUnusedLocalSymbols
+  private beforeDestroy(): void {
+    document.removeEventListener('keyup', this.keyup);
   }
 
   private initFocus(): void {
@@ -62,17 +72,16 @@ export default class G8XmlPopup extends Vue {
 
   private save(evt: Event): void {
     this.$emit('save', evt);
+    this.close(evt);
   }
 
   private keyup(evt: KeyboardEvent): void {
-    if (evt.defaultPrevented) {
-      return;
-    }
     if ('Escape' == evt.key) {
       this.close(evt);
     } else if ('Enter' == evt.key) {
       const tag = (evt.target as HTMLElement).localName;
       if (!evt.ctrlKey && ('textarea' == tag || 'select' == tag)) {
+        /* istanbul ignore next: unable to unit test */
         return;
       }
       this.save(evt);

@@ -14,48 +14,48 @@ export interface XmlDeclaration {
   parent: XmlRoot;
 }
 
-export interface XmlEntry {
+export interface XmlNodeBase {
   type: string;
   parent: XmlElement | XmlRoot;
 }
 
-export interface XmlCData extends XmlEntry {
+export interface XmlCData extends XmlNodeBase {
   type: 'cdata';
   cdata: string;
 }
 
-export interface XmlComment extends XmlEntry {
+export interface XmlComment extends XmlNodeBase {
   type: 'comment';
   comment: string;
 }
 
-export interface XmlDocType extends XmlEntry {
+export interface XmlDocType extends XmlNodeBase {
   type: 'doctype';
   doctype: string;
 }
 
-export interface XmlElement extends XmlEntry {
+export interface XmlElement extends XmlNodeBase {
   type: 'element';
   name: string;
   attributes?: XmlAttribute[];
-  nodes?: XmlEntry[];
+  nodes?: XmlNodeBase[];
 }
 
-export interface XmlInstruction extends XmlEntry {
+export interface XmlInstruction extends XmlNodeBase {
   type: 'instruction';
   name: string;
   instruction?: string;
   attributes?: XmlAttribute[];
 }
 
-export interface XmlText extends XmlEntry {
+export interface XmlText extends XmlNodeBase {
   type: 'text';
   text: string;
 }
 
 export interface XmlRoot {
   declaration: XmlDeclaration;
-  nodes?: XmlEntry[];
+  nodes?: XmlNodeBase[];
 }
 
 export type XmlNode =

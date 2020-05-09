@@ -13,7 +13,7 @@ import {
   XmlNode,
   XmlNodeTypes,
   XmlRoot,
-} from './components/types';
+} from './types/types';
 
 export type AnyObject = { [key: string]: unknown; [key: number]: unknown };
 

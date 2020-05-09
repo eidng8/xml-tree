@@ -4,22 +4,22 @@
  * Author: eidng8
  */
 
-import { Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { removeHierarchyFromNode } from '../utils';
 import {
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
   XmlDeclaration,
   XmlNode,
-} from './types';
-import { removeHierarchyFromNode } from '../utils';
+} from '../types/types';
 import { getTexts } from '../translations/translation';
-import G8XmlPopupInterface from './xml-popup-interface';
+import G8XmlPopupInterface from '../types/xml-popup-interface';
 
-export default abstract class G8XmlPopupClass extends Vue
-  implements G8XmlPopupInterface {
-  abstract node: XmlNode | XmlDeclaration;
+@Component
+export default class PopupBoxMixin extends Vue implements G8XmlPopupInterface {
+  @Prop() protected node!: XmlNode | XmlDeclaration;
 
-  texts = getTexts();
+  protected texts = getTexts();
 
   save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     evt.data = this.node;

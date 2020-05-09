@@ -5,7 +5,7 @@
   -->
 
 <template>
-  <g8-xml-popup
+  <popup-box
     class="g8-xml__popup__declaration"
     @save="save($event)"
     @close="$emit('close', $event)"
@@ -39,21 +39,21 @@
         </div>
       </div>
     </template>
-  </g8-xml-popup>
+  </popup-box>
 </template>
 
 <script lang="ts">
-import { Component, Prop } from 'vue-property-decorator';
-import G8XmlPopup from './xml-popup.vue';
-import { XmlDeclaration } from './types';
-import G8XmlPopupClass from './xml-popup-class';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+import PopupBox from './popup-box.vue';
+import { XmlDeclaration } from '../../types/types';
+import PopupBoxMixin from '../../mixins/popup-box';
 
 @Component({
-  name: 'g8-xml-popup-declaration',
-  components: { G8XmlPopup },
+  name: 'popup-declaration',
+  components: { PopupBox },
 })
-export default class G8XmlPopupDeclaration extends G8XmlPopupClass {
-  @Prop() node!: XmlDeclaration;
+export default class PopupDeclaration extends Mixins(PopupBoxMixin) {
+  @Prop() protected node!: XmlDeclaration;
 
   // noinspection JSUnusedLocalSymbols
   private created(): void {

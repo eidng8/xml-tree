@@ -10,7 +10,7 @@
       <li
         class="g8-tree__node"
         v-if="tree.declaration"
-        @contextmenu.prevent.stop="editNode(tree.declaration)"
+        @contextmenu.prevent.stop="editDeclaration()"
       >
         <div class="g8-tree__node__entry">
           <span class="g8-xml__declaration"><span></span></span>
@@ -36,7 +36,7 @@
             :class="[`g8-xml__${item.type}`]"
             @contextmenu.prevent.stop="openMenu(item, $event)"
           >
-            {{ item | badge(piUseAttribute) }}
+            {{ item | nodeTag(piUseAttribute) }}
           </span>
         </template>
         <template #tag="{ item, tag }">
@@ -47,32 +47,35 @@
         </template>
       </g8-vue-tree>
     </ul>
-    <g8-xml-popup-declaration
+    <popup-declaration
       v-if="popupOpen && !currentNode.type"
       :node="popupItem"
       @save="saveNode($event)"
       @close="closePopup()"
-    ></g8-xml-popup-declaration>
-    <g8-xml-popup-element
+    ></popup-declaration>
+    <popup-node
       v-else-if="popupOpen"
       :node="popupItem"
       @save="saveNode($event)"
       @close="closePopup()"
-    ></g8-xml-popup-element>
-    <g8-xml-popup-attribute
+    ></popup-node>
+    <popup-attribute
       v-if="editingAttribute"
       :attribute="editingAttribute"
+      @save="saveAttributePopup($event)"
       @close="closeAttributePopup()"
-    ></g8-xml-popup-attribute>
+    ></popup-attribute>
     <g8-popup-menu
       class="g8-menu g8-menu--off"
       ref="menu"
+      :add-element-id="true"
       @select="action($event)"
     />
   </div>
 </template>
 
 <script lang="ts">
+import { findIndex, map, remove } from 'lodash';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8VueTree } from 'g8-vue-tree';
 import { G8MenuItem, G8PopupMenu } from 'g8-popup-menu';
@@ -87,25 +90,24 @@ import {
   XmlNode,
   XmlNodeTypes,
   XmlRoot,
-} from './types';
-import G8XmlPopupDeclaration from './xml-popup-declaration.vue';
+} from '../types/types';
 import { cloneWithoutHierarchy, createEmptyNode, xmlJs } from '../utils';
-import G8XmlPopupElement from './xml-popup-element.vue';
 import { getTexts } from '../translations/translation';
-import { findIndex, map, remove } from 'lodash';
-import G8XmlPopupAttribute from './xml-popup-attribute.vue';
+import PopupAttribute from './popup/popup-attribute.vue';
+import PopupDeclaration from './popup/popup-declaration.vue';
+import PopupNode from './popup/popup-node.vue';
 
 @Component({
   name: 'g8-xml-edit',
   components: {
-    G8XmlPopupAttribute,
-    G8XmlPopupElement,
-    G8XmlPopupDeclaration,
+    PopupAttribute,
+    PopupNode,
+    PopupDeclaration,
     G8VueTree,
     G8PopupMenu,
   },
   filters: {
-    badge(node: XmlNode, piUseAttribute: boolean): string {
+    nodeTag(node: XmlNode, piUseAttribute: boolean): string {
       switch (node.type) {
         case 'cdata':
           return node.cdata;
@@ -215,6 +217,19 @@ export default class G8XmlEdit extends Vue {
     this.reloadXml();
   }
 
+  private setCurrentNode(item: XmlNode | XmlDeclaration): void {
+    this.currentNode = item;
+    this.currentNodeParent = item.parent!;
+    if (this.currentNodeParent.nodes) {
+      this.currentNodeIndex = findIndex(
+        this.currentNodeParent.nodes,
+        n => n === item,
+      );
+    } else {
+      this.currentNodeIndex = -1;
+    }
+  }
+
   /**
    * Close the popup box.
    */
@@ -232,16 +247,7 @@ export default class G8XmlEdit extends Vue {
    * @param evt
    */
   private openMenu(item: XmlNode, evt: MouseEvent): void {
-    this.currentNode = item;
-    this.currentNodeParent = item.parent!;
-    if (this.currentNodeParent.nodes) {
-      this.currentNodeIndex = findIndex(
-        this.currentNodeParent.nodes,
-        n => n === item,
-      );
-    } else {
-      this.currentNodeIndex = -1;
-    }
+    this.setCurrentNode(item);
     this.nodeMenu = this.generateNodeMenu(item);
     (this.$refs.menu as G8PopupMenu).open(this.nodeMenu, evt);
   }
@@ -321,6 +327,14 @@ export default class G8XmlEdit extends Vue {
   }
 
   /**
+   * Pops up a box to edit the XML declaration. It operates on a clone of the node.
+   */
+  private editDeclaration(): void {
+    this.setCurrentNode(this.tree.declaration);
+    this.editNode(this.tree.declaration);
+  }
+
+  /**
    * Pops up a box to edit the `node`. It operates on a clone of the node.
    * @param node
    */
@@ -343,10 +357,23 @@ export default class G8XmlEdit extends Vue {
     ) as XmlNode | XmlDeclaration;
     if (isDeclarationNode(newNode)) {
       this.tree.declaration = newNode;
+      /**
+       * The XML declaration has been changed
+       * @type {XmlDeclaration}
+       */
+      this.$emit('declaration-changed', this.tree.declaration);
     } else if (this.creatingNode) {
       this.saveNewNode(newNode);
     } else {
       this.currentNodeParent.nodes![this.currentNodeIndex] = newNode;
+      /**
+       * A new XML node has been changed
+       * @type {XmlNode}
+       */
+      this.$emit(
+        'node-changed',
+        this.currentNodeParent.nodes![this.currentNodeIndex],
+      );
     }
     this.closePopup();
   }
@@ -358,6 +385,7 @@ export default class G8XmlEdit extends Vue {
   private saveNewNode(node: XmlNode): void {
     const p = this.currentNodeParent! as XmlElement;
     if (!p.nodes) p.nodes = [];
+    node.parent = p;
     p.nodes.splice(Math.max(this.currentNodeIndex, 0), 0, node);
     // mutation doesn't trigger rendering, calling `$forceUpdate()` on the whole
     // component may be too costly, so we just force the corresponding node
@@ -370,6 +398,11 @@ export default class G8XmlEdit extends Vue {
         Object.assign({}, p),
       );
     }
+    /**
+     * A new XML node has been created
+     * @type {XmlNode}
+     */
+    this.$emit('node-created', node);
   }
 
   /**
@@ -378,6 +411,20 @@ export default class G8XmlEdit extends Vue {
    */
   private editAttribute(attr: XmlAttribute): void {
     this.editingAttribute = attr;
+  }
+
+  /**
+   * Closes the attributes edit box.
+   */
+  private saveAttributePopup(
+    evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent,
+  ): void {
+    /**
+     * A XML node attribute has been changed
+     * @type {XmlNode}
+     * @param {XmlAttribute} attribute
+     */
+    this.$emit('attribute-changed', this.currentNode, evt.data);
   }
 
   /**
