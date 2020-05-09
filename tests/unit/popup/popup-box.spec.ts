@@ -5,8 +5,8 @@
  */
 
 import { mount, Wrapper } from '@vue/test-utils';
-import PopupBox from '../../../src/components/popup/popup-box.vue';
 import { click, keyup } from '../helpers';
+import PopupBox from '../../../src/components/popup/popup-box.vue';
 
 let wrapper: Wrapper<PopupBox>;
 
