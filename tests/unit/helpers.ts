@@ -39,3 +39,30 @@ export async function keyup(
   (element || document).dispatchEvent(evt);
   return wrapper.vm.$nextTick();
 }
+
+export async function savePopup(wrapper: Wrapper<any>): Promise<void> {
+  return click(wrapper, '.g8-xml__popup__footer button:first-child');
+}
+
+export async function enterText(
+  wrapper: Wrapper<any>,
+  selector: string | Wrapper<any>,
+  text: string,
+  event = 'input',
+): Promise<void> {
+  const input = 'string' == typeof selector ? wrapper.find(selector) : selector;
+  (input.element as HTMLInputElement).value = text;
+  return input.trigger(event);
+}
+
+export function rawValue(wrapper: Wrapper<any>): string {
+  return (wrapper.find('.g8-xml__popup__raw textarea')
+    .element as HTMLTextAreaElement).value;
+}
+
+export async function addAttribute(wrapper: Wrapper<any>): Promise<void> {
+  return click(
+    wrapper,
+    '.g8-xml__popup__attributes+.g8-xml__popup__control-group button',
+  );
+}

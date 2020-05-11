@@ -215,3 +215,24 @@
     display: table-cell;
   }
 }
+
+.g8-xml__popup__raw .g8--error {
+  flex-wrap: wrap;
+}
+
+.g8__message {
+  width: 100%;
+  display: none;
+  font-size: 0.8em;
+  color: $g8--error;
+
+  &:before {
+    content: '\26a0';
+    margin-right: 3px;
+    display: inline-block;
+  }
+
+  .g8-xml__popup__raw .g8--error & {
+    display: block;
+  }
+}

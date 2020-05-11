@@ -5,7 +5,7 @@
  */
 
 import { mount, Wrapper } from '@vue/test-utils';
-import { click, keyup } from '../helpers';
+import { click, keyup, savePopup } from '../helpers';
 import PopupBox from '../../../src/components/popup/popup-box.vue';
 
 let wrapper: Wrapper<PopupBox>;
@@ -50,7 +50,7 @@ describe('basics', () => {
 
   it('emits `save` & `close` event when save button is clicked', async () => {
     expect.assertions(2);
-    await click(wrapper, '.g8-xml__popup__footer button:first-child');
+    await savePopup(wrapper);
     const emitted = wrapper.emittedByOrder();
     expect(emitted[0].name).toBe('save');
     expect(emitted[1].name).toBe('close');

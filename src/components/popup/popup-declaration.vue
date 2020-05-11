@@ -14,27 +14,33 @@
       <span class="g8-xml__declaration">{{ texts.declaration }}</span>
     </template>
     <template>
-      <div
-        class="g8-xml__popup__attributes"
-        v-if="node.attributes && node.attributes.length"
-      >
-        <div
-          class="g8-xml__popup__attribute"
-          v-for="(attr, idx) in node.attributes"
-          :key="idx"
-        >
-          <label
-            >{{ attr.name }} =
-            <select v-model="attr.value" v-if="'standalone' == attr.name">
+      <div class="g8-xml__popup__attributes">
+        <div class="g8-xml__popup__attribute">
+          <label>
+            <span>version = </span>
+            <select v-model="version.value">
+              <option value="1.0">1.0</option>
+              <option value="1.1">1.1</option>
+            </select>
+          </label>
+        </div>
+        <div class="g8-xml__popup__attribute">
+          <label>
+            <span>encoding = </span>
+            <input
+              type="text"
+              v-model="encoding.value"
+              @focus="$event.target.select()"
+            />
+          </label>
+        </div>
+        <div class="g8-xml__popup__attribute">
+          <label>
+            <span>standalone = </span>
+            <select v-model="standalone.value">
               <option value="no">no</option>
               <option value="yes">yes</option>
             </select>
-            <input
-              type="text"
-              v-else
-              v-model="attr.value"
-              @focus="$event.target.select()"
-            />
           </label>
         </div>
       </div>
@@ -43,10 +49,11 @@
 </template>
 
 <script lang="ts">
+import { each, filter, includes, map } from 'lodash';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import PopupBox from './popup-box.vue';
-import { XmlDeclaration } from '../../types/types';
+import { XmlAttribute, XmlDeclaration } from '../../types/types';
 import PopupBoxMixin from '../../mixins/popup-box';
+import PopupBox from './popup-box.vue';
 
 @Component({
   name: 'popup-declaration',
@@ -55,18 +62,39 @@ import PopupBoxMixin from '../../mixins/popup-box';
 export default class PopupDeclaration extends Mixins(PopupBoxMixin) {
   @Prop() protected node!: XmlDeclaration;
 
+  private version!: XmlAttribute;
+
+  private encoding!: XmlAttribute;
+
+  private standalone!: XmlAttribute;
+
   // noinspection JSUnusedLocalSymbols
   private created(): void {
-    const has = this.node.attributes.map(a => a.name);
-    ['version', 'encoding', 'standalone']
-      .filter(n => !has.includes(n))
-      .forEach(n => this.node.attributes.push({ name: n, value: undefined }));
+    if (!this.node.attributes) this.node.attributes = [];
+    const has = map(this.node.attributes, 'name');
+    each(
+      filter(['version', 'encoding', 'standalone'], n => !includes(has, n)),
+      n => this.node.attributes.push({ name: n, value: undefined }),
+    );
+    each(this.node.attributes, attribute => {
+      switch (attribute.name) {
+        case 'encoding':
+          this.encoding = attribute;
+          break;
+        case 'standalone':
+          this.standalone = attribute;
+          break;
+        case 'version':
+          this.version = attribute;
+          break;
+      }
+    });
   }
 
   // noinspection JSUnusedLocalSymbols
   private mounted(): void {
     this.$nextTick(() => {
-      const e = this.$el.querySelector('input');
+      const e = this.$el.querySelector('select');
       if (e) e.focus();
     });
   }

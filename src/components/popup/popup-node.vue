@@ -11,8 +11,8 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span :class="[`g8-xml__${node.type || 'declaration'}`]">
-        {{ texts[node.type || 'declaration'] }}
+      <span :class="[`g8-xml__${node.type}`]">
+        {{ texts[node.type] }}
       </span>
     </template>
     <template>
@@ -24,6 +24,7 @@
               tabindex="999"
               class="g8-xml--large"
               v-model="node.name"
+              @input="updateRaw()"
               @focus="$event.target.select()"
             />
           </div>
@@ -44,7 +45,7 @@
                 type="text"
                 :tabindex="1000 + idx * 3"
                 v-model="attr.name"
-                @change="updateRaw()"
+                @input="updateRaw()"
                 @focus="$event.target.select()"
               />
             </span>
@@ -54,7 +55,7 @@
                 type="text"
                 :tabindex="1001 + idx * 3"
                 v-model="attr.value"
-                @change="updateRaw()"
+                @input="updateRaw()"
                 @focus="$event.target.select()"
               />
             </span>
@@ -91,12 +92,13 @@
         <div class="g8-xml__popup__separator">
           <span>{{ texts.raw }}</span>
         </div>
-        <div class="g8-xml__popup__control-group">
+        <div class="g8-xml__popup__control-group" ref="rawText">
+          <div class="g8__message">{{ errorMessage }}</div>
           <textarea
             tabindex="9998"
             class="g8-xml__popup__control"
             v-model="raw"
-            @change="rawChanged()"
+            @input="rawChanged()"
             @focus="$event.target.select()"
           ></textarea>
         </div>
@@ -121,29 +123,26 @@ import PopupBoxMixin from '../../mixins/popup-box';
 @Component({
   name: 'popup-node',
   components: { PopupBox },
+  watch: {
+    raw: function(this: PopupNode): void {
+      try {
+        xmlJs(this.raw);
+      } catch (e) {
+        this.errorMessage = this.texts.errInvalidXml;
+        (this.$refs.rawText as HTMLDivElement).classList.add('g8--error');
+      }
+    },
+  },
 })
 export default class PopupNode extends Mixins(PopupBoxMixin) {
   @Prop() protected node!: XmlNode;
 
   private raw = '';
 
+  private errorMessage = '';
+
   // noinspection JSUnusedLocalSymbols
   private created(): void {
-    // if (!this.node.type) {
-    //   const attrs = defaultDeclaration().attributes;
-    //   if (!this.node.attributes || !this.node.attributes.length) {
-    //     this.node.attributes = attrs;
-    //   } else {
-    //     each(
-    //       differenceWith(
-    //         attrs,
-    //         this.node.attributes,
-    //         (a, b) => a.name == b.name,
-    //       ),
-    //       a => this.node.attributes!.push({ name: a.name, value: undefined }),
-    //     );
-    //   }
-    // }
     this.updateRaw();
   }
 
@@ -174,11 +173,17 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
   }
 
   private rawChanged(): void {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const obj = (xmlJs(this.raw) as XmlElement).nodes![0] as XmlNode;
+    let obj;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      obj = (xmlJs(this.raw) as XmlElement).nodes![0] as XmlNode;
+    } catch (e) {
+      return;
+    }
     removeHierarchyFromNode(obj);
     rectifyNodeAttributes(obj);
     Object.assign(this.node, obj);
+    (this.$refs.rawText as HTMLDivElement).classList.remove('g8--error');
   }
 
   private newAttribute(): void {
