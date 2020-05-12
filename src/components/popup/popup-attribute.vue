@@ -65,6 +65,8 @@ export default class PopupAttribute extends Vue implements G8XmlPopupInterface {
 
   private safe!: XmlAttribute;
 
+  private saving = false;
+
   // noinspection JSUnusedLocalSymbols
   private created(): void {
     this.safe = Object.assign({}, this.attribute);
@@ -73,11 +75,13 @@ export default class PopupAttribute extends Vue implements G8XmlPopupInterface {
   save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     evt.data = this.attribute;
     this.$emit('save', evt);
-    this.close(evt);
+    this.saving = true;
   }
 
   private cancel(evt: Event): void {
-    Object.assign(this.attribute, this.safe);
+    if (!this.saving) {
+      Object.assign(this.attribute, this.safe);
+    }
     this.close(evt);
   }
 

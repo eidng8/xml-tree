@@ -9,6 +9,7 @@
     class="g8-xml__popup_element"
     :class="{ 'g8--error': errorMessage }"
     :message="errorMessage"
+    :message-hint="errorMessageHint"
     @save="save($event)"
     @close="$emit('close', $event)"
   >
@@ -87,6 +88,7 @@
           tabindex="1000"
           class="g8-xml__popup__control"
           v-model="node[node.type]"
+          @input="updateRaw()"
           @focus="$event.target.select()"
         ></textarea>
       </div>
@@ -111,7 +113,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import PopupBox from './popup-box.vue';
-import { XmlElement, XmlNode } from '../../types/types';
+import { isTextNode, XmlElement, XmlNode } from '../../types/types';
 import { each } from 'lodash';
 import {
   objXml,
@@ -126,11 +128,14 @@ import PopupBoxMixin from '../../mixins/popup-box';
   components: { PopupBox },
   watch: {
     raw: function(this: PopupNode): void {
+      if (isTextNode(this.node)) return;
       try {
         xmlJs(this.raw);
         this.errorMessage = '';
+        this.errorMessageHint = '';
       } catch (e) {
         this.errorMessage = this.texts.errInvalidXml;
+        this.errorMessageHint = e.message;
       }
     },
   },
@@ -141,6 +146,8 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
   private raw = '';
 
   private errorMessage = '';
+
+  private errorMessageHint = '';
 
   // noinspection JSUnusedLocalSymbols
   private created(): void {
@@ -170,17 +177,22 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
   private updateRaw(): void {
     removeHierarchyFromNode(this.node);
     rectifyNodeAttributes(this.node);
-    this.raw = objXml({ nodes: [this.node] });
+    if (isTextNode(this.node)) this.raw = this.node.text;
+    else this.raw = objXml({ nodes: [this.node] });
   }
 
   private rawChanged(): void {
     let obj;
-    try {
-      obj = xmlJs(this.raw) as XmlElement;
-    } catch (e) {
-      return;
+    if (isTextNode(this.node)) {
+      obj = Object.assign({}, this.node);
+    } else {
+      try {
+        obj = xmlJs(this.raw) as XmlElement;
+      } catch (e) {
+        return;
+      }
+      obj = obj.nodes![0] as XmlNode;
     }
-    obj = obj.nodes![0] as XmlNode;
     removeHierarchyFromNode(obj);
     rectifyNodeAttributes(obj);
     Object.assign(this.node, obj);

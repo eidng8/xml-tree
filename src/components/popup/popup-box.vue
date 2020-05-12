@@ -26,7 +26,7 @@
         <slot name="footer">
           <label
             class="g8-xml__popup__message"
-            :title="message"
+            :title="messageHint"
             v-if="message"
             >{{ message }}</label
           >
@@ -49,6 +49,8 @@ import { getTexts } from '../../translations/translation';
 @Component({ name: 'popup-box' })
 export default class PopupBox extends Vue {
   @Prop() private message?: string;
+
+  @Prop() private messageHint?: string;
 
   private texts = getTexts();
 

@@ -9,6 +9,7 @@ import PopupNode from '../../../src/components/popup/popup-node.vue';
 import {
   addAttribute,
   click,
+  closePopup,
   enterRawXml,
   enterText,
   rawValue,
@@ -36,17 +37,6 @@ describe('element node', () => {
   it('creates a modal box', () => {
     expect.assertions(1);
     expect(rawValue(wrapper)).toBe('<test ta="abc"/>');
-  });
-
-  it('updates raw field', async () => {
-    expect.assertions(3);
-    const inputs = wrapper.findAll('input');
-    await enterText(wrapper, inputs.at(0), 'abc');
-    expect(rawValue(wrapper)).toBe('<abc ta="abc"/>');
-    await enterText(wrapper, inputs.at(1), 'def');
-    expect(rawValue(wrapper)).toBe('<abc def="abc"/>');
-    await enterText(wrapper, inputs.at(2), 'ghi');
-    expect(rawValue(wrapper)).toBe('<abc def="ghi"/>');
   });
 
   it('can remove attribute', async () => {
@@ -102,5 +92,111 @@ describe('element node', () => {
     const msg = wrapper.find('.g8-xml__popup__message');
     expect(msg.exists()).toBe(true);
     expect(msg.text()).toBe('Invalid XML');
+  });
+
+  it('can be canceled', async () => {
+    expect.assertions(2);
+    await enterText(wrapper, 'input', 'b');
+    await closePopup(wrapper);
+    const emitted = wrapper.emitted();
+    expect(emitted.save).toBeUndefined();
+    expect(emitted.close.length).toBe(1);
+  });
+});
+
+describe('raw field', () => {
+  it('updates CDATA raw field', async () => {
+    expect.assertions(2);
+    wrapper = mount(PopupNode, {
+      propsData: { node: { type: 'cdata', cdata: 'a' } },
+    });
+    expect(rawValue(wrapper)).toBe('<![CDATA[a]]>');
+    await enterText(wrapper, 'textarea', 'abc');
+    expect(rawValue(wrapper)).toBe('<![CDATA[abc]]>');
+  });
+
+  it('updates comment raw field', async () => {
+    expect.assertions(2);
+    wrapper = mount(PopupNode, {
+      propsData: { node: { type: 'comment', comment: 'a' } },
+    });
+    expect(rawValue(wrapper)).toBe('<!--a-->');
+    await enterText(wrapper, 'textarea', 'abc');
+    expect(rawValue(wrapper)).toBe('<!--abc-->');
+  });
+
+  it('updates DOCTYPE raw field', async () => {
+    expect.assertions(2);
+    wrapper = mount(PopupNode, {
+      propsData: {
+        node: { type: 'doctype', doctype: 'note SYSTEM "note.dtd"' },
+      },
+    });
+    expect(rawValue(wrapper)).toBe('<!DOCTYPE note SYSTEM "note.dtd">');
+    await enterText(wrapper, 'textarea', 'abc def "ghi"');
+    expect(rawValue(wrapper)).toBe('<!DOCTYPE abc def "ghi">');
+  });
+
+  it('updates element raw field', async () => {
+    expect.assertions(3);
+    wrapper = mount(PopupNode, {
+      propsData: {
+        node: {
+          type: 'element',
+          name: 'test',
+          attributes: [{ name: 'ta', value: 'abc' }],
+        },
+      },
+    });
+    const inputs = wrapper.findAll('input');
+    await enterText(wrapper, inputs.at(0), 'abc');
+    expect(rawValue(wrapper)).toBe('<abc ta="abc"/>');
+    await enterText(wrapper, inputs.at(1), 'def');
+    expect(rawValue(wrapper)).toBe('<abc def="abc"/>');
+    await enterText(wrapper, inputs.at(2), 'ghi');
+    expect(rawValue(wrapper)).toBe('<abc def="ghi"/>');
+  });
+
+  it('updates process instruction with attribute raw field', async () => {
+    expect.assertions(4);
+    wrapper = mount(PopupNode, {
+      propsData: {
+        node: {
+          type: 'instruction',
+          name: 'test',
+          attributes: [{ name: 'ta', value: 'abc' }],
+        },
+      },
+    });
+    expect(rawValue(wrapper)).toBe('<?test ta="abc"?>');
+    const inputs = wrapper.findAll('input');
+    await enterText(wrapper, inputs.at(0), 'abc');
+    expect(rawValue(wrapper)).toBe('<?abc ta="abc"?>');
+    await enterText(wrapper, inputs.at(1), 'def');
+    expect(rawValue(wrapper)).toBe('<?abc def="abc"?>');
+    await enterText(wrapper, inputs.at(2), 'ghi');
+    expect(rawValue(wrapper)).toBe('<?abc def="ghi"?>');
+  });
+
+  it('updates process instruction without attribute raw field', async () => {
+    expect.assertions(2);
+    wrapper = mount(PopupNode, {
+      propsData: {
+        node: { type: 'instruction', name: 'test', instruction: 'asf' },
+      },
+    });
+    expect(rawValue(wrapper)).toBe('<?test asf?>');
+    await enterText(wrapper, 'input', 'abc');
+    expect(rawValue(wrapper)).toBe('<?abc asf?>');
+  });
+
+  it('updates text raw field', async () => {
+    expect.assertions(2);
+    wrapper = mount(PopupNode, {
+      propsData: { node: { type: 'text', text: 'test' } },
+    });
+    expect(rawValue(wrapper)).toBe('test');
+    await enterText(wrapper, 'textarea', 'abc');
+    expect(rawValue(wrapper)).toBe('abc');
   });
 });

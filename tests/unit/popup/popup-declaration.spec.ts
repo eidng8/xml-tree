@@ -7,7 +7,7 @@
 import { mount, Wrapper } from '@vue/test-utils';
 import { defaultDeclaration, XmlDeclaration } from '../../../src';
 import PopupDeclaration from '../../../src/components/popup/popup-declaration.vue';
-import { savePopup } from '../helpers';
+import { closePopup, enterText, savePopup } from '../helpers';
 
 let wrapper: Wrapper<PopupDeclaration>;
 
@@ -56,5 +56,17 @@ describe('basics', () => {
       { name: 'encoding', value: undefined },
       { name: 'standalone', value: undefined },
     ]);
+  });
+
+  it('can be canceled', async () => {
+    expect.assertions(2);
+    wrapper = mount(PopupDeclaration, {
+      propsData: { node: { attributes: [{ name: 'version', value: '1.0' }] } },
+    });
+    await enterText(wrapper, 'input', 'b');
+    await closePopup(wrapper);
+    const emitted = wrapper.emitted();
+    expect(emitted.save).toBeUndefined();
+    expect(emitted.close.length).toBe(1);
   });
 });
