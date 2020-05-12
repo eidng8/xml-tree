@@ -7,6 +7,8 @@
 <template>
   <popup-box
     class="g8-xml__popup_element"
+    :class="{ 'g8--error': errorMessage }"
+    :message="errorMessage"
     @save="save($event)"
     @close="$emit('close', $event)"
   >
@@ -92,8 +94,7 @@
         <div class="g8-xml__popup__separator">
           <span>{{ texts.raw }}</span>
         </div>
-        <div class="g8-xml__popup__control-group" ref="rawText">
-          <div class="g8__message">{{ errorMessage }}</div>
+        <div class="g8-xml__popup__control-group">
           <textarea
             tabindex="9998"
             class="g8-xml__popup__control"
@@ -127,9 +128,9 @@ import PopupBoxMixin from '../../mixins/popup-box';
     raw: function(this: PopupNode): void {
       try {
         xmlJs(this.raw);
+        this.errorMessage = '';
       } catch (e) {
         this.errorMessage = this.texts.errInvalidXml;
-        (this.$refs.rawText as HTMLDivElement).classList.add('g8--error');
       }
     },
   },
@@ -175,15 +176,14 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
   private rawChanged(): void {
     let obj;
     try {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      obj = (xmlJs(this.raw) as XmlElement).nodes![0] as XmlNode;
+      obj = xmlJs(this.raw) as XmlElement;
     } catch (e) {
       return;
     }
+    obj = obj.nodes![0] as XmlNode;
     removeHierarchyFromNode(obj);
     rectifyNodeAttributes(obj);
     Object.assign(this.node, obj);
-    (this.$refs.rawText as HTMLDivElement).classList.remove('g8--error');
   }
 
   private newAttribute(): void {

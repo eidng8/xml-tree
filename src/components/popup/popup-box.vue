@@ -24,6 +24,12 @@
       </div>
       <div class="g8-xml__popup__footer">
         <slot name="footer">
+          <label
+            class="g8-xml__popup__message"
+            :title="message"
+            v-if="message"
+            >{{ message }}</label
+          >
           <button tabindex="9999" @click="save($event)">
             {{ texts.save }}
           </button>
@@ -37,11 +43,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { getTexts } from '../../translations/translation';
 
 @Component({ name: 'popup-box' })
 export default class PopupBox extends Vue {
+  @Prop() private message?: string;
+
   private texts = getTexts();
 
   // noinspection JSUnusedLocalSymbols

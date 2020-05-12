@@ -9,6 +9,7 @@ import PopupNode from '../../../src/components/popup/popup-node.vue';
 import {
   addAttribute,
   click,
+  enterRawXml,
   enterText,
   rawValue,
   savePopup,
@@ -65,7 +66,7 @@ describe('element node', () => {
 
   it('can edit raw', async () => {
     expect.assertions(1);
-    await enterText(wrapper, '.g8-xml__popup__raw textarea', '<a b="c"/>');
+    await enterRawXml(wrapper, '<a b="c"/>');
     await savePopup(wrapper);
     const emitted = wrapper.emitted().save[0][0] as SaveNodeMouseEvent;
     expect(emitted.data).toEqual({
@@ -73,5 +74,33 @@ describe('element node', () => {
       name: 'a',
       attributes: [{ name: 'b', value: 'c' }],
     });
+  });
+
+  it('shows error message about raw', async () => {
+    expect.assertions(3);
+    await enterRawXml(wrapper, '<a b/>');
+    expect(wrapper.find('.g8--error').exists()).toBe(true);
+    const msg = wrapper.find('.g8-xml__popup__message');
+    expect(msg.exists()).toBe(true);
+    expect(msg.text()).toBe('Invalid XML');
+  });
+
+  it('shows error message about tag name', async () => {
+    expect.assertions(3);
+    await enterText(wrapper, 'input', '&');
+    expect(wrapper.find('.g8--error').exists()).toBe(true);
+    const msg = wrapper.find('.g8-xml__popup__message');
+    expect(msg.exists()).toBe(true);
+    expect(msg.text()).toBe('Invalid XML');
+  });
+
+  it('shows error message about attribute', async () => {
+    expect.assertions(3);
+    const inputs = wrapper.findAll('input');
+    await enterText(wrapper, inputs.at(1), '&');
+    expect(wrapper.find('.g8--error').exists()).toBe(true);
+    const msg = wrapper.find('.g8-xml__popup__message');
+    expect(msg.exists()).toBe(true);
+    expect(msg.text()).toBe('Invalid XML');
   });
 });

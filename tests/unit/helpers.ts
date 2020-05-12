@@ -55,6 +55,14 @@ export async function enterText(
   return input.trigger(event);
 }
 
+export async function enterRawXml(
+  wrapper: Wrapper<any>,
+  text: string,
+  event = 'input',
+): Promise<void> {
+  return enterText(wrapper, '.g8-xml__popup__raw textarea', text, event);
+}
+
 export function rawValue(wrapper: Wrapper<any>): string {
   return (wrapper.find('.g8-xml__popup__raw textarea')
     .element as HTMLTextAreaElement).value;
