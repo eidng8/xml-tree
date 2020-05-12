@@ -105,6 +105,10 @@ export function defaultDeclaration(parent?: XmlRoot): XmlDeclaration {
   };
 }
 
+export function isElementNode(node: XmlNode): node is XmlElement {
+  return 'element' == node.type;
+}
+
 export function isTextNode(node: XmlNode): node is XmlText {
   return 'text' == node.type;
 }

@@ -10,6 +10,7 @@ import {
   XmlAttribute,
   XmlDeclaration,
   XmlElement,
+  XmlInstruction,
   XmlNode,
   XmlNodeTypes,
   XmlRoot,
@@ -104,6 +105,7 @@ export function xmlJs(
       addParent: true,
       elementsKey: 'nodes',
       attributesFn: (attrs: string | AnyObject) => {
+        /* istanbul ignore if: unable to unit test */
         if ('string' == typeof attrs) {
           throw new Error(`Expected object, but got string '${attrs}'`);
         }
@@ -127,6 +129,7 @@ export function objXml(obj: object, options?: Options.JS2XML): string {
       spaces: 2,
       elementsKey: 'nodes',
       attributesFn: (attrs: string | AnyObject[]) => {
+        /* istanbul ignore if: unable to unit test */
         if ('string' == typeof attrs) {
           throw new Error(`Expected array, but got string '${attrs}'`);
         }
@@ -173,13 +176,20 @@ export function rectifyNodeAttributes(node: XmlNode | XmlDeclaration): void {
 /**
  * Creates an empty XML node.
  * @param type
- * @param ia `true` if processing instruction should use attributes.
+ * @param piUseAttribute `true` if processing instruction should use attributes.
  */
-export function createEmptyNode(type: XmlNodeTypes, ia = false): XmlNode {
+export function createEmptyNode(
+  type: XmlNodeTypes,
+  piUseAttribute = false,
+): XmlNode {
   const node = { type } as XmlNode;
   if ('element' == type || 'instruction' == type) {
     (node as XmlElement).name = `new-${type}`;
-    if (ia || 'element' == type) (node as XmlElement).attributes = [];
+    if (piUseAttribute || 'element' == type) {
+      (node as XmlElement).attributes = [];
+    } else {
+      (node as XmlInstruction).instruction = '';
+    }
   } else {
     // eslint-disable-next-line
     (node as any)[type] = `new ${type}`;

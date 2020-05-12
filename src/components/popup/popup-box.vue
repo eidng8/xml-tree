@@ -90,8 +90,8 @@ export default class PopupBox extends Vue {
       this.close(evt);
     } else if ('Enter' == evt.key) {
       const tag = (evt.target as HTMLElement).localName;
+      /* istanbul ignore if: unable to unit test */
       if (!evt.ctrlKey && ('textarea' == tag || 'select' == tag)) {
-        /* istanbul ignore next: unable to unit test */
         return;
       }
       this.save(evt);

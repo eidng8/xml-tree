@@ -40,7 +40,7 @@
           </span>
         </template>
         <template #tag="{ item, tag }">
-          <span @contextmenu.prevent.stop="editAttribute(tag)">
+          <span @contextmenu.prevent.stop="editAttribute(item, tag)">
             <span>{{ tag.name }}</span>
             <span v-if="showAttrValue">="{{ tag.value }}"</span>
           </span>
@@ -82,6 +82,7 @@ import { G8MenuItem, G8PopupMenu } from 'g8-popup-menu';
 import {
   defaultDeclaration,
   isDeclarationNode,
+  isElementNode,
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
   XmlAttribute,
@@ -122,7 +123,9 @@ import PopupNode from './popup/popup-node.vue';
           return `${node.name} ${node.instruction}`;
         case 'text':
           return node.text;
+        /* istanbul ignore next: unable to unit test */
         default:
+          /* istanbul ignore next: unable to unit test */
           return `~~~`;
       }
     },
@@ -220,14 +223,10 @@ export default class G8XmlEdit extends Vue {
   private setCurrentNode(item: XmlNode | XmlDeclaration): void {
     this.currentNode = item;
     this.currentNodeParent = item.parent!;
-    if (this.currentNodeParent.nodes) {
-      this.currentNodeIndex = findIndex(
-        this.currentNodeParent.nodes,
-        n => n === item,
-      );
-    } else {
-      this.currentNodeIndex = -1;
-    }
+    this.currentNodeIndex = findIndex(
+      this.currentNodeParent.nodes,
+      n => n === item,
+    );
   }
 
   /**
@@ -274,33 +273,49 @@ export default class G8XmlEdit extends Vue {
         subtitle,
       },
     ] as G8MenuItem[];
-    if ('element' == node.type) {
+    for (let idx = 4; idx < menu.length; idx++) {
+      const item = menu[idx];
+      const nodes =
+        node.parent === this.tree
+          ? ['CDATA', 'comment', 'DOCTYPE', 'instruction']
+          : ['CDATA', 'comment', 'element', 'instruction', 'text'];
+      item.children = map(
+        nodes,
+        e =>
+          ({
+            id: `${item.id}-${e}`.toLowerCase(),
+            label: e,
+          } as G8MenuItem),
+      );
+    }
+    if (isElementNode(node)) {
       menu.push(
         {
           id: 'g8-xml-menu-append-child',
           label: this.texts.menuAppend,
           subtitle,
+          children: map(
+            ['CDATA', 'comment', 'element', 'instruction', 'text'],
+            e =>
+              ({
+                id: `g8-xml-menu-append-child-${e}`.toLowerCase(),
+                label: e,
+              } as G8MenuItem),
+          ),
         },
         {
           id: 'g8-xml-menu-prepend-child',
           label: this.texts.menuPrepend,
           subtitle,
+          children: map(
+            ['CDATA', 'comment', 'element', 'instruction', 'text'],
+            e =>
+              ({
+                id: `g8-xml-menu-prepend-child-${e}`.toLowerCase(),
+                label: e,
+              } as G8MenuItem),
+          ),
         },
-      );
-    }
-    for (let idx = 4; idx < menu.length; idx++) {
-      const item = menu[idx];
-      const nodes =
-        node.parent === this.tree
-          ? ['CData', 'comment', 'instruction']
-          : ['CData', 'comment', 'element', 'instruction', 'text'];
-      item.children = map(
-        nodes,
-        e =>
-          ({
-            id: `${item.id}-${e}`,
-            label: e,
-          } as G8MenuItem),
       );
     }
     if ('element' == node.type && node.parent === this.tree) menu.splice(1, 2);
@@ -348,7 +363,9 @@ export default class G8XmlEdit extends Vue {
    * @param evt
    */
   private saveNode(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+    /* istanbul ignore if: unable to unit test */
     if (!this.currentNode) throw new Error(this.texts.errNotEditing);
+    /* istanbul ignore if: unable to unit test */
     if (!this.currentNodeParent) throw new Error(this.texts.errNodeParent);
     const newNode = Object.assign(
       {},
@@ -384,6 +401,7 @@ export default class G8XmlEdit extends Vue {
    */
   private saveNewNode(node: XmlNode): void {
     const p = this.currentNodeParent! as XmlElement;
+    /* istanbul ignore if: unable to unit test */
     if (!p.nodes) p.nodes = [];
     node.parent = p;
     p.nodes.splice(Math.max(this.currentNodeIndex, 0), 0, node);
@@ -407,9 +425,11 @@ export default class G8XmlEdit extends Vue {
 
   /**
    * Pops up a box to edit the given attribute.
+   * @param item
    * @param attr
    */
-  private editAttribute(attr: XmlAttribute): void {
+  private editAttribute(item: XmlNode, attr: XmlAttribute): void {
+    this.setCurrentNode(item);
     this.editingAttribute = attr;
   }
 
@@ -464,9 +484,7 @@ export default class G8XmlEdit extends Vue {
       if ('prepend' == actions[0]) {
         this.currentNodeIndex = -1;
       } else {
-        this.currentNodeIndex = this.currentNodeParent.nodes
-          ? this.currentNodeParent.nodes.length
-          : -1;
+        this.currentNodeIndex = this.currentNodeParent.nodes!.length;
       }
     }
     this.editNode(

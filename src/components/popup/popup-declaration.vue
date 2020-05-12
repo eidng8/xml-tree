@@ -95,6 +95,7 @@ export default class PopupDeclaration extends Mixins(PopupBoxMixin) {
   private mounted(): void {
     this.$nextTick(() => {
       const e = this.$el.querySelector('select');
+      /* istanbul ignore else: unable to unit test */
       if (e) e.focus();
     });
   }

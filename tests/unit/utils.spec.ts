@@ -7,6 +7,7 @@
 import {
   cloneObject,
   cloneWithoutHierarchy,
+  createEmptyNode,
   kvpArray,
   kvpObject,
   objXml,
@@ -228,5 +229,23 @@ describe('objXml', () => {
   <b c="d">
     <e/></b></a>`,
     );
+  });
+});
+
+describe('createEmptyNode', () => {
+  it('creates element', () => {
+    expect(createEmptyNode('element')).toEqual({
+      type: 'element',
+      name: 'new-element',
+      attributes: [],
+    });
+  });
+
+  it('creates process instruction with attribute', () => {
+    expect(createEmptyNode('instruction', true)).toEqual({
+      type: 'instruction',
+      name: 'new-instruction',
+      attributes: [],
+    });
   });
 });

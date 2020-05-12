@@ -113,7 +113,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import PopupBox from './popup-box.vue';
-import { isTextNode, XmlElement, XmlNode } from '../../types/types';
+import { isTextNode, XmlElement, XmlNode, XmlText } from '../../types/types';
 import { each } from 'lodash';
 import {
   objXml,
@@ -166,10 +166,10 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
   private initRawSize(): void {
     const areas = this.$el.getElementsByTagName('textarea');
     const area = areas[0] as HTMLTextAreaElement;
-    if (!area) return;
     const styles = window.getComputedStyle(area);
     const mh = parseInt(styles.getPropertyValue('max-height')) / areas.length;
     // remember to count borders
+    /* istanbul ignore next: unable to unit test */
     const ah = (mh > area.scrollHeight ? area.scrollHeight : mh) + 2;
     each(areas, a => (a.style.height = `${ah}px`));
   }
@@ -184,7 +184,7 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
   private rawChanged(): void {
     let obj;
     if (isTextNode(this.node)) {
-      obj = Object.assign({}, this.node);
+      obj = { type: 'text', text: this.raw } as XmlText;
     } else {
       try {
         obj = xmlJs(this.raw) as XmlElement;
@@ -200,21 +200,20 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
 
   private newAttribute(): void {
     const node = this.node as XmlElement;
-    if (!node.attributes) node.attributes = [];
-    node.attributes.push({ name: '', value: '' });
+    node.attributes!.push({ name: '', value: '' });
     this.$forceUpdate();
     this.$nextTick(() => {
       const input = this.$el.querySelector(
         '.g8-xml__popup__attributes .g8-xml__popup__attribute:last-child input',
       ) as HTMLInputElement;
+      /* istanbul ignore else: unable to unit test */
       if (input) input.focus();
     });
   }
 
   private deleteAttribute(idx: number): void {
     const node = this.node as XmlElement;
-    if (!node.attributes) return;
-    node.attributes.splice(idx, 1);
+    node.attributes!.splice(idx, 1);
     this.updateRaw();
     this.$forceUpdate();
   }
