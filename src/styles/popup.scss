@@ -50,6 +50,14 @@
     // full viewport height - lines of text - padding - borders
     max-height: calc(100vh - 12em - 4px);
   }
+
+  input,
+  select,
+  textarea {
+    &:invalid {
+      border-color: $g8--error !important;
+    }
+  }
 }
 
 .g8-xml__popup__box {

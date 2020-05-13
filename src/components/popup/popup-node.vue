@@ -46,6 +46,7 @@
             <span class="g8-xml__popup__control-label">
               <input
                 type="text"
+                pattern="[\w_]+"
                 :tabindex="1000 + idx * 3"
                 v-model="attr.name"
                 @input="updateRaw()"
@@ -111,6 +112,8 @@
 </template>
 
 <script lang="ts">
+import { each } from 'lodash';
+import XRegExp from 'xregexp';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import PopupBox from './popup-box.vue';
 import {
@@ -121,7 +124,6 @@ import {
   XmlInstruction,
   XmlNode,
 } from '../../types/types';
-import { each } from 'lodash';
 import {
   cloneWithoutHierarchy,
   objXml,
@@ -135,19 +137,6 @@ import { getTexts } from '../../translations/translation';
 @Component({
   name: 'popup-node',
   components: { PopupBox },
-  // watch: {
-  //   raw: function(this: PopupNode): void {
-  //     if (isTextNode(this.node)) return;
-  //     try {
-  //       xmlJs(this.raw);
-  //       this.errorMessage = '';
-  //       this.errorMessageHint = '';
-  //     } catch (e) {
-  //       this.errorMessage = this.texts.errInvalidXml;
-  //       this.errorMessageHint = e.message;
-  //     }
-  //   },
-  // },
 })
 export default class PopupNode extends Vue {
   @Prop() private node!: XmlNode;
@@ -167,6 +156,14 @@ export default class PopupNode extends Vue {
 
   // noinspection JSUnusedLocalSymbols
   private mounted(): void {
+    each(
+      this.$el.querySelectorAll(
+        '.g8-xml__popup__attributes .g8-xml__popup__control-label input',
+      ),
+      e => {
+        e.setAttribute('pattern', XRegExp('[\\p{L}_]+').toString());
+      },
+    );
     this.$nextTick(() => this.initRawSize());
   }
 
@@ -195,19 +192,29 @@ export default class PopupNode extends Vue {
       rectifyNodeAttributes(node);
       this.raw = objXml({ nodes: [node] });
     }
-    this.rawChanged();
+    this.validateXml();
   }
 
-  private rawChanged(): void {
-    if (isTextNode(this.node)) return;
+  private validateXml(): boolean {
+    if (isTextNode(this.node)) return true;
     try {
       xmlJs(this.raw);
       this.errorMessage = '';
       this.errorMessageHint = '';
+      return true;
     } catch (e) {
       this.errorMessage = this.texts.errInvalidXml;
       this.errorMessageHint = e.message;
+      return false;
     }
+  }
+
+  private rawChanged(): void {
+    if (!this.validateXml()) return;
+    const node = xmlJs(this.raw) as XmlElement;
+    const obj = node.nodes![0] as XmlNode;
+    removeHierarchyFromNode(obj);
+    Object.assign(this.node, obj);
   }
 
   private newAttribute(): void {
