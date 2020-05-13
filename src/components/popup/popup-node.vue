@@ -161,7 +161,10 @@ export default class PopupNode extends Vue {
         '.g8-xml__popup__attributes .g8-xml__popup__control-label input',
       ),
       e => {
-        e.setAttribute('pattern', XRegExp('[\\p{L}_]+').toString());
+        e.setAttribute(
+          'pattern',
+          XRegExp('[\\p{L}_][\\p{L}\\d_:-]+').toString(),
+        );
       },
     );
     this.$nextTick(() => this.initRawSize());
