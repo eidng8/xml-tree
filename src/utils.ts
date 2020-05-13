@@ -7,7 +7,6 @@
 import { assign, cloneDeep, each, filter, keys, map } from 'lodash';
 import { js2xml, Options, xml2js } from 'xml-js';
 import {
-  XmlAttribute,
   XmlDeclaration,
   XmlElement,
   XmlInstruction,
@@ -91,6 +90,19 @@ export function cloneObject(
 }
 
 /**
+ * Clone the given node, without `parent` and `nodes`.
+ * @param node
+ */
+export function cloneWithoutHierarchy(
+  node: XmlNode | XmlDeclaration,
+): XmlNode | XmlDeclaration {
+  return cloneObject((node as unknown) as { [key: string]: unknown }, [
+    'parent',
+    'nodes',
+  ]) as XmlNode | XmlDeclaration;
+}
+
+/**
  * Converts XML string to object.
  * @param xml
  * @param options
@@ -142,25 +154,17 @@ export function objXml(obj: object, options?: Options.JS2XML): string {
 }
 
 /**
- * Clone the given node, without `parent` and `nodes`.
- * @param node
- */
-export function cloneWithoutHierarchy(
-  node: XmlNode | XmlDeclaration,
-): XmlNode | XmlDeclaration {
-  return cloneObject((node as unknown) as { [key: string]: unknown }, [
-    'parent',
-    'nodes',
-  ]) as XmlNode | XmlDeclaration;
-}
-
-/**
  * Makes sure there is no hierarchy data. This function mutates the given
  * `node`.
  */
 export function removeHierarchyFromNode(node: XmlNode | XmlDeclaration): void {
   delete node.parent;
   delete (node as XmlElement).nodes;
+}
+
+export function rectifyAttributeValue(value: string): string {
+  if (!value) return '';
+  return value.replace(/&(?!\w+;)/gm, '&amp;').replace(/"/gm, '&quot;');
 }
 
 /**
@@ -170,7 +174,10 @@ export function removeHierarchyFromNode(node: XmlNode | XmlDeclaration): void {
 export function rectifyNodeAttributes(node: XmlNode | XmlDeclaration): void {
   node = node as XmlElement;
   if (!node.attributes) return;
-  node.attributes = filter(node.attributes, n => n.name) as XmlAttribute[];
+  // node.attributes = filter(node.attributes, n => n.name) as XmlAttribute[];
+  each(node.attributes, a => {
+    a.value = rectifyAttributeValue(a.value!);
+  });
 }
 
 /**

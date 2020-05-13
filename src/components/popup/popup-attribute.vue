@@ -51,14 +51,13 @@ import {
   SaveNodeMouseEvent,
   XmlAttribute,
 } from '../../types/types';
-import G8XmlPopupInterface from '../../types/xml-popup-interface';
 import { getTexts } from '../../translations/translation';
 
 @Component({
   name: 'popup-attribute',
   components: { PopupBox },
 })
-export default class PopupAttribute extends Vue implements G8XmlPopupInterface {
+export default class PopupAttribute extends Vue {
   @Prop() private attribute!: XmlAttribute;
 
   private texts = getTexts();
@@ -72,7 +71,7 @@ export default class PopupAttribute extends Vue implements G8XmlPopupInterface {
     this.safe = Object.assign({}, this.attribute);
   }
 
-  save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+  private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     evt.data = this.attribute;
     this.$emit('save', evt);
     this.saving = true;

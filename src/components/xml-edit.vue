@@ -387,10 +387,7 @@ export default class G8XmlEdit extends Vue {
        * A new XML node has been changed
        * @type {XmlNode}
        */
-      this.$emit(
-        'node-changed',
-        this.currentNodeParent.nodes![this.currentNodeIndex],
-      );
+      this.$emit('node-changed', newNode);
     }
     this.closePopup();
   }

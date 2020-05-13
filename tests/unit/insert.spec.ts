@@ -132,7 +132,6 @@ describe('Child node insertion', () => {
     expect(emitted['node-created'][0][0]).toEqual({
       type: 'element',
       name: 'abc',
-      attributes: [],
     });
     await expandTreeNode(wrapper, first);
     expect(wrapper.find(`${first} .g8-tree__node`).text()).toBe('abc');

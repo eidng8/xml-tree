@@ -50,17 +50,25 @@
 
 <script lang="ts">
 import { each, filter, includes, map } from 'lodash';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { XmlAttribute, XmlDeclaration } from '../../types/types';
-import PopupBoxMixin from '../../mixins/popup-box';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import {
+  SaveNodeKeyboardEvent,
+  SaveNodeMouseEvent,
+  XmlAttribute,
+  XmlDeclaration,
+} from '../../types/types';
 import PopupBox from './popup-box.vue';
+import { removeHierarchyFromNode } from '../../utils';
+import { getTexts } from '../../translations/translation';
 
 @Component({
   name: 'popup-declaration',
   components: { PopupBox },
 })
-export default class PopupDeclaration extends Mixins(PopupBoxMixin) {
-  @Prop() protected node!: XmlDeclaration;
+export default class PopupDeclaration extends Vue {
+  @Prop() private node!: XmlDeclaration;
+
+  private texts = getTexts();
 
   private version!: XmlAttribute;
 
@@ -98,6 +106,16 @@ export default class PopupDeclaration extends Mixins(PopupBoxMixin) {
       /* istanbul ignore else: unable to unit test */
       if (e) e.focus();
     });
+  }
+
+  private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+    evt.data = this.node;
+    removeHierarchyFromNode(this.node);
+    /**
+     * The node passed in the `data` field shall be saved.
+     * @param {SaveNodeMouseEvent|SaveNodeKeyboardEvent} event
+     */
+    this.$emit('save', evt);
   }
 }
 </script>

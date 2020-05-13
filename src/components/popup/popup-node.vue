@@ -111,37 +111,48 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import PopupBox from './popup-box.vue';
-import { isTextNode, XmlElement, XmlNode, XmlText } from '../../types/types';
+import {
+  isTextNode,
+  SaveNodeKeyboardEvent,
+  SaveNodeMouseEvent,
+  XmlElement,
+  XmlInstruction,
+  XmlNode,
+} from '../../types/types';
 import { each } from 'lodash';
 import {
+  cloneWithoutHierarchy,
   objXml,
+  rectifyAttributeValue,
   rectifyNodeAttributes,
   removeHierarchyFromNode,
   xmlJs,
 } from '../../utils';
-import PopupBoxMixin from '../../mixins/popup-box';
+import { getTexts } from '../../translations/translation';
 
 @Component({
   name: 'popup-node',
   components: { PopupBox },
-  watch: {
-    raw: function(this: PopupNode): void {
-      if (isTextNode(this.node)) return;
-      try {
-        xmlJs(this.raw);
-        this.errorMessage = '';
-        this.errorMessageHint = '';
-      } catch (e) {
-        this.errorMessage = this.texts.errInvalidXml;
-        this.errorMessageHint = e.message;
-      }
-    },
-  },
+  // watch: {
+  //   raw: function(this: PopupNode): void {
+  //     if (isTextNode(this.node)) return;
+  //     try {
+  //       xmlJs(this.raw);
+  //       this.errorMessage = '';
+  //       this.errorMessageHint = '';
+  //     } catch (e) {
+  //       this.errorMessage = this.texts.errInvalidXml;
+  //       this.errorMessageHint = e.message;
+  //     }
+  //   },
+  // },
 })
-export default class PopupNode extends Mixins(PopupBoxMixin) {
-  @Prop() protected node!: XmlNode;
+export default class PopupNode extends Vue {
+  @Prop() private node!: XmlNode;
+
+  private texts = getTexts();
 
   private raw = '';
 
@@ -175,27 +186,28 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
   }
 
   private updateRaw(): void {
-    removeHierarchyFromNode(this.node);
-    rectifyNodeAttributes(this.node);
-    if (isTextNode(this.node)) this.raw = this.node.text;
-    else this.raw = objXml({ nodes: [this.node] });
+    // removeHierarchyFromNode(this.node);
+    // rectifyNodeAttributes(this.node);
+    if (isTextNode(this.node)) {
+      this.raw = rectifyAttributeValue(this.node.text);
+    } else {
+      const node = cloneWithoutHierarchy(this.node);
+      rectifyNodeAttributes(node);
+      this.raw = objXml({ nodes: [node] });
+    }
+    this.rawChanged();
   }
 
   private rawChanged(): void {
-    let obj;
-    if (isTextNode(this.node)) {
-      obj = { type: 'text', text: this.raw } as XmlText;
-    } else {
-      try {
-        obj = xmlJs(this.raw) as XmlElement;
-      } catch (e) {
-        return;
-      }
-      obj = obj.nodes![0] as XmlNode;
+    if (isTextNode(this.node)) return;
+    try {
+      xmlJs(this.raw);
+      this.errorMessage = '';
+      this.errorMessageHint = '';
+    } catch (e) {
+      this.errorMessage = this.texts.errInvalidXml;
+      this.errorMessageHint = e.message;
     }
-    removeHierarchyFromNode(obj);
-    rectifyNodeAttributes(obj);
-    Object.assign(this.node, obj);
   }
 
   private newAttribute(): void {
@@ -216,6 +228,25 @@ export default class PopupNode extends Mixins(PopupBoxMixin) {
     node.attributes!.splice(idx, 1);
     this.updateRaw();
     this.$forceUpdate();
+  }
+
+  private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+    const wrapper = xmlJs(
+      isTextNode(this.node) ? `<tmp>${this.raw}</tmp>` : this.raw,
+      {
+        instructionHasAttributes: !!(this.node as XmlInstruction).attributes,
+      },
+    ) as XmlElement;
+    const node = (isTextNode(this.node)
+      ? (wrapper.nodes![0] as XmlElement).nodes![0]
+      : wrapper.nodes![0]) as XmlNode;
+    removeHierarchyFromNode(node);
+    evt.data = node;
+    /**
+     * The node passed in the `data` field shall be saved.
+     * @param {SaveNodeMouseEvent|SaveNodeKeyboardEvent} event
+     */
+    this.$emit('save', evt);
   }
 }
 </script>
