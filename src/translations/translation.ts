@@ -33,6 +33,7 @@ const texts = {
   errNotEditing: 'There is no node being edited.',
   errNodeParent: 'Invalid node parent',
   errInvalidXml: 'Invalid XML',
+  errInvalidName: 'Invalid name',
 } as { [key: string]: string };
 
 export function getTexts(): { [key: string]: string } {

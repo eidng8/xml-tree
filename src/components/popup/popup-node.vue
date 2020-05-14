@@ -22,11 +22,11 @@
       <div class="g8-xml__popup__name" v-if="node.name">
         <div class="g8-xml__popup__control-group">
           <div class="g8-xml__popup__control">
-            <input
+            <input-name
               type="text"
               tabindex="999"
               class="g8-xml--large"
-              v-model="node.name"
+              :node="node"
               @input="updateRaw()"
               @focus="$event.target.select()"
             />
@@ -44,11 +44,10 @@
             :key="idx"
           >
             <span class="g8-xml__popup__control-label">
-              <input
+              <input-name
                 type="text"
-                pattern="[\w_]+"
                 :tabindex="1000 + idx * 3"
-                v-model="attr.name"
+                :node="attr"
                 @input="updateRaw()"
                 @focus="$event.target.select()"
               />
@@ -113,9 +112,7 @@
 
 <script lang="ts">
 import { each } from 'lodash';
-import XRegExp from 'xregexp';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import PopupBox from './popup-box.vue';
 import {
   isTextNode,
   SaveNodeKeyboardEvent,
@@ -133,10 +130,12 @@ import {
   xmlJs,
 } from '../../utils';
 import { getTexts } from '../../translations/translation';
+import InputName from '../inputs/input-name.vue';
+import PopupBox from './popup-box.vue';
 
 @Component({
   name: 'popup-node',
-  components: { PopupBox },
+  components: { InputName, PopupBox },
 })
 export default class PopupNode extends Vue {
   @Prop() private node!: XmlNode;
@@ -156,17 +155,6 @@ export default class PopupNode extends Vue {
 
   // noinspection JSUnusedLocalSymbols
   private mounted(): void {
-    each(
-      this.$el.querySelectorAll(
-        '.g8-xml__popup__attributes .g8-xml__popup__control-label input',
-      ),
-      e => {
-        e.setAttribute(
-          'pattern',
-          XRegExp('[\\p{L}_][\\p{L}\\d_:-]+').toString(),
-        );
-      },
-    );
     this.$nextTick(() => this.initRawSize());
   }
 
@@ -201,7 +189,10 @@ export default class PopupNode extends Vue {
   private validateXml(): boolean {
     if (isTextNode(this.node)) return true;
     try {
-      xmlJs(this.raw);
+      if (!Object.keys(xmlJs(this.raw)).length) {
+        this.errorMessageHint = this.errorMessage = this.texts.errInvalidXml;
+        return false;
+      }
       this.errorMessage = '';
       this.errorMessageHint = '';
       return true;
