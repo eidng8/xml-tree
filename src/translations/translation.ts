@@ -34,6 +34,7 @@ const texts = {
   errNodeParent: 'Invalid node parent',
   errInvalidXml: 'Invalid XML',
   errInvalidName: 'Invalid name',
+  errInvalidEncoding: 'Invalid encoding',
 } as { [key: string]: string };
 
 export function getTexts(): { [key: string]: string } {

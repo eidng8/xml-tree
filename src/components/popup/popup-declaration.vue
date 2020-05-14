@@ -27,9 +27,9 @@
         <div class="g8-xml__popup__attribute">
           <label>
             <span>encoding = </span>
-            <input
+            <input-encoding
               type="text"
-              v-model="encoding.value"
+              v-model="encoding"
               @focus="$event.target.select()"
             />
           </label>
@@ -60,10 +60,11 @@ import {
 import PopupBox from './popup-box.vue';
 import { cloneWithoutHierarchy, removeHierarchyFromNode } from '../../utils';
 import { getTexts } from '../../translations/translation';
+import InputEncoding from '../inputs/input-encoding.vue';
 
 @Component({
   name: 'popup-declaration',
-  components: { PopupBox },
+  components: { InputEncoding, PopupBox },
 })
 export default class PopupDeclaration extends Vue {
   @Prop() private node!: XmlDeclaration;
@@ -112,6 +113,12 @@ export default class PopupDeclaration extends Vue {
   }
 
   private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+    const invalid = this.$el.querySelector(':invalid') as HTMLInputElement;
+    if (invalid) {
+      invalid.reportValidity();
+      evt.preventDefault();
+      return;
+    }
     evt.data = this.operand;
     removeHierarchyFromNode(this.operand);
     /**
