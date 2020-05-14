@@ -26,7 +26,7 @@ describe('Node editing', () => {
     expect.assertions(3);
     const wrapper = mount(G8XmlEdit, { propsData: { xml: '<root/>' } });
     await rightClickDeclaration(wrapper);
-    await enterText(wrapper, 'input', 'abc');
+    await enterText(wrapper, 'input', 'ascii');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['declaration-changed'].length).toBe(1);
@@ -39,7 +39,7 @@ describe('Node editing', () => {
         },
         {
           name: 'encoding',
-          value: 'abc',
+          value: 'ascii',
         },
         {
           name: 'standalone',
@@ -48,8 +48,17 @@ describe('Node editing', () => {
       ],
     });
     expect(wrapper.find('.g8-tree__node').text()).toMatch(
-      /version="1.0"\s+encoding="abc"\s+standalone="no"/,
+      /version="1.0"\s+encoding="ascii"\s+standalone="no"/,
     );
+  });
+
+  it('validates declaration encoding', async () => {
+    expect.assertions(1);
+    const wrapper = mount(G8XmlEdit, { propsData: { xml: '<root/>' } });
+    await rightClickDeclaration(wrapper);
+    await enterText(wrapper, 'input', 'abc');
+    await savePopup(wrapper);
+    expect(wrapper.emitted()).toEqual({});
   });
 
   it('edits CDATA node', async () => {
