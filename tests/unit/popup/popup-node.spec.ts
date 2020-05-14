@@ -75,23 +75,17 @@ describe('element node', () => {
     expect(msg.text()).toBe('Invalid XML');
   });
 
-  it('shows error message about tag name', async () => {
-    expect.assertions(3);
+  it('checks tag name', async () => {
+    expect.assertions(1);
     await enterText(wrapper, 'input', '&');
-    expect(wrapper.find('.g8--error').exists()).toBe(true);
-    const msg = wrapper.find('.g8-xml__popup__message');
-    expect(msg.exists()).toBe(true);
-    expect(msg.text()).toBe('Invalid XML');
+    expect(wrapper.find(':invalid').exists()).toBe(true);
   });
 
   it('shows error message about attribute', async () => {
-    expect.assertions(3);
+    expect.assertions(1);
     const inputs = wrapper.findAll('input');
     await enterText(wrapper, inputs.at(1), '&');
-    expect(wrapper.find('.g8--error').exists()).toBe(true);
-    const msg = wrapper.find('.g8-xml__popup__message');
-    expect(msg.exists()).toBe(true);
-    expect(msg.text()).toBe('Invalid XML');
+    expect(wrapper.find(':invalid').exists()).toBe(true);
   });
 
   it('can be canceled', async () => {

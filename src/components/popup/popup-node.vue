@@ -120,6 +120,7 @@ import {
   XmlElement,
   XmlInstruction,
   XmlNode,
+  XmlText,
 } from '../../types/types';
 import {
   cloneWithoutHierarchy,
@@ -205,8 +206,14 @@ export default class PopupNode extends Vue {
 
   private rawChanged(): void {
     if (!this.validateXml()) return;
-    const node = xmlJs(this.raw) as XmlElement;
-    const obj = node.nodes![0] as XmlNode;
+    let node: XmlElement, obj: XmlNode;
+    if (isTextNode(this.node)) {
+      node = xmlJs(`<tmp>${this.raw}</tmp>`) as XmlElement;
+      obj = (node.nodes![0] as XmlElement).nodes![0] as XmlText;
+    } else {
+      node = xmlJs(this.raw) as XmlElement;
+      obj = node.nodes![0] as XmlNode;
+    }
     removeHierarchyFromNode(obj);
     Object.assign(this.node, obj);
   }
