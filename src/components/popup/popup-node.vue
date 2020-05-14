@@ -11,7 +11,7 @@
     :message="errorMessage"
     :message-hint="errorMessageHint"
     @save="save($event)"
-    @close="$emit('close', $event)"
+    @close="close($event)"
   >
     <template v-slot:title>
       <span :class="[`g8-xml__${operand.type}`]">
@@ -259,6 +259,10 @@ export default class PopupNode extends Vue {
      * @param {SaveNodeMouseEvent|SaveNodeKeyboardEvent} event
      */
     this.$emit('save', evt);
+  }
+
+  private close(evt: Event): void {
+    this.$emit('close', evt);
   }
 }
 </script>

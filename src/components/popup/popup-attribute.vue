@@ -8,7 +8,7 @@
   <popup-box
     class="g8-xml__popup_element"
     @save="save($event)"
-    @close="$emit('close', $event)"
+    @close="close($event)"
   >
     <template v-slot:title>
       <span class="g8-xml__attribute" style="text-transform: none !important;">
@@ -57,6 +57,11 @@ export default class PopupAttribute extends Vue {
   private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     evt.data = this.operand;
     this.$emit('save', evt);
+    this.close(evt);
+  }
+
+  private close(evt: Event): void {
+    this.$emit('close', evt);
   }
 }
 </script>

@@ -37,37 +37,38 @@ describe('basics', () => {
   });
 
   it('emits `close` event when close button is clicked', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     await click(wrapper, '.g8-xml__popup__header__close');
+    expect(wrapper.emittedByOrder().length).toBe(1);
     expect(wrapper.emitted().close.length).toBe(1);
   });
 
   it('emits `close` event when cancel button is clicked', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     await click(wrapper, '.g8-xml__popup__footer button:last-child');
+    expect(wrapper.emittedByOrder().length).toBe(1);
     expect(wrapper.emitted().close.length).toBe(1);
   });
 
-  it('emits `save` & `close` event when save button is clicked', async () => {
+  it('emits `save` event when save button is clicked', async () => {
     expect.assertions(2);
     await savePopup(wrapper);
-    const emitted = wrapper.emittedByOrder();
-    expect(emitted[0].name).toBe('save');
-    expect(emitted[1].name).toBe('close');
+    expect(wrapper.emittedByOrder().length).toBe(1);
+    expect(wrapper.emitted().save.length).toBe(1);
   });
 
   it('emits `close` event when ESC is pressed', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     await keyup(wrapper, 'Escape');
+    expect(wrapper.emittedByOrder().length).toBe(1);
     expect(wrapper.emitted().close.length).toBe(1);
   });
 
-  it('emits `save` & `close` event when Enter is pressed', async () => {
+  it('emits `save` event when Enter is pressed', async () => {
     expect.assertions(2);
     await keyup(wrapper, 'Enter');
-    const emitted = wrapper.emittedByOrder();
-    expect(emitted[0].name).toBe('save');
-    expect(emitted[1].name).toBe('close');
+    expect(wrapper.emittedByOrder().length).toBe(1);
+    expect(wrapper.emitted().save.length).toBe(1);
   });
 });
 
@@ -77,12 +78,11 @@ describe('slot', () => {
       (wrapper = mount(PopupBox, { scopedSlots: { default: '<textarea/>' } })),
   );
 
-  it('emits `save` & `close` event when Ctrl+Enter is pressed', async () => {
+  it('emits `save` event when Ctrl+Enter is pressed', async () => {
     expect.assertions(2);
     wrapper.find('textarea').element.focus();
     await keyup(wrapper, 'Enter', { ctrlKey: true });
-    const emitted = wrapper.emittedByOrder();
-    expect(emitted[0].name).toBe('save');
-    expect(emitted[1].name).toBe('close');
+    expect(wrapper.emittedByOrder().length).toBe(1);
+    expect(wrapper.emitted().save.length).toBe(1);
   });
 });

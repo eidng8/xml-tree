@@ -82,7 +82,6 @@ export default class PopupBox extends Vue {
 
   private save(evt: Event): void {
     this.$emit('save', evt);
-    if (!evt.defaultPrevented) this.close(evt);
   }
 
   private keyup(evt: KeyboardEvent): void {
