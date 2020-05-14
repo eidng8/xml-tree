@@ -58,7 +58,7 @@ import {
   XmlDeclaration,
 } from '../../types/types';
 import PopupBox from './popup-box.vue';
-import { removeHierarchyFromNode } from '../../utils';
+import { cloneWithoutHierarchy, removeHierarchyFromNode } from '../../utils';
 import { getTexts } from '../../translations/translation';
 
 @Component({
@@ -67,6 +67,8 @@ import { getTexts } from '../../translations/translation';
 })
 export default class PopupDeclaration extends Vue {
   @Prop() private node!: XmlDeclaration;
+
+  private operand!: XmlDeclaration;
 
   private texts = getTexts();
 
@@ -78,13 +80,14 @@ export default class PopupDeclaration extends Vue {
 
   // noinspection JSUnusedLocalSymbols
   private created(): void {
-    if (!this.node.attributes) this.node.attributes = [];
-    const has = map(this.node.attributes, 'name');
+    this.operand = cloneWithoutHierarchy(this.node) as XmlDeclaration;
+    if (!this.operand.attributes) this.operand.attributes = [];
+    const has = map(this.operand.attributes, 'name');
     each(
       filter(['version', 'encoding', 'standalone'], n => !includes(has, n)),
-      n => this.node.attributes.push({ name: n, value: undefined }),
+      n => this.operand.attributes.push({ name: n, value: undefined }),
     );
-    each(this.node.attributes, attribute => {
+    each(this.operand.attributes, attribute => {
       switch (attribute.name) {
         case 'encoding':
           this.encoding = attribute;
@@ -109,8 +112,8 @@ export default class PopupDeclaration extends Vue {
   }
 
   private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
-    evt.data = this.node;
-    removeHierarchyFromNode(this.node);
+    evt.data = this.operand;
+    removeHierarchyFromNode(this.operand);
     /**
      * The node passed in the `data` field shall be saved.
      * @param {SaveNodeMouseEvent|SaveNodeKeyboardEvent} event

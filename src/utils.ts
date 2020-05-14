@@ -14,7 +14,6 @@ import {
   XmlNodeTypes,
   XmlRoot,
 } from './types/types';
-import XRegExp from 'xregexp';
 
 export type AnyObject = { [key: string]: unknown; [key: number]: unknown };
 
@@ -203,25 +202,4 @@ export function createEmptyNode(
     (node as any)[type] = `new ${type}`;
   }
   return node;
-}
-
-export function ValidNameRegex(flags?: string): RegExp {
-  if (!flags) flags = 'u';
-  else if (-1 == flags.indexOf('u')) flags += 'u';
-  console.log(
-    XRegExp('(?:[^"]|(?!&(?!\\w+;)))*', 'nu'),
-    XRegExp('(?:[^"]|(?!&(?!\\w+;)))*', 'nu').exec('abd'),
-  );
-  return XRegExp('[_\\p{L}][-_:\\d\\p{L}]+', flags);
-}
-
-export function ValidNamePattern(flags?: string): string {
-  const rx = ValidNameRegex(flags).toString();
-  return rx.substr(1, rx.lastIndexOf('/') - 1);
-}
-
-export function ValidAttributeValueRegex(flags?: string): RegExp {
-  if (!flags) flags = 'u';
-  else if (-1 == flags.indexOf('u')) flags += 'u';
-  return XRegExp('[^]+', flags);
 }

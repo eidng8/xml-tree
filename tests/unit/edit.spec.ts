@@ -205,9 +205,8 @@ describe('Attribute editing', () => {
       propsData: { xml: '<root test="abc"/>', showAttrValue: true },
     });
     await rightClickBadge(wrapper, `${first} .g8-tree__node__entry__tags__tag`);
-    expect(inputValue(wrapper, 'input')).toBe('test');
+    expect(wrapper.find('.g8-xml__popup__header__title').text()).toBe('test');
     expect(inputValue(wrapper, 'textarea')).toBe('abc');
-    await enterText(wrapper, 'input', 'abc');
     await enterText(wrapper, 'textarea', 'def');
     await savePopup(wrapper);
     const emitted = wrapper.emitted()['attribute-changed'];
@@ -218,16 +217,16 @@ describe('Attribute editing', () => {
       name: 'root',
       attributes: [
         {
-          name: 'abc',
+          name: 'test',
           value: 'def',
         },
       ],
     });
     expect(emitted[0][1]).toEqual({
-      name: 'abc',
+      name: 'test',
       value: 'def',
     });
-    expect(wrapper.find(first).text()).toMatch(/root\s+abc\s*="def"/);
+    expect(wrapper.find(first).text()).toMatch(/root\s+test\s*="def"/);
   });
 });
 

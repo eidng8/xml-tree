@@ -49,13 +49,13 @@
     </ul>
     <popup-declaration
       v-if="popupOpen && !currentNode.type"
-      :node="popupItem"
+      :node="currentNode"
       @save="saveNode($event)"
       @close="closePopup()"
     ></popup-declaration>
     <popup-node
       v-else-if="popupOpen"
-      :node="popupItem"
+      :node="currentNode"
       @save="saveNode($event)"
       @close="closePopup()"
     ></popup-node>
@@ -436,12 +436,16 @@ export default class G8XmlEdit extends Vue {
   private saveAttributePopup(
     evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent,
   ): void {
+    const attributes = (this.currentNode! as XmlElement).attributes!;
+    const attribute = evt.data as XmlAttribute;
+    const idx = findIndex(attributes, a => attribute.name == a.name);
+    attributes[idx] = attribute;
     /**
      * A XML node attribute has been changed
      * @type {XmlNode}
      * @param {XmlAttribute} attribute
      */
-    this.$emit('attribute-changed', this.currentNode, evt.data);
+    this.$emit('attribute-changed', this.currentNode, attribute);
   }
 
   /**
@@ -484,12 +488,11 @@ export default class G8XmlEdit extends Vue {
         this.currentNodeIndex = this.currentNodeParent.nodes!.length;
       }
     }
-    this.editNode(
-      createEmptyNode(
-        actions[2].toLowerCase() as XmlNodeTypes,
-        this.piUseAttribute,
-      ),
+    this.currentNode = createEmptyNode(
+      actions[2].toLowerCase() as XmlNodeTypes,
+      this.piUseAttribute,
     );
+    this.editNode(this.currentNode);
   }
 }
 </script>

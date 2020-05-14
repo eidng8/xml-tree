@@ -14,33 +14,33 @@
     @close="$emit('close', $event)"
   >
     <template v-slot:title>
-      <span :class="[`g8-xml__${node.type}`]">
-        {{ texts[node.type] }}
+      <span :class="[`g8-xml__${operand.type}`]">
+        {{ texts[operand.type] }}
       </span>
     </template>
     <template>
-      <div class="g8-xml__popup__name" v-if="node.name">
+      <div class="g8-xml__popup__name" v-if="operand.name">
         <div class="g8-xml__popup__control-group">
           <div class="g8-xml__popup__control">
             <input-name
               type="text"
               tabindex="999"
               class="g8-xml--large"
-              :node="node"
+              :node="operand"
               @input="updateRaw()"
               @focus="$event.target.select()"
             />
           </div>
         </div>
       </div>
-      <div v-if="node.attributes">
+      <div v-if="operand.attributes">
         <div class="g8-xml__popup__attributes">
           <div class="g8-xml__popup__separator">
             <span>{{ texts.attributes }}</span>
           </div>
           <div
             class="g8-xml__popup__control-group g8-xml__popup__attribute"
-            v-for="(attr, idx) in node.attributes"
+            v-for="(attr, idx) in operand.attributes"
             :key="idx"
           >
             <span class="g8-xml__popup__control-label">
@@ -87,7 +87,7 @@
         <textarea
           tabindex="1000"
           class="g8-xml__popup__control"
-          v-model="node[node.type]"
+          v-model="operand[operand.type]"
           @input="updateRaw()"
           @focus="$event.target.select()"
         ></textarea>
@@ -141,6 +141,8 @@ import PopupBox from './popup-box.vue';
 export default class PopupNode extends Vue {
   @Prop() private node!: XmlNode;
 
+  private operand!: XmlNode;
+
   private texts = getTexts();
 
   private raw = '';
@@ -151,6 +153,7 @@ export default class PopupNode extends Vue {
 
   // noinspection JSUnusedLocalSymbols
   private created(): void {
+    this.operand = cloneWithoutHierarchy(this.node) as XmlNode;
     this.updateRaw();
   }
 
@@ -175,20 +178,19 @@ export default class PopupNode extends Vue {
   }
 
   private updateRaw(): void {
-    // removeHierarchyFromNode(this.node);
-    // rectifyNodeAttributes(this.node);
-    if (isTextNode(this.node)) {
-      this.raw = rectifyAttributeValue(this.node.text);
+    const bak = this.raw;
+    if (isTextNode(this.operand)) {
+      this.raw = rectifyAttributeValue(this.operand.text);
     } else {
-      const node = cloneWithoutHierarchy(this.node);
+      const node = cloneWithoutHierarchy(this.operand);
       rectifyNodeAttributes(node);
       this.raw = objXml({ nodes: [node] });
     }
-    this.validateXml();
+    if (!this.validateXml()) this.raw = bak;
   }
 
   private validateXml(): boolean {
-    if (isTextNode(this.node)) return true;
+    if (isTextNode(this.operand)) return true;
     try {
       if (!Object.keys(xmlJs(this.raw)).length) {
         this.errorMessageHint = this.errorMessage = this.texts.errInvalidXml;
@@ -207,19 +209,21 @@ export default class PopupNode extends Vue {
   private rawChanged(): void {
     if (!this.validateXml()) return;
     let node: XmlElement, obj: XmlNode;
-    if (isTextNode(this.node)) {
+    if (isTextNode(this.operand)) {
       node = xmlJs(`<tmp>${this.raw}</tmp>`) as XmlElement;
       obj = (node.nodes![0] as XmlElement).nodes![0] as XmlText;
     } else {
-      node = xmlJs(this.raw) as XmlElement;
+      node = xmlJs(this.raw, {
+        instructionHasAttributes: !!(this.operand as XmlInstruction).attributes,
+      }) as XmlElement;
       obj = node.nodes![0] as XmlNode;
     }
     removeHierarchyFromNode(obj);
-    Object.assign(this.node, obj);
+    this.operand = obj;
   }
 
   private newAttribute(): void {
-    const node = this.node as XmlElement;
+    const node = this.operand as XmlElement;
     node.attributes!.push({ name: '', value: '' });
     this.$forceUpdate();
     this.$nextTick(() => {
@@ -232,7 +236,7 @@ export default class PopupNode extends Vue {
   }
 
   private deleteAttribute(idx: number): void {
-    const node = this.node as XmlElement;
+    const node = this.operand as XmlElement;
     node.attributes!.splice(idx, 1);
     this.updateRaw();
     this.$forceUpdate();
@@ -240,12 +244,12 @@ export default class PopupNode extends Vue {
 
   private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
     const wrapper = xmlJs(
-      isTextNode(this.node) ? `<tmp>${this.raw}</tmp>` : this.raw,
+      isTextNode(this.operand) ? `<tmp>${this.raw}</tmp>` : this.raw,
       {
-        instructionHasAttributes: !!(this.node as XmlInstruction).attributes,
+        instructionHasAttributes: !!(this.operand as XmlInstruction).attributes,
       },
     ) as XmlElement;
-    const node = (isTextNode(this.node)
+    const node = (isTextNode(this.operand)
       ? (wrapper.nodes![0] as XmlElement).nodes![0]
       : wrapper.nodes![0]) as XmlNode;
     removeHierarchyFromNode(node);
