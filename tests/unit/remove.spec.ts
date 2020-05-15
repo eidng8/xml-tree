@@ -70,10 +70,11 @@ describe('Node removal', () => {
   it('removes element node', async () => {
     expect.assertions(2);
     const wrapper = mount(G8XmlEdit, {
-      propsData: { xml: '<root><abc/></root>' },
+      propsData: { xml: '<root><abc>def</abc></root>' },
     });
     await expandTreeNode(wrapper, root);
-    expect(wrapper.findAll('.g8-tree__node').length).toBe(3);
+    await expandTreeNode(wrapper, `${root} .g8-tree__node`);
+    expect(wrapper.findAll('.g8-tree__node').length).toBe(4);
     await rightClick(wrapper, `${root} .g8-tree__node`);
     await click(wrapper, '#g8-xml-menu-remove');
     expect(wrapper.findAll('.g8-tree__node').length).toBe(2);

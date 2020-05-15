@@ -26,9 +26,9 @@ import { getTexts } from '../../translations/translation';
 
 @Component({ name: 'node-menu', components: { G8PopupMenu } })
 export default class NodeMenu extends Vue {
-  private texts = getTexts();
+  private static readonly SEPARATOR = { label: '---' };
 
-  private separator = { label: '---' };
+  private texts = getTexts();
 
   open(node: XmlNode, isRoot = false, evt?: MouseEvent): void {
     (this.$children[0] as G8PopupMenu).open(
@@ -42,11 +42,11 @@ export default class NodeMenu extends Vue {
    * @param node
    * @param isRoot
    */
-  private generateNodeMenu(node: XmlNode, isRoot = false): G8MenuItem[] {
+  private generateNodeMenu(node: XmlNode, isRoot: boolean): G8MenuItem[] {
     const subtitle = `< ${(node as XmlElement).name || node.type} >`;
     const menu = [
       { id: 'g8-xml-menu-edit', label: this.texts.menuEdit, subtitle },
-      this.separator,
+      NodeMenu.SEPARATOR,
       {
         id: 'g8-xml-menu-insert-after',
         label: this.texts.menuInsertAfter,
@@ -70,7 +70,7 @@ export default class NodeMenu extends Vue {
     ] as G8MenuItem[];
     if (isElementNode(node)) menu.push(...this.generateElementMenu(node));
     if (!isRoot || !isElementNode(node)) {
-      menu.push(this.separator, {
+      menu.push(NodeMenu.SEPARATOR, {
         id: 'g8-xml-menu-remove',
         label: this.texts.menuRemove,
         subtitle,
@@ -84,9 +84,9 @@ export default class NodeMenu extends Vue {
    * @param node
    */
   private generateElementMenu(node: XmlElement): G8MenuItem[] {
-    const subtitle = `< ${(node as XmlElement).name || node.type} >`;
+    const subtitle = `< ${node.name} >`;
     return [
-      this.separator,
+      NodeMenu.SEPARATOR,
       {
         id: 'g8-xml-menu-append-child',
         label: this.texts.menuAppend,
@@ -117,7 +117,7 @@ export default class NodeMenu extends Vue {
   private generateInsertMenu(
     parentId: string,
     node: XmlNode,
-    isRoot = false,
+    isRoot: boolean,
   ): G8MenuItem[] {
     const nodes = ['CDATA', 'comment', 'instruction'];
     if (isRoot) {
