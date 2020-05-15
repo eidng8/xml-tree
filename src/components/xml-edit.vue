@@ -65,24 +65,23 @@
       @save="saveAttributePopup($event)"
       @close="closeAttributePopup()"
     ></popup-attribute>
-    <g8-popup-menu
+    <node-menu
       class="g8-menu g8-menu--off"
       ref="menu"
-      :add-element-id="true"
       @select="action($event)"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { findIndex, map, remove } from 'lodash';
+import { findIndex, remove } from 'lodash';
+import { Options } from 'xml-js';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8VueTree } from 'g8-vue-tree';
 import { G8MenuItem, G8PopupMenu } from 'g8-popup-menu';
 import {
   defaultDeclaration,
   isDeclarationNode,
-  isElementNode,
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
   XmlAttribute,
@@ -95,6 +94,7 @@ import {
 import {
   cloneWithoutHierarchy,
   createEmptyNode,
+  dehydrate,
   objXml,
   xmlJs,
 } from '../utils';
@@ -102,11 +102,12 @@ import { getTexts } from '../translations/translation';
 import PopupAttribute from './popup/popup-attribute.vue';
 import PopupDeclaration from './popup/popup-declaration.vue';
 import PopupNode from './popup/popup-node.vue';
-import { Options } from 'xml-js';
+import NodeMenu from './menus/node-menu.vue';
 
 @Component({
   name: 'g8-xml-edit',
   components: {
+    NodeMenu,
     PopupAttribute,
     PopupNode,
     PopupDeclaration,
@@ -195,11 +196,6 @@ export default class G8XmlEdit extends Vue {
   private texts = getTexts();
 
   /**
-   * The popup menu content related to {@link currentNode}.
-   */
-  private nodeMenu?: G8MenuItem[];
-
-  /**
    * The attribute being edited in popup box.
    */
   private editingAttribute: XmlAttribute | null = null;
@@ -257,79 +253,12 @@ export default class G8XmlEdit extends Vue {
    */
   private openMenu(item: XmlNode, evt: MouseEvent): void {
     this.setCurrentNode(item);
-    this.nodeMenu = this.generateNodeMenu(item);
-    (this.$refs.menu as G8PopupMenu).open(this.nodeMenu, evt);
-  }
-
-  /**
-   * Generate context menu according to `node`.
-   * @param node
-   */
-  private generateNodeMenu(node: XmlNode): G8MenuItem[] {
-    const subtitle = `< ${(node as XmlElement).name || node.type} >`;
-    const menu = [
-      { id: 'g8-xml-menu-edit', label: this.texts.menuEdit, subtitle },
-      { label: '---' },
-      { id: 'g8-xml-menu-remove', label: this.texts.menuRemove, subtitle },
-      { label: '---' },
-      {
-        id: 'g8-xml-menu-insert-after',
-        label: this.texts.menuInsertAfter,
-        subtitle,
-      },
-      {
-        id: 'g8-xml-menu-insert-before',
-        label: this.texts.menuInsertBefore,
-        subtitle,
-      },
-    ] as G8MenuItem[];
-    for (let idx = 4; idx < menu.length; idx++) {
-      const item = menu[idx];
-      const nodes =
-        node.parent === this.tree
-          ? ['CDATA', 'comment', 'DOCTYPE', 'instruction']
-          : ['CDATA', 'comment', 'element', 'instruction', 'text'];
-      item.children = map(
-        nodes,
-        e =>
-          ({
-            id: `${item.id}-${e}`.toLowerCase(),
-            label: e,
-          } as G8MenuItem),
-      );
-    }
-    if (isElementNode(node)) {
-      menu.push(
-        {
-          id: 'g8-xml-menu-append-child',
-          label: this.texts.menuAppend,
-          subtitle,
-          children: map(
-            ['CDATA', 'comment', 'element', 'instruction', 'text'],
-            e =>
-              ({
-                id: `g8-xml-menu-append-child-${e}`.toLowerCase(),
-                label: e,
-              } as G8MenuItem),
-          ),
-        },
-        {
-          id: 'g8-xml-menu-prepend-child',
-          label: this.texts.menuPrepend,
-          subtitle,
-          children: map(
-            ['CDATA', 'comment', 'element', 'instruction', 'text'],
-            e =>
-              ({
-                id: `g8-xml-menu-prepend-child-${e}`.toLowerCase(),
-                label: e,
-              } as G8MenuItem),
-          ),
-        },
-      );
-    }
-    if ('element' == node.type && node.parent === this.tree) menu.splice(1, 2);
-    return menu;
+    // eslint-disable-next-line
+    (this.$refs.menu as any).open(
+      this.currentNode,
+      this.currentNode!.parent === this.tree,
+      evt,
+    );
   }
 
   /**
@@ -384,6 +313,7 @@ export default class G8XmlEdit extends Vue {
     ) as XmlNode | XmlDeclaration;
     if (isDeclarationNode(newNode)) {
       this.tree.declaration = newNode;
+      dehydrate(this.tree.declaration);
       /**
        * The XML declaration has been changed
        * @type {XmlDeclaration}
@@ -393,6 +323,7 @@ export default class G8XmlEdit extends Vue {
       this.saveNewNode(newNode);
     } else {
       this.currentNodeParent.nodes![this.currentNodeIndex] = newNode;
+      dehydrate(newNode);
       /**
        * A new XML node has been changed
        * @type {XmlNode}
@@ -423,6 +354,7 @@ export default class G8XmlEdit extends Vue {
         Object.assign({}, p),
       );
     }
+    dehydrate(node);
     /**
      * A new XML node has been created
      * @type {XmlNode}
@@ -450,6 +382,7 @@ export default class G8XmlEdit extends Vue {
     const attribute = evt.data as XmlAttribute;
     const idx = findIndex(attributes, a => attribute.name == a.name);
     attributes[idx] = attribute;
+    dehydrate(this.currentNode!);
     /**
      * A XML node attribute has been changed
      * @type {XmlNode}
@@ -472,6 +405,12 @@ export default class G8XmlEdit extends Vue {
     const item = this.currentNode! as XmlNode;
     remove(item.parent!.nodes!, n => n === item);
     this.$forceUpdate();
+    dehydrate(item);
+    /**
+     * A new XML node has been created
+     * @type {XmlNode}
+     */
+    this.$emit('node-removed', item);
   }
 
   /**

@@ -203,3 +203,25 @@ export function createEmptyNode(
   }
   return node;
 }
+
+export function dehydrate(node: XmlNode | XmlDeclaration): void {
+  const keep = [
+    'name',
+    'value',
+    'type',
+    'cdata',
+    'comment',
+    'doctype',
+    'instruction',
+    'text',
+    'attributes',
+    'declaration',
+    'parent',
+    'nodes',
+  ];
+  each(Object.keys(node), k => {
+    if (!keep.includes(k)) {
+      delete ((node as unknown) as { [key: string]: unknown })[k];
+    }
+  });
+}

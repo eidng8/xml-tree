@@ -30,13 +30,25 @@
       :xml="xml"
       :show-attr-value="showAttrValue"
       :pi-use-attribute="piAttr"
+      @declaration-changed="xmlChanged('declaration-changed', $event)"
+      @attribute-changed="xmlChanged('attribute-changed', $event)"
+      @node-changed="xmlChanged('node-changed', $event)"
+      @node-created="xmlChanged('node-created', $event)"
+      @node-removed="xmlChanged('node-removed', $event)"
     />
+    <hr />
+    <div>
+      <code>{{ evtName }}</code>
+      <code> : </code>
+      <code>{{ evtNode }}</code>
+    </div>
+    <pre class="xml">{{ output }}</pre>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { G8XmlEdit } from '.';
+import { cloneWithoutHierarchy, G8XmlEdit, XmlDeclaration, XmlNode } from '.';
 
 @Component({ components: { G8XmlEdit } })
 export default class App extends Vue {
@@ -69,6 +81,17 @@ export default class App extends Vue {
 
   darkTheme = true;
 
+  output = '';
+
+  evtName = '';
+
+  evtNode: XmlNode | XmlDeclaration | null = null;
+
+  // noinspection JSUnusedGlobalSymbols
+  created(): void {
+    this.output = this.xml;
+  }
+
   piChanged(): void {
     this.$nextTick(() => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,6 +99,12 @@ export default class App extends Vue {
       tree.reloadXml();
       tree.$forceUpdate();
     });
+  }
+
+  xmlChanged(name: string, evt: XmlNode | XmlDeclaration): void {
+    this.evtName = name;
+    this.evtNode = cloneWithoutHierarchy(evt);
+    this.output = this.$children[0] ? this.$children[0].toString() : '';
   }
 }
 </script>
@@ -123,5 +152,10 @@ hr {
 
 .control-group {
   display: inline-flex;
+}
+
+.xml {
+  overflow: auto;
+  max-height: 30em;
 }
 </style>

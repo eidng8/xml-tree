@@ -114,6 +114,7 @@
 import { each } from 'lodash';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import {
+  isElementNode,
   isTextNode,
   SaveNodeKeyboardEvent,
   SaveNodeMouseEvent,
@@ -154,6 +155,9 @@ export default class PopupNode extends Vue {
   // noinspection JSUnusedLocalSymbols
   private created(): void {
     this.operand = cloneWithoutHierarchy(this.node) as XmlNode;
+    if (isElementNode(this.operand) && !this.operand.attributes) {
+      this.operand.attributes = [];
+    }
     this.updateRaw();
   }
 
