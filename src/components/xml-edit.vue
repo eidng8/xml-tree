@@ -92,11 +92,17 @@ import {
   XmlNodeTypes,
   XmlRoot,
 } from '../types/types';
-import { cloneWithoutHierarchy, createEmptyNode, xmlJs } from '../utils';
+import {
+  cloneWithoutHierarchy,
+  createEmptyNode,
+  objXml,
+  xmlJs,
+} from '../utils';
 import { getTexts } from '../translations/translation';
 import PopupAttribute from './popup/popup-attribute.vue';
 import PopupDeclaration from './popup/popup-declaration.vue';
 import PopupNode from './popup/popup-node.vue';
+import { Options } from 'xml-js';
 
 @Component({
   name: 'g8-xml-edit',
@@ -213,6 +219,10 @@ export default class G8XmlEdit extends Vue {
     ) {
       this.tree.declaration = defaultDeclaration(this.tree);
     }
+  }
+
+  toString(options?: Options.JS2XML): string {
+    return objXml(this.tree, options);
   }
 
   // noinspection JSUnusedLocalSymbols

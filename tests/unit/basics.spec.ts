@@ -103,3 +103,13 @@ describe('XML view', () => {
     });
   });
 });
+
+describe('toXml', () => {
+  it('converts to XML string', () => {
+    expect.assertions(1);
+    const wrapper = mount(G8XmlEdit, { propsData: { xml: '<test/>' } });
+    expect((wrapper.vm as any).toString()).toBe(
+      '<?xml version="1.0" encoding="utf-8" standalone="no"?>\n<test/>',
+    );
+  });
+});

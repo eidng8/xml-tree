@@ -138,7 +138,7 @@ export function objXml(obj: object, options?: Options.JS2XML): string {
   const opts = Object.assign(
     {},
     {
-      spaces: 2,
+      spaces: 4,
       elementsKey: 'nodes',
       attributesFn: (attrs: string | AnyObject[]) => {
         /* istanbul ignore if: unable to unit test */

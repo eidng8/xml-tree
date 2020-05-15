@@ -226,8 +226,8 @@ describe('objXml', () => {
     expect(actual).toBe(
       `<?xml version="1.0" encoding="utf-8"?>
 <a>
-  <b c="d">
-    <e/></b></a>`,
+    <b c="d">
+        <e/></b></a>`,
     );
   });
 });
