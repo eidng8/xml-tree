@@ -62,13 +62,13 @@ export default class NodeMenu extends Vue {
         label: this.texts.menuInsertBefore,
         subtitle,
         children: this.generateInsertMenu(
-          'g8-xml-menu-insert-after',
+          'g8-xml-menu-insert-before',
           node,
           isRoot,
         ),
       },
     ] as G8MenuItem[];
-    if (isElementNode(node)) menu.concat(this.generateElementMenu(node));
+    if (isElementNode(node)) menu.push(...this.generateElementMenu(node));
     if (!isRoot || !isElementNode(node)) {
       menu.push(this.separator, {
         id: 'g8-xml-menu-remove',
@@ -86,6 +86,7 @@ export default class NodeMenu extends Vue {
   private generateElementMenu(node: XmlElement): G8MenuItem[] {
     const subtitle = `< ${(node as XmlElement).name || node.type} >`;
     return [
+      this.separator,
       {
         id: 'g8-xml-menu-append-child',
         label: this.texts.menuAppend,
@@ -140,10 +141,11 @@ export default class NodeMenu extends Vue {
     const items = ['CDATA', 'comment', 'element', 'instruction'];
     if (
       !(
-        (parentId.indexOf('-append-') > -1 &&
+        node.nodes &&
+        ((parentId.indexOf('-append-') > -1 &&
           isTextNode(last(node.nodes) as XmlNode)) ||
-        (parentId.indexOf('-prepend-') > -1 &&
-          isTextNode(head(node.nodes) as XmlNode))
+          (parentId.indexOf('-prepend-') > -1 &&
+            isTextNode(head(node.nodes) as XmlNode)))
       )
     ) {
       items.push('text');
