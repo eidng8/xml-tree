@@ -63,7 +63,7 @@ describe('basics', () => {
     wrapper = mount(PopupDeclaration, {
       propsData: { node: { attributes: [{ name: 'version', value: '1.0' }] } },
     });
-    await enterText(wrapper, 'input', 'b');
+    await enterText(wrapper, 'b');
     await closePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted.save).toBeUndefined();

@@ -29,7 +29,7 @@ describe('Node insertion', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-insert-after');
     await click(wrapper, '#g8-xml-menu-insert-after-cdata');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
@@ -46,7 +46,7 @@ describe('Node insertion', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-insert-before');
     await click(wrapper, '#g8-xml-menu-insert-before-comment');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
@@ -63,7 +63,7 @@ describe('Node insertion', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-insert-before');
     await click(wrapper, '#g8-xml-menu-insert-before-doctype');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
@@ -80,7 +80,7 @@ describe('Node insertion', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-insert-before');
     await click(wrapper, '#g8-xml-menu-insert-before-instruction');
-    await enterText(wrapper, 'input', 'abc');
+    await enterText(wrapper, 'abc');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
@@ -104,7 +104,7 @@ describe('Child node insertion', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-append-child');
     await click(wrapper, '#g8-xml-menu-append-child-text');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
@@ -124,7 +124,7 @@ describe('Child node insertion', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-prepend-child');
     await click(wrapper, '#g8-xml-menu-prepend-child-element');
-    await enterText(wrapper, 'input', 'abc');
+    await enterText(wrapper, 'abc');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);

@@ -49,8 +49,8 @@ describe('element node', () => {
     expect.assertions(1);
     await addAttribute(wrapper);
     const inputs = wrapper.findAll('input');
-    await enterText(wrapper, inputs.at(3), 'abc');
-    await enterText(wrapper, inputs.at(4), 'def');
+    await enterText(wrapper, 'abc', inputs.at(3));
+    await enterText(wrapper, 'def', inputs.at(4));
     expect(rawValue(wrapper)).toBe('<test ta="abc" abc="def"/>');
   });
 
@@ -77,20 +77,20 @@ describe('element node', () => {
 
   it('checks tag name', async () => {
     expect.assertions(1);
-    await enterText(wrapper, 'input', '&');
+    await enterText(wrapper, '&');
     expect(wrapper.find(':invalid').exists()).toBe(true);
   });
 
   it('shows error message about attribute', async () => {
     expect.assertions(1);
     const inputs = wrapper.findAll('input');
-    await enterText(wrapper, inputs.at(1), '&');
+    await enterText(wrapper, '&', inputs.at(1));
     expect(wrapper.find(':invalid').exists()).toBe(true);
   });
 
   it('can be canceled', async () => {
     expect.assertions(2);
-    await enterText(wrapper, 'input', 'b');
+    await enterText(wrapper, 'b');
     await closePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted.save).toBeUndefined();
@@ -116,7 +116,7 @@ describe('raw field', () => {
       propsData: { node: { type: 'cdata', cdata: 'a' } },
     });
     expect(rawValue(wrapper)).toBe('<![CDATA[a]]>');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     expect(rawValue(wrapper)).toBe('<![CDATA[abc]]>');
   });
 
@@ -137,7 +137,7 @@ describe('raw field', () => {
       propsData: { node: { type: 'comment', comment: 'a' } },
     });
     expect(rawValue(wrapper)).toBe('<!--a-->');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     expect(rawValue(wrapper)).toBe('<!--abc-->');
   });
 
@@ -162,7 +162,7 @@ describe('raw field', () => {
       },
     });
     expect(rawValue(wrapper)).toBe('<!DOCTYPE note SYSTEM "note.dtd">');
-    await enterText(wrapper, 'textarea', 'abc def "ghi"');
+    await enterText(wrapper, 'abc def "ghi"', 'textarea');
     expect(rawValue(wrapper)).toBe('<!DOCTYPE abc def "ghi">');
   });
 
@@ -196,11 +196,11 @@ describe('raw field', () => {
       },
     });
     const inputs = wrapper.findAll('input');
-    await enterText(wrapper, inputs.at(0), 'abc');
+    await enterText(wrapper, 'abc', inputs.at(0));
     expect(rawValue(wrapper)).toBe('<abc ta="abc"/>');
-    await enterText(wrapper, inputs.at(1), 'def');
+    await enterText(wrapper, 'def', inputs.at(1));
     expect(rawValue(wrapper)).toBe('<abc def="abc"/>');
-    await enterText(wrapper, inputs.at(2), 'ghi');
+    await enterText(wrapper, 'ghi', inputs.at(2));
     expect(rawValue(wrapper)).toBe('<abc def="ghi"/>');
   });
 
@@ -236,11 +236,11 @@ describe('raw field', () => {
     });
     expect(rawValue(wrapper)).toBe('<?test ta="abc"?>');
     const inputs = wrapper.findAll('input');
-    await enterText(wrapper, inputs.at(0), 'abc');
+    await enterText(wrapper, 'abc', inputs.at(0));
     expect(rawValue(wrapper)).toBe('<?abc ta="abc"?>');
-    await enterText(wrapper, inputs.at(1), 'def');
+    await enterText(wrapper, 'def', inputs.at(1));
     expect(rawValue(wrapper)).toBe('<?abc def="abc"?>');
-    await enterText(wrapper, inputs.at(2), 'ghi');
+    await enterText(wrapper, 'ghi', inputs.at(2));
     expect(rawValue(wrapper)).toBe('<?abc def="ghi"?>');
   });
 
@@ -265,7 +265,7 @@ describe('raw field', () => {
       },
     });
     expect(rawValue(wrapper)).toBe('<?test asf?>');
-    await enterText(wrapper, 'input', 'abc');
+    await enterText(wrapper, 'abc');
     expect(rawValue(wrapper)).toBe('<?abc asf?>');
   });
 
@@ -286,7 +286,7 @@ describe('raw field', () => {
       propsData: { node: { type: 'text', text: 'test' } },
     });
     expect(rawValue(wrapper)).toBe('test');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     expect(rawValue(wrapper)).toBe('abc');
   });
 
@@ -302,11 +302,11 @@ describe('raw field', () => {
       },
     });
     const inputs = wrapper.findAll('input');
-    await enterText(wrapper, inputs.at(0), 'abc&');
+    await enterText(wrapper, 'abc&', inputs.at(0));
     expect(rawValue(wrapper)).toBe('<test ta="abc"/>');
-    await enterText(wrapper, inputs.at(1), 'def&');
+    await enterText(wrapper, 'def&', inputs.at(1));
     expect(rawValue(wrapper)).toBe('<test ta="abc"/>');
-    await enterText(wrapper, inputs.at(2), 'ghi&');
+    await enterText(wrapper, 'ghi&', inputs.at(2));
     expect(rawValue(wrapper)).toBe('<test ta="abc"/>');
   });
 

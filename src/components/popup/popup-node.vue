@@ -243,6 +243,10 @@ export default class PopupNode extends Vue {
   }
 
   private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+    if (this.hasError()) {
+      this.reportError();
+      return;
+    }
     const wrapper = xmlJs(
       isTextNode(this.operand) ? `<tmp>${this.raw}</tmp>` : this.raw,
       {
@@ -263,6 +267,18 @@ export default class PopupNode extends Vue {
 
   private close(evt: Event): void {
     this.$emit('close', evt);
+  }
+
+  private hasError(): boolean {
+    return (
+      this.$el.classList.contains('g8--error') ||
+      this.$el.querySelector(':invalid,.g8--error') != null
+    );
+  }
+
+  private reportError(): void {
+    const elem = this.$el.querySelector(':invalid') as HTMLInputElement;
+    if (elem) elem.reportValidity();
   }
 }
 </script>

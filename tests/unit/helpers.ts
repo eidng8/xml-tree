@@ -58,13 +58,13 @@ export async function closePopup(wrapper: Wrapper<any>): Promise<void> {
 }
 
 export async function savePopup(wrapper: Wrapper<any>): Promise<void> {
-  return click(wrapper, '.g8-xml__popup__footer button:first-child');
+  return click(wrapper, '.g8-xml__popup__footer button');
 }
 
 export async function enterText(
   wrapper: Wrapper<any>,
-  selector: string | Wrapper<any>,
   text: string,
+  selector: string | Wrapper<any> = 'input',
   event = 'input',
 ): Promise<void> {
   const input = 'string' == typeof selector ? wrapper.find(selector) : selector;
@@ -77,7 +77,7 @@ export async function enterRawXml(
   text: string,
   event = 'input',
 ): Promise<void> {
-  return enterText(wrapper, '.g8-xml__popup__raw textarea', text, event);
+  return enterText(wrapper, text, '.g8-xml__popup__raw textarea', event);
 }
 
 export function inputValue(wrapper: Wrapper<any>, selector: string): string {

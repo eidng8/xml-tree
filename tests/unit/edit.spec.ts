@@ -26,7 +26,7 @@ describe('Node editing', () => {
     expect.assertions(3);
     const wrapper = mount(G8XmlEdit, { propsData: { xml: '<root/>' } });
     await rightClickDeclaration(wrapper);
-    await enterText(wrapper, 'input', 'ascii');
+    await enterText(wrapper, 'ascii');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['declaration-changed'].length).toBe(1);
@@ -56,7 +56,7 @@ describe('Node editing', () => {
     expect.assertions(1);
     const wrapper = mount(G8XmlEdit, { propsData: { xml: '<root/>' } });
     await rightClickDeclaration(wrapper);
-    await enterText(wrapper, 'input', 'abc');
+    await enterText(wrapper, 'abc');
     await savePopup(wrapper);
     expect(wrapper.emitted()).toEqual({});
   });
@@ -69,7 +69,7 @@ describe('Node editing', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-edit');
     expect(rawValue(wrapper)).toBe('<![CDATA[a]]>');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
@@ -89,7 +89,7 @@ describe('Node editing', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-edit');
     expect(rawValue(wrapper)).toBe('<!--a-->');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
@@ -109,7 +109,7 @@ describe('Node editing', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-edit');
     expect(rawValue(wrapper)).toBe('<!DOCTYPE note SYSTEM "note.dtd">');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
@@ -127,7 +127,7 @@ describe('Node editing', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-edit');
     expect(rawValue(wrapper)).toBe('<root/>');
-    await enterText(wrapper, 'input', 'abc');
+    await enterText(wrapper, 'abc');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
@@ -151,7 +151,7 @@ describe('Node editing', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-edit');
     expect(rawValue(wrapper)).toBe('<?test abc="def"?>');
-    await enterText(wrapper, 'input', 'abc');
+    await enterText(wrapper, 'abc');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
@@ -172,7 +172,7 @@ describe('Node editing', () => {
     await rightClick(wrapper, first);
     await click(wrapper, '#g8-xml-menu-edit');
     expect(rawValue(wrapper)).toBe('<?test abc="def"?>');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
@@ -194,7 +194,7 @@ describe('Node editing', () => {
     await rightClick(wrapper, `${first} .g8-tree__node`);
     await click(wrapper, '#g8-xml-menu-edit');
     expect(rawValue(wrapper)).toBe('test');
-    await enterText(wrapper, 'textarea', 'abc');
+    await enterText(wrapper, 'abc', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
@@ -204,6 +204,16 @@ describe('Node editing', () => {
       text: 'abc',
     });
     expect(wrapper.find(`${first} .g8-tree__node`).text()).toBe('abc');
+  });
+
+  it('does not allow saving invalid XML', async () => {
+    expect.assertions(1);
+    const wrapper = mount(G8XmlEdit, { propsData: { xml: '<root/>' } });
+    await rightClick(wrapper, first);
+    await click(wrapper, '#g8-xml-menu-edit');
+    await enterText(wrapper, '&');
+    await savePopup(wrapper);
+    expect(wrapper.emitted()).toEqual({});
   });
 });
 
@@ -216,7 +226,7 @@ describe('Attribute editing', () => {
     await rightClickBadge(wrapper, `${first} .g8-tree__node__entry__tags__tag`);
     expect(wrapper.find('.g8-xml__popup__header__title').text()).toBe('test');
     expect(inputValue(wrapper, 'textarea')).toBe('abc');
-    await enterText(wrapper, 'textarea', 'def');
+    await enterText(wrapper, 'def', 'textarea');
     await savePopup(wrapper);
     const emitted = wrapper.emitted()['attribute-changed'];
     expect(emitted.length).toBe(1);
@@ -259,5 +269,15 @@ describe('Edit raw XML', () => {
       text: 'abc',
     });
     expect(wrapper.find(`${first} .g8-tree__node`).text()).toBe('abc');
+  });
+
+  it('does not allow saving invalid XML', async () => {
+    expect.assertions(1);
+    const wrapper = mount(G8XmlEdit, { propsData: { xml: '<root/>' } });
+    await rightClick(wrapper, first);
+    await click(wrapper, '#g8-xml-menu-edit');
+    await enterRawXml(wrapper, '&');
+    await savePopup(wrapper);
+    expect(wrapper.emitted()).toEqual({});
   });
 });
