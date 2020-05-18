@@ -1,0 +1,8 @@
+{
+  "screenshots": {
+    "enabled": true,
+    "path": "./tests/e2e/reports",
+    "on_failure": true,
+    "on_error": true
+  }
+}

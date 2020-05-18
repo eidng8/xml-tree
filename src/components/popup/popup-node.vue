@@ -28,7 +28,6 @@
               class="g8-xml--large"
               :node="operand"
               @input="updateRaw()"
-              @focus="$event.target.select()"
             />
           </div>
         </div>
@@ -49,7 +48,6 @@
                 :tabindex="1000 + idx * 3"
                 :node="attr"
                 @input="updateRaw()"
-                @focus="$event.target.select()"
               />
             </span>
             <span>=</span>

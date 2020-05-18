@@ -37,8 +37,8 @@
       @node-removed="xmlChanged('node-removed', $event)"
     />
     <hr />
-    <div>
-      <code>{{ evtName }}</code>
+    <div id="event">
+      <code id="event-name">{{ evtName }}</code>
       <code> : </code>
       <code>{{ evtNode }}</code>
     </div>

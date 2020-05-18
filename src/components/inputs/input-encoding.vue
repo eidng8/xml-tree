@@ -5,7 +5,11 @@
   -->
 
 <template>
-  <input v-model="value.value" @input="validate($event)" />
+  <input
+    v-model="value.value"
+    @input="validate($event)"
+    @focus="$event.target.select()"
+  />
 </template>
 
 <script lang="ts">

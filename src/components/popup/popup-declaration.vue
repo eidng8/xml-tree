@@ -27,11 +27,7 @@
         <div class="g8-xml__popup__attribute">
           <label>
             <span>encoding = </span>
-            <input-encoding
-              type="text"
-              v-model="encoding"
-              @focus="$event.target.select()"
-            />
+            <input-encoding type="text" v-model="encoding" />
           </label>
         </div>
         <div class="g8-xml__popup__attribute">
