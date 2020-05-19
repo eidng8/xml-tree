@@ -4,7 +4,4 @@
  * Author: eidng8
  */
 
-module.exports = {
-  url: '/',
-  elements: require('../shared-elements'),
-};
+exports.command = require('../utils').menuAction('g8-xml-menu-edit');

@@ -15,12 +15,12 @@ module.exports = {
 
   afterEach: browser => browser.end(),
 
-  'declaration node': () => {
+  'Declaration node': () => {
     page.assert.containsText('@declaration', 'version="1.0"');
     page.assert.outputContains('encoding="utf-8"');
   },
 
-  'change declaration version': () => {
+  'Change declaration version': () => {
     page.edit();
     page.setVersion('1.1');
     page.savePopup();
@@ -30,7 +30,7 @@ module.exports = {
     page.assert.eventContains('{ "name": "version", "value": "1.1" }');
   },
 
-  'change declaration encoding': () => {
+  'Change declaration encoding': () => {
     page.edit();
     page.setEncoding('ascii');
     page.savePopup();
@@ -40,7 +40,7 @@ module.exports = {
     page.assert.eventContains('{ "name": "encoding", "value": "ascii" }');
   },
 
-  'change declaration standalone': () => {
+  'Change declaration standalone': () => {
     page.edit();
     page.setStandalone('yes');
     page.savePopup();
@@ -50,7 +50,7 @@ module.exports = {
     page.assert.eventContains('{ "name": "standalone", "value": "yes" }');
   },
 
-  'cancel declaration change': () => {
+  'Cancel declaration change': () => {
     page.edit();
     page.setEncoding('ascii');
     page.cancelPopup();

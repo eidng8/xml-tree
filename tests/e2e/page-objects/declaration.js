@@ -4,17 +4,9 @@
  * Author: eidng8
  */
 
-const sharedElements = require('../shared-elements');
-
 module.exports = {
   url: '/',
-  elements: [
-    sharedElements,
-    {
-      declaration: '.g8-tree__node:first-child',
-      popup: '.g8-xml__popup',
-    },
-  ],
+  elements: require('../shared-elements'),
   commands: {
     edit() {
       this.moveToElement('@declaration', 1, 1);

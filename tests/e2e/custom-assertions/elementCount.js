@@ -18,6 +18,8 @@
  * @param {number} count
  */
 
+const selectorString = require('../utils').selectorString;
+
 exports.assertion = function elementCount(selectorOrObject, count, msg) {
   // If the custom commands operates with DOM elements, this options should be set
   this.options = {
@@ -25,10 +27,7 @@ exports.assertion = function elementCount(selectorOrObject, count, msg) {
   };
 
   // it's an object when called from a page object element or section
-  const selector =
-    'string' == typeof selectorOrObject
-      ? selectorOrObject
-      : selectorOrObject.selector;
+  const selector = selectorString(selectorOrObject);
 
   let found = 0;
 
