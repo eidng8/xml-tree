@@ -50,9 +50,9 @@ exports.assertion = function outputContains(search, msg) {
   // noinspection JSUnusedGlobalSymbols
   this.actual = passed => {
     if (search instanceof RegExp) {
-      return `'${got}' ${passed ? 'matches' : "doesn't match"} '${search}'`;
+      return `${passed ? 'matches' : "doesn't match"} '${search}'`;
     }
-    return `'${got}' ${passed ? 'contains' : "doesn't contain"} '${search}'`;
+    return `${passed ? 'contains' : "doesn't contain"} '${search}'`;
   };
 
   // noinspection JSUnusedGlobalSymbols

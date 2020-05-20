@@ -24,7 +24,7 @@ export default class InputName extends Vue {
 
   private texts = getTexts();
 
-  private regex = XRegExp('^[_\\p{L}][-_:\\d\\p{L}]+$', 'nu');
+  private regex = XRegExp('^[_\\p{L}][-_:\\d\\p{L}]*$', 'nu');
 
   private validate(evt: InputEvent): void {
     if (this.regex.test(this.node.name)) {

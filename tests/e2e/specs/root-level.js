@@ -10,7 +10,7 @@ module.exports = {
   beforeEach: browser => {
     browser.init();
     page = browser.page.rootLevel();
-    page.waitForElementVisible('.g8-xml__tree');
+    page.waitForElementVisible('@tree');
   },
 
   afterEach: browser => browser.end(),

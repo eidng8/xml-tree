@@ -11,9 +11,10 @@ declare module 'e2e/*' {
   // noinspection JSUnusedGlobalSymbols
   interface ElementCommands {
     /**
-     * Press the `Save` button in popup box. Waits until the box went away.
+     * Press the `Save` button in popup box. Waits until the box went away,
+     * unless `dontWait` is true.
      */
-    savePopup(): this;
+    savePopup(dontWait = false): this;
 
     /**
      * Press the `Cancel` button in popup box. Waits until the box went away.
@@ -106,12 +107,24 @@ declare module 'e2e/*' {
       type?: XmlNodeTypes,
       dontWait = false,
     ): this;
+
+    /**
+     * Click the specified element, then sets its text value.
+     * @param selector
+     * @param text
+     */
+    enterText(selector: string | EnhancedElementInstance, text: string);
   }
 
   interface NightwatchCustomAssertions {
     elementCount(
       selectorOrObject: string | EnhancedElementInstance,
       count: number,
+      message?: string,
+    ): NightwatchAPI;
+    containsOrMatches(
+      selector: string | EnhancedElementInstance,
+      search: string | RegExp,
       message?: string,
     ): NightwatchAPI;
     outputContains(search: string, message?: string): NightwatchAPI;

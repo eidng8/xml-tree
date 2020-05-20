@@ -4,9 +4,9 @@
  * Author: eidng8
  */
 
-exports.command = function savePopup() {
+exports.command = function savePopup(dontWait) {
   // Other Nightwatch commands are available via "this"
   this.click('.g8-xml__popup__footer button:first-of-type');
-  this.waitForElementNotPresent('.g8-xml__popup');
+  if (!dontWait) this.waitForElementNotPresent('.g8-xml__popup');
   return this;
 };
