@@ -5,6 +5,7 @@
  */
 
 module.exports = {
+  test_settings: { default: { skip_testcases_on_fail: false } },
   screenshots: {
     enabled: !process.env.CI,
     path: './tests/e2e/reports',

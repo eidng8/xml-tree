@@ -4,4 +4,9 @@
  * Author: eidng8
  */
 
-exports.command = require('../utils').menuAction('g8-xml-menu-remove');
+exports.command = function menuRemove(selector) {
+  this.menuOn(selector);
+  this.click('#g8-xml-menu-remove');
+  this.waitForElementPresent('.g8-menu--off');
+  return this;
+};

@@ -192,9 +192,9 @@ export default class PopupNode extends Vue {
   }
 
   private validateXml(): boolean {
-    if (isTextNode(this.operand)) return true;
+    const xml = isTextNode(this.operand) ? `<tmp>${this.raw}</tmp>` : this.raw;
     try {
-      if (!Object.keys(xmlJs(this.raw)).length) {
+      if (!Object.keys(xmlJs(xml)).length) {
         this.errorMessageHint = this.errorMessage = this.texts.errInvalidXml;
         return false;
       }
