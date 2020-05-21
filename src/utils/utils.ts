@@ -13,7 +13,7 @@ import {
   XmlNode,
   XmlNodeTypes,
   XmlRoot,
-} from './types/types';
+} from '../types/types';
 
 export type AnyObject = { [key: string]: unknown; [key: number]: unknown };
 
@@ -224,4 +224,15 @@ export function dehydrate(node: XmlNode | XmlDeclaration): void {
       delete ((node as unknown) as { [key: string]: unknown })[k];
     }
   });
+}
+
+export function defaultDeclaration(parent?: XmlRoot): XmlDeclaration {
+  return {
+    attributes: [
+      { name: 'version', value: '1.0' },
+      { name: 'encoding', value: 'utf-8' },
+      { name: 'standalone', value: 'no' },
+    ],
+    parent: parent!,
+  };
 }

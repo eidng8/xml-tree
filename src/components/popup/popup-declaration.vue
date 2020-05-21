@@ -47,14 +47,13 @@
 <script lang="ts">
 import { each, filter, includes, map } from 'lodash';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import {
-  SaveNodeKeyboardEvent,
-  SaveNodeMouseEvent,
-  XmlAttribute,
-  XmlDeclaration,
-} from '../../types/types';
+import { XmlAttribute, XmlDeclaration } from '../../types/types';
+import { SaveNodeKeyboardEvent, SaveNodeMouseEvent } from '../../types/events';
 import PopupBox from './popup-box.vue';
-import { cloneWithoutHierarchy, removeHierarchyFromNode } from '../../utils';
+import {
+  cloneWithoutHierarchy,
+  removeHierarchyFromNode,
+} from '../../utils/utils';
 import { getTexts } from '../../translations/translation';
 import InputEncoding from '../inputs/input-encoding.vue';
 

@@ -30,8 +30,8 @@ describe('Node editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['declaration-changed'].length).toBe(1);
-    delete emitted['declaration-changed'][0][0].parent;
-    expect(emitted['declaration-changed'][0][0]).toEqual({
+    delete emitted['declaration-changed'][0][0].detail.parent;
+    expect(emitted['declaration-changed'][0][0].detail).toEqual({
       attributes: [
         {
           name: 'version',
@@ -58,7 +58,7 @@ describe('Node editing', () => {
     await rightClickDeclaration(wrapper);
     await enterText(wrapper, 'abc');
     await savePopup(wrapper);
-    expect(wrapper.emitted()).toEqual({});
+    expect(wrapper.emitted()['declaration-changed']).toBeUndefined();
   });
 
   it('edits CDATA node', async () => {
@@ -73,8 +73,8 @@ describe('Node editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
-    delete emitted['node-changed'][0][0].parent;
-    expect(emitted['node-changed'][0][0]).toEqual({
+    delete emitted['node-changed'][0][0].detail.parent;
+    expect(emitted['node-changed'][0][0].detail).toEqual({
       type: 'cdata',
       cdata: 'abc',
     });
@@ -93,8 +93,8 @@ describe('Node editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
-    delete emitted['node-changed'][0][0].parent;
-    expect(emitted['node-changed'][0][0]).toEqual({
+    delete emitted['node-changed'][0][0].detail.parent;
+    expect(emitted['node-changed'][0][0].detail).toEqual({
       type: 'comment',
       comment: 'abc',
     });
@@ -113,8 +113,8 @@ describe('Node editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
-    delete emitted['node-changed'][0][0].parent;
-    expect(emitted['node-changed'][0][0]).toEqual({
+    delete emitted['node-changed'][0][0].detail.parent;
+    expect(emitted['node-changed'][0][0].detail).toEqual({
       type: 'doctype',
       doctype: 'abc',
     });
@@ -131,8 +131,8 @@ describe('Node editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
-    delete emitted['node-changed'][0][0].parent;
-    expect(emitted['node-changed'][0][0]).toEqual({
+    delete emitted['node-changed'][0][0].detail.parent;
+    expect(emitted['node-changed'][0][0].detail).toEqual({
       type: 'element',
       name: 'abc',
     });
@@ -155,8 +155,8 @@ describe('Node editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
-    delete emitted['node-changed'][0][0].parent;
-    expect(emitted['node-changed'][0][0]).toEqual({
+    delete emitted['node-changed'][0][0].detail.parent;
+    expect(emitted['node-changed'][0][0].detail).toEqual({
       type: 'instruction',
       name: 'abc',
       attributes: [{ name: 'abc', value: 'def' }],
@@ -176,8 +176,8 @@ describe('Node editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
-    delete emitted['node-changed'][0][0].parent;
-    expect(emitted['node-changed'][0][0]).toEqual({
+    delete emitted['node-changed'][0][0].detail.parent;
+    expect(emitted['node-changed'][0][0].detail).toEqual({
       type: 'instruction',
       name: 'test',
       instruction: 'abc',
@@ -198,8 +198,8 @@ describe('Node editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
-    delete emitted['node-changed'][0][0].parent;
-    expect(emitted['node-changed'][0][0]).toEqual({
+    delete emitted['node-changed'][0][0].detail.parent;
+    expect(emitted['node-changed'][0][0].detail).toEqual({
       type: 'text',
       text: 'abc',
     });
@@ -213,7 +213,7 @@ describe('Node editing', () => {
     await click(wrapper, '#g8-xml-menu-edit');
     await enterText(wrapper, '&');
     await savePopup(wrapper);
-    expect(wrapper.emitted()).toEqual({});
+    expect(wrapper.emitted()['node-changed']).toBeUndefined();
   });
 });
 
@@ -230,8 +230,8 @@ describe('Attribute editing', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted()['attribute-changed'];
     expect(emitted.length).toBe(1);
-    delete emitted[0][0].parent;
-    expect(emitted[0][0]).toEqual({
+    delete emitted[0][0].detail.node.parent;
+    expect(emitted[0][0].detail.node).toEqual({
       type: 'element',
       name: 'root',
       attributes: [
@@ -241,7 +241,7 @@ describe('Attribute editing', () => {
         },
       ],
     });
-    expect(emitted[0][1]).toEqual({
+    expect(emitted[0][0].detail.attribute).toEqual({
       name: 'test',
       value: 'def',
     });
@@ -263,8 +263,8 @@ describe('Edit raw XML', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-changed'].length).toBe(1);
-    delete emitted['node-changed'][0][0].parent;
-    expect(emitted['node-changed'][0][0]).toEqual({
+    delete emitted['node-changed'][0][0].detail.parent;
+    expect(emitted['node-changed'][0][0].detail).toEqual({
       type: 'text',
       text: 'abc',
     });
@@ -278,6 +278,6 @@ describe('Edit raw XML', () => {
     await click(wrapper, '#g8-xml-menu-edit');
     await enterRawXml(wrapper, '&');
     await savePopup(wrapper);
-    expect(wrapper.emitted()).toEqual({});
+    expect(wrapper.emitted()['node-changed']).toBeUndefined();
   });
 });

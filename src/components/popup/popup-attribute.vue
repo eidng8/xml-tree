@@ -33,11 +33,8 @@
 <script lang="ts">
 import { cloneDeep } from 'lodash';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import {
-  SaveNodeKeyboardEvent,
-  SaveNodeMouseEvent,
-  XmlAttribute,
-} from '../../types/types';
+import { XmlAttribute } from '../../types/types';
+import { SaveNodeKeyboardEvent, SaveNodeMouseEvent } from '../../types/events';
 import PopupBox from './popup-box.vue';
 
 @Component({

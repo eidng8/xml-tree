@@ -30,11 +30,16 @@
       :xml="xml"
       :show-attr-value="showAttrValue"
       :pi-use-attribute="piAttr"
-      @declaration-changed="xmlChanged('declaration-changed', $event)"
-      @attribute-changed="xmlChanged('attribute-changed', $event)"
-      @node-changed="xmlChanged('node-changed', $event)"
-      @node-created="xmlChanged('node-created', $event)"
-      @node-removed="xmlChanged('node-removed', $event)"
+      @declaration-changed="eventFired('declaration-changed', $event)"
+      @attribute-changed="eventFired('attribute-changed', $event)"
+      @node-changed="eventFired('node-changed', $event)"
+      @node-created="eventFired('node-created', $event)"
+      @node-removed="eventFired('node-removed', $event)"
+      @default-declaration="eventFired('...', $event)"
+      @menu-open="eventFired('...', $event)"
+      @select-node="eventFired('...', $event)"
+      @edit-node="eventFired('...', $event)"
+      @save-node="eventFired('...', $event)"
     />
     <hr />
     <div id="event">
@@ -49,6 +54,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { cloneWithoutHierarchy, G8XmlEdit, XmlDeclaration, XmlNode } from '.';
+import EventBase from './events/event-base';
 
 @Component({ components: { G8XmlEdit } })
 export default class App extends Vue {
@@ -101,9 +107,17 @@ export default class App extends Vue {
     });
   }
 
-  xmlChanged(name: string, evt: XmlNode | XmlDeclaration): void {
-    this.evtName = name;
-    this.evtNode = cloneWithoutHierarchy(evt);
+  eventFired(
+    name: string,
+    // eslint-disable-next-line
+    evt: XmlNode | XmlDeclaration | EventBase<any>,
+  ): void {
+    // eslint-disable-next-line
+    const e = evt as EventBase<any>;
+    this.evtName = e.type || name;
+    this.evtNode = cloneWithoutHierarchy(
+      e.detail ? e.detail.node || e.detail : evt,
+    );
     this.output = this.$children[0] ? this.$children[0].toString() : '';
   }
 }

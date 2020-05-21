@@ -16,13 +16,10 @@
 import { head, last, map } from 'lodash';
 import { Component, Vue } from 'vue-property-decorator';
 import { G8MenuItem, G8PopupMenu } from 'g8-popup-menu';
-import {
-  isElementNode,
-  isTextNode,
-  XmlElement,
-  XmlNode,
-} from '../../types/types';
+import { XmlElement, XmlNode } from '../../types/types';
 import { getTexts } from '../../translations/translation';
+import { isElementNode, isTextNode } from '../../utils/type-guards';
+import MenuOpenEvent from '../../events/menu-open';
 
 @Component({ name: 'node-menu', components: { G8PopupMenu } })
 export default class NodeMenu extends Vue {
@@ -30,11 +27,17 @@ export default class NodeMenu extends Vue {
 
   private texts = getTexts();
 
+  /**
+   * Generates and shows the menu with on the given node.
+   */
   open(node: XmlNode, isRoot = false, evt?: MouseEvent): void {
-    (this.$children[0] as G8PopupMenu).open(
-      this.generateNodeMenu(node, isRoot),
-      evt,
-    );
+    const items = this.generateNodeMenu(node, isRoot);
+    const ovt = new MenuOpenEvent({
+      detail: { items, node, rootLevel: isRoot, originalEvent: evt },
+    });
+    this.$emit(MenuOpenEvent.TYPE, ovt);
+    if (ovt.defaultPrevented) return;
+    (this.$children[0] as G8PopupMenu).open(items, evt);
   }
 
   /**
@@ -134,6 +137,11 @@ export default class NodeMenu extends Vue {
     });
   }
 
+  /**
+   * Generate sub-menu items for append and prepend.
+   * @param parentId
+   * @param node
+   */
   private generateInsertChildMenu(
     parentId: string,
     node: XmlElement,

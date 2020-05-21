@@ -112,15 +112,12 @@
 import { each } from 'lodash';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import {
-  isElementNode,
-  isTextNode,
-  SaveNodeKeyboardEvent,
-  SaveNodeMouseEvent,
   XmlElement,
   XmlInstruction,
   XmlNode,
   XmlText,
 } from '../../types/types';
+import { SaveNodeKeyboardEvent, SaveNodeMouseEvent } from '../../types/events';
 import {
   cloneWithoutHierarchy,
   objXml,
@@ -128,10 +125,11 @@ import {
   rectifyNodeAttributes,
   removeHierarchyFromNode,
   xmlJs,
-} from '../../utils';
+} from '../../utils/utils';
 import { getTexts } from '../../translations/translation';
 import InputName from '../inputs/input-name.vue';
 import PopupBox from './popup-box.vue';
+import { isElementNode, isTextNode } from '../../utils/type-guards';
 
 @Component({
   name: 'popup-node',

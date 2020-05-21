@@ -30,6 +30,7 @@
         tags-key="attributes"
         children-key="nodes"
         tag-hint="value"
+        @click="setCurrentNode($event.data.item, $event.data.expanded)"
       >
         <template #default="{ item }">
           <span
@@ -48,14 +49,14 @@
       </g8-vue-tree>
     </ul>
     <popup-declaration
-      v-if="popupOpen && !currentNode.type"
-      :node="currentNode"
+      v-if="popupOpen && !popupItem.type"
+      :node="popupItem"
       @save="saveNode($event)"
       @close="closePopup()"
     ></popup-declaration>
     <popup-node
       v-else-if="popupOpen"
-      :node="currentNode"
+      :node="popupItem"
       @save="saveNode($event)"
       @close="closePopup()"
     ></popup-node>
@@ -68,6 +69,7 @@
     <node-menu
       class="g8-menu g8-menu--off"
       ref="menu"
+      @menu-open="$emit('menu-open', $event)"
       @select="action($event)"
     />
   </div>
@@ -80,29 +82,40 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { G8VueTree } from 'g8-vue-tree';
 import { G8MenuItem, G8PopupMenu } from 'g8-popup-menu';
 import {
-  defaultDeclaration,
-  isDeclarationNode,
-  SaveNodeKeyboardEvent,
-  SaveNodeMouseEvent,
   XmlAttribute,
   XmlDeclaration,
   XmlElement,
+  XmlInstruction,
   XmlNode,
   XmlNodeTypes,
   XmlRoot,
 } from '../types/types';
+import { SaveNodeKeyboardEvent, SaveNodeMouseEvent } from '../types/events';
 import {
-  cloneWithoutHierarchy,
   createEmptyNode,
+  defaultDeclaration,
   dehydrate,
   objXml,
   xmlJs,
-} from '../utils';
-import { getTexts } from '../translations/translation';
+} from '../utils/utils';
 import PopupAttribute from './popup/popup-attribute.vue';
 import PopupDeclaration from './popup/popup-declaration.vue';
 import PopupNode from './popup/popup-node.vue';
 import NodeMenu from './menus/node-menu.vue';
+import DefaultDeclarationEvent from '../events/default-declaration';
+import { isDeclarationNode } from '../utils/type-guards';
+import XmlReloadEvent from '../events/xml-reload';
+import SelectNodeEvent from '../events/select-node';
+import EditNodeEvent from '../events/edit-node';
+import SaveNodeEvent from '../events/save-node';
+import DeclarationChangedEvent from '../events/declaration-changed';
+import NodeChangedEvent from '../events/node-changed';
+import NodeCreatedEvent from '../events/node-created';
+import EditAttributeEvent from '../events/edit-attribute';
+import SaveAttributeEvent from '../events/save-attribute';
+import AttributeChangedEvent from '../events/attribute-changed';
+import DeleteNodeEvent from '../events/delete-node';
+import NodeRemovedEvent from '../events/node-removed';
 
 @Component({
   name: 'g8-xml-edit',
@@ -191,14 +204,35 @@ export default class G8XmlEdit extends Vue {
   private popupOpen = false;
 
   /**
-   * Texts translation
-   */
-  private texts = getTexts();
-
-  /**
    * The attribute being edited in popup box.
    */
   private editingAttribute: XmlAttribute | null = null;
+
+  /**
+   * Returns default XML declaration.
+   */
+  private get defaultDeclaration(): XmlDeclaration {
+    const evt = new DefaultDeclarationEvent({
+      detail: { document: this.tree, declaration: this.tree.declaration },
+    });
+    /**
+     * Emitted when the XML document doesn't have a declaration. The default
+     * behavior of this event is to combine the build-in default declaration
+     * and the `detail.declaration`. Call `preventDefault()` on the event if
+     * the default behavior is not desired.
+     * - `detail.document` field holds the loaded XML object,
+     * - `detail.declaration` field is the return value of the event, which will
+     * be set to the loaded document.
+     * @type {DefaultDeclarationEvent}
+     */
+    this.$emit(DefaultDeclarationEvent.TYPE, evt);
+    if (evt.defaultPrevented) return evt.detail.declaration;
+    return Object.assign(
+      {},
+      defaultDeclaration(this.tree),
+      evt.detail.declaration,
+    );
+  }
 
   /**
    * Reloads the {@link xml} content. All modifications to current {@link tree}
@@ -213,8 +247,19 @@ export default class G8XmlEdit extends Vue {
       !this.tree.declaration.attributes ||
       !this.tree.declaration.attributes.length
     ) {
-      this.tree.declaration = defaultDeclaration(this.tree);
+      this.tree.declaration = this.defaultDeclaration;
     }
+    /**
+     * Emits when XML document has been reloaded. The `detail.document` field
+     * holds the newly loaded XML object.
+     * Please note that this event is fired only when {@see reloadXml} is
+     * called. Changing the {@see xml} property will be trigger this event.
+     * @type {XmlReloadEvent}
+     */
+    this.$emit(
+      XmlReloadEvent.TYPE,
+      new XmlReloadEvent({ detail: { document: this.tree } }),
+    );
   }
 
   toString(options?: Options.JS2XML): string {
@@ -226,12 +271,30 @@ export default class G8XmlEdit extends Vue {
     this.reloadXml();
   }
 
-  private setCurrentNode(item: XmlNode | XmlDeclaration): void {
+  /**
+   * Sets the node to be acted upon.
+   */
+  private setCurrentNode(
+    item: XmlNode | XmlDeclaration,
+    expanded?: boolean,
+  ): void {
     this.currentNode = item;
     this.currentNodeParent = item.parent!;
     this.currentNodeIndex = findIndex(
       this.currentNodeParent.nodes,
       n => n === item,
+    );
+    this.$emit(
+      SelectNodeEvent.TYPE,
+      new SelectNodeEvent({
+        detail: {
+          node: this.currentNode,
+          parent: this.currentNodeParent,
+          index: this.currentNodeIndex,
+          creating: this.creatingNode,
+          expanded,
+        },
+      }),
     );
   }
 
@@ -241,9 +304,6 @@ export default class G8XmlEdit extends Vue {
   private closePopup(): void {
     this.popupOpen = false;
     this.popupItem = null;
-    this.currentNode = null;
-    this.currentNodeIndex = -1;
-    this.currentNodeParent = null;
   }
 
   /**
@@ -293,7 +353,18 @@ export default class G8XmlEdit extends Vue {
    * @param node
    */
   private editNode(node: XmlNode | XmlDeclaration): void {
-    this.popupItem = cloneWithoutHierarchy(node);
+    const evt = new EditNodeEvent({
+      detail: {
+        document: this.tree,
+        node,
+        parent: this.currentNodeParent!,
+        index: this.currentNodeIndex,
+        creating: this.creatingNode,
+      },
+    });
+    this.$emit(EditNodeEvent.TYPE, evt);
+    if (evt.defaultPrevented) return;
+    this.popupItem = evt.detail.node;
     this.popupOpen = true;
   }
 
@@ -302,35 +373,72 @@ export default class G8XmlEdit extends Vue {
    * @param evt
    */
   private saveNode(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
-    /* istanbul ignore if: unable to unit test */
-    if (!this.currentNode) throw new Error(this.texts.errNotEditing);
-    /* istanbul ignore if: unable to unit test */
-    if (!this.currentNodeParent) throw new Error(this.texts.errNodeParent);
-    const newNode = Object.assign(
-      {},
-      this.creatingNode ? { parent: this.currentNodeParent } : this.currentNode,
-      evt.data,
-    ) as XmlNode | XmlDeclaration;
+    const svt = new SaveNodeEvent({
+      detail: {
+        document: this.tree,
+        node: evt.data as XmlNode | XmlDeclaration,
+        parent: this.currentNodeParent!,
+        index: this.currentNodeIndex,
+        creating: this.creatingNode,
+      },
+    });
+    this.$emit(SaveNodeEvent.TYPE, svt);
+    if (svt.defaultPrevented) return;
+    const newNode = this.processChangedNode(
+      svt.detail.node as XmlNode | XmlDeclaration,
+    );
     if (isDeclarationNode(newNode)) {
-      this.tree.declaration = newNode;
-      dehydrate(this.tree.declaration);
-      /**
-       * The XML declaration has been changed
-       * @type {XmlDeclaration}
-       */
-      this.$emit('declaration-changed', this.tree.declaration);
+      this.saveDeclaration(newNode);
     } else if (this.creatingNode) {
       this.saveNewNode(newNode);
     } else {
-      this.currentNodeParent.nodes![this.currentNodeIndex] = newNode;
-      dehydrate(newNode);
-      /**
-       * A new XML node has been changed
-       * @type {XmlNode}
-       */
-      this.$emit('node-changed', newNode);
+      this.saveChangedNode(newNode);
     }
     this.closePopup();
+  }
+
+  /**
+   * Process the changed node before adding to tree.
+   */
+  private processChangedNode(
+    node: XmlNode | XmlDeclaration,
+  ): XmlNode | XmlDeclaration {
+    const newNode = Object.assign(
+      {},
+      this.creatingNode ? { parent: this.currentNodeParent } : this.currentNode,
+      node,
+    ) as XmlNode | XmlDeclaration;
+    dehydrate(newNode);
+    return newNode;
+  }
+
+  /**
+   * Saves the given declaration.
+   * @param declaration
+   */
+  private saveDeclaration(declaration: XmlDeclaration): void {
+    this.tree.declaration = declaration;
+    /**
+     * The XML declaration has been changed
+     * @type {XmlDeclaration}
+     */
+    this.$emit(
+      DeclarationChangedEvent.TYPE,
+      new DeclarationChangedEvent({ detail: declaration }),
+    );
+  }
+
+  /**
+   * Save the given node.
+   * @param node
+   */
+  private saveChangedNode(node: XmlNode): void {
+    this.currentNodeParent!.nodes![this.currentNodeIndex] = node;
+    /**
+     * A new XML node has been changed
+     * @type {XmlNode}
+     */
+    this.$emit(NodeChangedEvent.TYPE, new NodeChangedEvent({ detail: node }));
   }
 
   /**
@@ -354,12 +462,12 @@ export default class G8XmlEdit extends Vue {
         Object.assign({}, p),
       );
     }
-    dehydrate(node);
     /**
      * A new XML node has been created
      * @type {XmlNode}
      */
-    this.$emit('node-created', node);
+    this.$emit(NodeCreatedEvent.TYPE, new NodeCreatedEvent({ detail: node }));
+    this.creatingNode = false;
   }
 
   /**
@@ -369,7 +477,16 @@ export default class G8XmlEdit extends Vue {
    */
   private editAttribute(item: XmlNode, attr: XmlAttribute): void {
     this.setCurrentNode(item);
-    this.editingAttribute = attr;
+    const evt = new EditAttributeEvent({
+      detail: {
+        document: this.tree,
+        node: item as XmlElement | XmlInstruction,
+        attribute: attr,
+      },
+    });
+    this.$emit(EditAttributeEvent.TYPE, evt);
+    if (evt.defaultPrevented) return;
+    this.editingAttribute = evt.detail.attribute;
   }
 
   /**
@@ -378,17 +495,31 @@ export default class G8XmlEdit extends Vue {
   private saveAttributePopup(
     evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent,
   ): void {
-    const attributes = (this.currentNode! as XmlElement).attributes!;
-    const attribute = evt.data as XmlAttribute;
+    dehydrate(this.currentNode!);
+    const svt = new SaveAttributeEvent({
+      detail: {
+        document: this.tree,
+        node: this.currentNode! as XmlElement | XmlInstruction,
+        attribute: evt.data as XmlAttribute,
+      },
+    });
+    this.$emit(SaveAttributeEvent.TYPE, svt);
+    if (svt.defaultPrevented) return;
+    const attributes = svt.detail.node.attributes!;
+    const attribute = svt.detail.attribute;
     const idx = findIndex(attributes, a => attribute.name == a.name);
     attributes[idx] = attribute;
-    dehydrate(this.currentNode!);
     /**
      * A XML node attribute has been changed
      * @type {XmlNode}
      * @param {XmlAttribute} attribute
      */
-    this.$emit('attribute-changed', this.currentNode, attribute);
+    this.$emit(
+      AttributeChangedEvent.TYPE,
+      new AttributeChangedEvent({
+        detail: { document: this.tree, node: svt.detail.node, attribute },
+      }),
+    );
   }
 
   /**
@@ -402,15 +533,28 @@ export default class G8XmlEdit extends Vue {
    * Delete the {@link currentNode}.
    */
   private deleteNode(): void {
-    const item = this.currentNode! as XmlNode;
-    remove(item.parent!.nodes!, n => n === item);
+    const evt = new DeleteNodeEvent({
+      detail: {
+        document: this.tree,
+        node: this.currentNode!,
+        parent: this.currentNodeParent!,
+        index: this.currentNodeIndex,
+      },
+    });
+    this.$emit(DeleteNodeEvent.TYPE, evt);
+    if (evt.defaultPrevented) return;
+    const node = evt.detail.node;
+    remove(node.parent!.nodes!, n => n === node);
     this.$forceUpdate();
-    dehydrate(item);
+    dehydrate(node);
     /**
      * A new XML node has been created
      * @type {XmlNode}
      */
-    this.$emit('node-removed', item);
+    this.$emit(
+      NodeRemovedEvent.TYPE,
+      new NodeRemovedEvent({ detail: node as XmlNode }),
+    );
   }
 
   /**

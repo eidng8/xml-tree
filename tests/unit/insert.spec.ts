@@ -33,8 +33,8 @@ describe('Node insertion', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
-    delete emitted['node-created'][0][0].parent;
-    expect(emitted['node-created'][0][0]).toEqual({
+    delete emitted['node-created'][0][0].detail.parent;
+    expect(emitted['node-created'][0][0].detail).toEqual({
       type: 'cdata',
       cdata: 'abc',
     });
@@ -50,8 +50,8 @@ describe('Node insertion', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
-    delete emitted['node-created'][0][0].parent;
-    expect(emitted['node-created'][0][0]).toEqual({
+    delete emitted['node-created'][0][0].detail.parent;
+    expect(emitted['node-created'][0][0].detail).toEqual({
       type: 'comment',
       comment: 'abc',
     });
@@ -67,8 +67,8 @@ describe('Node insertion', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
-    delete emitted['node-created'][0][0].parent;
-    expect(emitted['node-created'][0][0]).toEqual({
+    delete emitted['node-created'][0][0].detail.parent;
+    expect(emitted['node-created'][0][0].detail).toEqual({
       type: 'doctype',
       doctype: 'abc',
     });
@@ -84,8 +84,8 @@ describe('Node insertion', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
-    delete emitted['node-created'][0][0].parent;
-    expect(emitted['node-created'][0][0]).toEqual({
+    delete emitted['node-created'][0][0].detail.parent;
+    expect(emitted['node-created'][0][0].detail).toEqual({
       type: 'instruction',
       name: 'abc',
       instruction: '',
@@ -108,8 +108,8 @@ describe('Child node insertion', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
-    delete emitted['node-created'][0][0].parent;
-    expect(emitted['node-created'][0][0]).toEqual({
+    delete emitted['node-created'][0][0].detail.parent;
+    expect(emitted['node-created'][0][0].detail).toEqual({
       type: 'text',
       text: 'abc',
     });
@@ -128,8 +128,8 @@ describe('Child node insertion', () => {
     await savePopup(wrapper);
     const emitted = wrapper.emitted();
     expect(emitted['node-created'].length).toBe(1);
-    delete emitted['node-created'][0][0].parent;
-    expect(emitted['node-created'][0][0]).toEqual({
+    delete emitted['node-created'][0][0].detail.parent;
+    expect(emitted['node-created'][0][0].detail).toEqual({
       type: 'element',
       name: 'abc',
     });
