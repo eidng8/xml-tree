@@ -79,7 +79,7 @@ module.exports = {
   'Forbids saving invalid XML': () => {
     page.setValue('@raw', '>');
     page.savePopup(true);
-    page.assert.noEventFired();
+    page.assert.not.eventFired('node-changed');
     page.assert.visible('@popup');
     page.assert.visible('@error');
     page.assert.visible('@message');
@@ -88,7 +88,7 @@ module.exports = {
   'Cancel editing': () => {
     page.setValue('@raw', '<test a="b"/>');
     page.cancelPopup();
-    page.assert.noEventFired();
+    page.assert.not.eventFired('node-changed');
     page.assert.not.outputContains('<test a="b">');
   },
 };

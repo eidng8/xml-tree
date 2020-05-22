@@ -56,6 +56,6 @@ module.exports = {
     page.cancelPopup();
     page.assert.containsText('@declaration', 'encoding="utf-8"');
     page.assert.outputContains('encoding="utf-8"');
-    page.assert.noEventFired();
+    page.assert.not.eventFired('declaration-changed');
   },
 };
