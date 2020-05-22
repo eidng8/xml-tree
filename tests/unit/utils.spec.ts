@@ -8,13 +8,58 @@ import {
   cloneObject,
   cloneWithoutHierarchy,
   createEmptyNode,
+  isCDataNode,
+  isCommentNode,
+  isDeclarationNode,
+  isDocTypeNode,
+  isElementNode,
+  isInstructionNode,
+  isTextNode,
   kvpArray,
   kvpObject,
   objXml,
   XmlElement,
   xmlJs,
+  XmlNode,
   XmlRoot,
 } from '../../src';
+
+describe('Type guards', () => {
+  it('checks CDATA', () => {
+    expect.assertions(1);
+    expect(isCDataNode({ type: 'cdata' } as XmlNode)).toBe(true);
+  });
+
+  it('checks comment', () => {
+    expect.assertions(1);
+    expect(isCommentNode({ type: 'comment' } as XmlNode)).toBe(true);
+  });
+
+  it('checks DOCTYPE', () => {
+    expect.assertions(1);
+    expect(isDocTypeNode({ type: 'doctype' } as XmlNode)).toBe(true);
+  });
+
+  it('checks declaration', () => {
+    expect.assertions(1);
+    expect(isDeclarationNode({} as XmlNode)).toBe(true);
+  });
+
+  it('checks element', () => {
+    expect.assertions(1);
+    expect(isElementNode({ type: 'element' } as XmlNode)).toBe(true);
+  });
+
+  it('checks instruction', () => {
+    expect.assertions(1);
+    expect(isInstructionNode({ type: 'instruction' } as XmlNode)).toBe(true);
+  });
+
+  it('checks text', () => {
+    expect.assertions(1);
+    expect(isTextNode({ type: 'text' } as XmlNode)).toBe(true);
+  });
+});
 
 describe('kvpArray', () => {
   it('coverts object to kvp array', () => {
