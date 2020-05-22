@@ -35,8 +35,7 @@ jobs:
     - stage: test
       os: linux
       env:
-        - secure: UL7zmeiaxqvmQvlRUD/tTwcIR6uZ2w7qFNiDu1m/qtQQot6lFelavfizgk9FW9Hg/7oc2PFP8t9wuKZL8icDzMIncaOmTvisdK/JShSQKl79f70h6qddHbzzTkeU+qyTiggiTWWqOC+VDByWduj2lUU44q1sfbFLrN0XK0fAdaFAwuACu3ZsinEbdOwimRtVGaKEAlqf3P247GRPXIGAlewU7H4cv17K4+0wvM+DZ/BSQkL0JJOQmGmeBPWjTnS1SJ7TDpa1k2MtG4ESXXMc1PMPnzVRMcEs76TQ4WtdrxTneT4ylMBX8+H/Q1Nj9DtMfpQ58hcIf2v27KA8z3wEQkbb+TXga6PXsFv3nzR077Mk6OwcutFaGWlpdL6d97nztYhenQ7ZjNMp3hKaMSFyYBI7xgfqA2sJhCo/SR9DFQGR7J4IjEXI3E735QYvcRX4kvJkQpv77aQ9ST9H3lz4jwj/Wt5WbGfQL5guOy7sDnn+oPUQjtV1qEcR7kvHr3+8NvZtEUEn8KDcdsStFnd9qwIVKMdjeQ2iz6wTcU/KTzQ9a6N3+mfWB2bAeMg7sHkmc3M7Is2g3VLxSoNTM1V3lI/HJWEcr36N6JsTpUJ3bKH1/X7vUxqUpT73lJxb7h1ZUoiD5vGGetrMtcRwybYvT89L3iiYJIXizCCpO1E3lW4=
-        - secure: RyGlG4ZdaeE0zdTu0ni8HIT46IeE9hnLht3S5zIctq4kkFVfpUYqp+NqHFmOpKYiZGPWTGG9EkiB9TDj++IDL/96XYsRPZM/8wMuuqpqlJDfKISjvkE8rF1gidfVohS/18Sbc64wF75BxbktS0twI7d1hiiqYwOB6H1oyYa9e2QQ6P3v8uXk04U5TJnhZtZgIccvBJmq34BDSid9GDqB8Xlg752qHiMQb0dvKKZn7QMPXUVOjB8ln9csf98Rc4njhKjYi5egcJEClpakDBf85yvQYuY0YIUJRISzoJOg5FC9aQ/DfZ4qP2eGzIrLyBjH2E+P0kGhnDthE6FOfTD1RlgI+Aa988A3oc6uYCIWVsmhOuE92CZ4TI/W3usoD3/cyoEGyHnECq1k2vLxTakypOmSlwe/MiDKGZ8CJIAyuWR4HEu/VXQrAsci5qGSqHgXvWN22dXQUX2YBjaC00jPpFf9YQBPAkDRLLRdY5WlzQahZJLnxU/yJlaQ1TyJNdtsyJ9N7fOQyo/1gUC3QCpmQ9fgLmTLh92f9ohGgAD7zyCkX896cHqOeSZWSYrtFSghCq2VXeDQYLX7lg6tPwjl7bxKlg3kotwwB8vx5krXsE5+uQf85KDpzaZ3vcOrzjatz26PrgsMRqg62wOgL5Im+p1JXbxWU4J3njmAa9OVvfk=
+        secure: bZjWCQCogJjjcZSXp+aAuRuOnduCpHt2hNDtrxp9ZGrt5rVsulRBNzjjFOHcIPtrYqInToCpTnEScvm+KddRQ3QHzG8fkkoo+wSEzSa2Lgho/qZ5F4RQzY1jrz5ZxQrOGenr+SlaoF+IkV5ho79lR6H2uScI7niqOzwWCeoZiz9er8SaN/MEhdEXuiq8NynTkkkPtwYijM/38E9KBScZ2O7/ltlpqyQ0usc7d00Ydo/mlw+pb7ztTuiuYeJs5mAnZJ2RjuVd5Nbpm4QxOJeX8/hLYiQvMTlXN1JcOy1i/w5y9M9yq2yz0fKn367MoibACFmxQgkw218eC0v3pu5yAnBGvmbaIGJIwT9WofmRjNRTQ9hXemRbUetNQRhNriI9Ws8rfdieZnoJ35qDPnOijRx2zZPclo+3dLIiTj+AhYZjPsg9oEZ3DS8l/B1rCyXKYIudK3VQVI6YgAozKjsYSc/HP2tI0eB2Q+nyjHJlW1KBCGenCYM8KxnBKVOAs5T/9HI4ccJzSNjvPzQ49JqhsszMLsLYTnD3V6/NbX4tTw7Q3Lj6WNO05Mt2LQXzaByAs2bqmZ/FM4RkQrgyMnA36tb5f1NuthpRgwdckvb1lheo3+ibB5QldhLiBC4EdLuxqumiLF5RY0s/DsVOvkvYjo6KSouRxXkbXACYZIMdY/E=
       addons:
         chrome: stable
       install:
@@ -58,13 +57,13 @@ jobs:
       script: skip
       before_deploy:
         - npm install
-        - npm install --no-save @bundle-analyzer/webpack-plugin
         - npm run build
         - export PACKAGE=$(npm pack --silent)
       deploy:
         provider: releases
         edge: true
         file: ${PACKAGE}
+        release_notes_file: RELEASE.md
         token:
           secure: dgcb5HRqM4zQwFFPby1ybKRLovbN3Tj1z8gqGL1jm2EG182XM0QUIofV+DE6ujSVIv4E49K0klpc5WiNgN5G6FvmP4FYVdixYT94XlbRfCccgmIwDl++ldJSHny5CfpVeR3Uc4ikkhY0PYH+xJ4+y0nkASc/Z88EiNYS+mTZW5Cp0I3eY4ooMv8daJEpDoGv8ykpPspiLFaHGk1OZL0gHbwpICnElLePw6QxG7seSlYLcXC6J5/+tWv5x4jmpVH9PKG7L7COmPhATM2nMMS3J3Z/sybXDLeldERlPTR3kE639D5PT2xcRCuH5oUmQo88VEnmVawcVA3nieyWJDK9TxnTmHtgBaxw58BNybKCxcT8Z8M34EqrEIdtodTmsxqtj2Om52Arnyu1EHLh062cEI0dE6WSo+HV0xX3TsicFeCFKz/eoFGnK1rTNlSRRgHrnQNF2lTb44FVB3fV24YS3D4j0NmgHHbeo3ASRHc5JqFJdIGQlx0lJGTPCLFXm0MzQc273OOxgi5Jsa9Fca0UvqIHfeSKNTH7WBGjBkRHti6o5BnElvBIgNaKC3PnKiaIcwIWbFwnP19UIGMMoLn7doYUbkl6IBSaFJqTaaPum6PNECSzIxibnuSq0ZvKAH2jKO6B6cOzu2D9pM7COvd79RVH+0JcNTqDDEtzh+gJ7zs=
         on:
@@ -75,6 +74,9 @@ jobs:
     - stage: deploy
       os: linux
       script: skip
+      before_deploy:
+        - npm install
+        - npm run build
       deploy:
         provider: npm
         edge: true

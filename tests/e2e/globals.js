@@ -1,3 +1,9 @@
+/*
+ * GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ * Author: eidng8
+ */
+
 ///////////////////////////////////////////////////////////////////////////////////
 // Refer to the entire list of global config settings here:
 // https://github.com/nightwatchjs/nightwatch/blob/master/lib/settings/defaults.js#L16
@@ -41,7 +47,7 @@ module.exports = {
      *   return 'Firefox specific global';
      * }
      */
-  }
+  },
 
   /////////////////////////////////////////////////////////////////
   // Global hooks

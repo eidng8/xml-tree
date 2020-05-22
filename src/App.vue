@@ -5,7 +5,7 @@
   -->
 
 <template>
-  <div id="app">
+  <div id="app" :class="{ 'g8--dark': darkTheme }">
     <div class="controls">
       <div class="control-group">
         <label for="show-attr-value">Show attribute values</label>
@@ -28,16 +28,33 @@
     <hr />
     <g8-xml-edit
       :xml="xml"
-      :theme="darkTheme ? 'dark' : ''"
       :show-attr-value="showAttrValue"
       :pi-use-attribute="piAttr"
+      @declaration-changed="eventFired('declaration-changed', $event)"
+      @attribute-changed="eventFired('attribute-changed', $event)"
+      @node-changed="eventFired('node-changed', $event)"
+      @node-created="eventFired('node-created', $event)"
+      @node-removed="eventFired('node-removed', $event)"
+      @default-declaration="eventFired('...', $event)"
+      @menu-open="eventFired('...', $event)"
+      @select-node="eventFired('...', $event)"
+      @edit-node="eventFired('...', $event)"
+      @save-node="eventFired('...', $event)"
     />
+    <hr />
+    <div id="event">
+      <code id="event-name">{{ evtName }}</code>
+      <code> : </code>
+      <code>{{ evtNode }}</code>
+    </div>
+    <pre class="xml">{{ output }}</pre>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { G8XmlEdit } from '.';
+import { cloneWithoutHierarchy, G8XmlEdit, XmlDeclaration, XmlNode } from '.';
+import EventBase from './events/event-base';
 
 @Component({ components: { G8XmlEdit } })
 export default class App extends Vue {
@@ -70,12 +87,38 @@ export default class App extends Vue {
 
   darkTheme = true;
 
+  output = '';
+
+  evtName = '';
+
+  evtNode: XmlNode | XmlDeclaration | null = null;
+
+  // noinspection JSUnusedGlobalSymbols
+  created(): void {
+    this.output = this.xml;
+  }
+
   piChanged(): void {
     this.$nextTick(() => {
-      const tree = this.$children[0] as G8XmlEdit;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const tree = this.$children[0] as any;
       tree.reloadXml();
       tree.$forceUpdate();
     });
+  }
+
+  eventFired(
+    name: string,
+    // eslint-disable-next-line
+    evt: XmlNode | XmlDeclaration | EventBase<any>,
+  ): void {
+    // eslint-disable-next-line
+    const e = evt as EventBase<any>;
+    this.evtName = e.type || name;
+    this.evtNode = cloneWithoutHierarchy(
+      e.detail ? e.detail.node || e.detail : evt,
+    );
+    this.output = this.$children[0] ? this.$children[0].toString() : '';
   }
 }
 </script>
@@ -86,8 +129,6 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  color: #888;
-  background: #333333;
 }
 
 hr {
@@ -105,9 +146,13 @@ hr {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  &.g8--dark {
+    color: #888;
+    background: #333;
+  }
+
   > .controls {
     padding: 2px 6px;
-    height: 1.4em;
 
     > * {
       margin-right: 1em;
@@ -121,5 +166,10 @@ hr {
 
 .control-group {
   display: inline-flex;
+}
+
+.xml {
+  overflow: auto;
+  max-height: 30em;
 }
 </style>

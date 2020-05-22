@@ -7,13 +7,59 @@
 import {
   cloneObject,
   cloneWithoutHierarchy,
+  createEmptyNode,
+  isCDataNode,
+  isCommentNode,
+  isDeclarationNode,
+  isDocTypeNode,
+  isElementNode,
+  isInstructionNode,
+  isTextNode,
   kvpArray,
   kvpObject,
   objXml,
-  XmlEditElement,
-  XmlEditRoot,
+  XmlElement,
   xmlJs,
+  XmlNode,
+  XmlRoot,
 } from '../../src';
+
+describe('Type guards', () => {
+  it('checks CDATA', () => {
+    expect.assertions(1);
+    expect(isCDataNode({ type: 'cdata' } as XmlNode)).toBe(true);
+  });
+
+  it('checks comment', () => {
+    expect.assertions(1);
+    expect(isCommentNode({ type: 'comment' } as XmlNode)).toBe(true);
+  });
+
+  it('checks DOCTYPE', () => {
+    expect.assertions(1);
+    expect(isDocTypeNode({ type: 'doctype' } as XmlNode)).toBe(true);
+  });
+
+  it('checks declaration', () => {
+    expect.assertions(1);
+    expect(isDeclarationNode({} as XmlNode)).toBe(true);
+  });
+
+  it('checks element', () => {
+    expect.assertions(1);
+    expect(isElementNode({ type: 'element' } as XmlNode)).toBe(true);
+  });
+
+  it('checks instruction', () => {
+    expect.assertions(1);
+    expect(isInstructionNode({ type: 'instruction' } as XmlNode)).toBe(true);
+  });
+
+  it('checks text', () => {
+    expect.assertions(1);
+    expect(isTextNode({ type: 'text' } as XmlNode)).toBe(true);
+  });
+});
 
 describe('kvpArray', () => {
   it('coverts object to kvp array', () => {
@@ -133,7 +179,7 @@ describe('cloneWithoutHierarchy', () => {
       name: 'e',
       nodes: [],
       attributes: [],
-      parent: {} as XmlEditRoot,
+      parent: {} as XmlRoot,
     };
     const actual = cloneWithoutHierarchy(fixture);
     expect(actual).not.toBe(fixture);
@@ -148,11 +194,11 @@ describe('cloneWithoutHierarchy', () => {
 describe('xmlJs', () => {
   it('converts xml to object', () => {
     expect.assertions(1);
-    const actual = xmlJs('<a><b c="d"><e/></b></a>') as XmlEditElement;
+    const actual = xmlJs('<a><b c="d"><e/></b></a>') as XmlElement;
     delete actual.nodes![0].parent;
-    delete (actual.nodes![0] as XmlEditElement).nodes![0].parent;
-    delete ((actual.nodes![0] as XmlEditElement).nodes![0] as XmlEditElement)
-      .nodes![0].parent;
+    delete (actual.nodes![0] as XmlElement).nodes![0].parent;
+    delete ((actual.nodes![0] as XmlElement).nodes![0] as XmlElement).nodes![0]
+      .parent;
     expect(actual).toEqual({
       nodes: [
         {
@@ -225,8 +271,26 @@ describe('objXml', () => {
     expect(actual).toBe(
       `<?xml version="1.0" encoding="utf-8"?>
 <a>
-  <b c="d">
-    <e/></b></a>`,
+    <b c="d">
+        <e/></b></a>`,
     );
+  });
+});
+
+describe('createEmptyNode', () => {
+  it('creates element', () => {
+    expect(createEmptyNode('element')).toEqual({
+      type: 'element',
+      name: 'new-element',
+      attributes: [],
+    });
+  });
+
+  it('creates process instruction with attribute', () => {
+    expect(createEmptyNode('instruction', true)).toEqual({
+      type: 'instruction',
+      name: 'new-instruction',
+      attributes: [],
+    });
   });
 });

@@ -18,8 +18,9 @@
 
   button {
     padding: 0.5em;
-    margin: 0 0 0 1em;
     cursor: pointer;
+    margin: 0 0 0 1em;
+    text-transform: capitalize;
     border-radius: $g8-xml__corner--small;
     border: solid 1px $g8-xml__border__color;
   }
@@ -48,6 +49,14 @@
     // only useful if the textarea is the only field in the box
     // full viewport height - lines of text - padding - borders
     max-height: calc(100vh - 12em - 4px);
+  }
+
+  input,
+  select,
+  textarea {
+    &:invalid {
+      border-color: $g8--error !important;
+    }
   }
 }
 
@@ -102,8 +111,13 @@
 .g8-xml__popup__footer {
   padding: 1em;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   border-top: solid 1px $g8-xml__border__color;
+
+  button {
+    flex-shrink: 0;
+  }
 }
 
 .g8-xml__popup__body {
@@ -212,5 +226,25 @@
   > * {
     padding: 0 1px;
     display: table-cell;
+  }
+}
+
+.g8--error {
+  &.g8-xml__popup__message,
+  & .g8-xml__popup__message {
+    color: $g8--error;
+  }
+}
+
+.g8-xml__popup__message {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &:before {
+    content: '\26a0';
+    margin-right: 3px;
+    display: inline-block;
   }
 }

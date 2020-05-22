@@ -17,6 +17,7 @@ const texts = {
   text: 'text',
   // UI elements
   addAttribute: 'Add Attribute',
+  cancel: 'cancel',
   close: 'close',
   save: 'save',
   insertWhat: 'insert %s',
@@ -25,25 +26,16 @@ const texts = {
   menuEdit: 'edit',
   menuInsertBefore: 'insert before',
   menuInsertAfter: 'insert after',
-  menuAppend: 'append child',
-  menuPrepend: 'prepend child',
+  menuAppend: 'append to',
+  menuPrepend: 'prepend to',
   menuRemove: 'remove',
   // Errors
   errNotEditing: 'There is no node being edited.',
   errNodeParent: 'Invalid node parent',
+  errInvalidXml: 'Invalid XML',
+  errInvalidName: 'Invalid name',
+  errInvalidEncoding: 'Invalid encoding',
 } as { [key: string]: string };
-
-export function interpolate(key: string, ...args: any[]): string {
-  let arg = '%s';
-  let text = texts[key];
-  let i = text.indexOf('%s');
-  while (i >= 0) {
-    arg = args.shift() || arg;
-    text = text.replace('%s', arg);
-    i = text.indexOf('%s');
-  }
-  return text;
-}
 
 export function getTexts(): { [key: string]: string } {
   return texts;
