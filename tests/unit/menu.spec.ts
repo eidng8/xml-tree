@@ -5,7 +5,7 @@
  */
 
 import { mount } from '@vue/test-utils';
-import NodeMenu from '../../../src/components/menus/node-menu.vue';
+import NodeMenu from '../../src/components/menus/node-menu.vue';
 
 describe('menu', () => {
   it('generates menu', () => {

@@ -9,12 +9,12 @@ import EventBase from './event-base';
 
 /**
  * A node has been selected. The `detail` field holds information about the
- * selected node.
+ * selected node. This event is not cancelable.
  */
 export default class SelectNodeEvent extends EventBase<SelectNodeEventDetail> {
   static readonly TYPE = 'select-node';
 
   constructor(init?: CustomEventInit<SelectNodeEventDetail>) {
-    super(SelectNodeEvent.TYPE, init);
+    super(SelectNodeEvent.TYPE, Object.assign({}, init, { cancelable: false }));
   }
 }

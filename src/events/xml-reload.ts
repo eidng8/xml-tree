@@ -4,16 +4,17 @@
  * Author: eidng8
  */
 
-import { DocumentDetail } from '../types/events';
 import EventBase from './event-base';
+import { XmlRoot } from '../types/types';
 
 /**
- * The XML content has be reloaded, converted into a new XML object.
+ * The XML content has be reloaded, converted into a new XML object. This event
+ * is not cancelable.
  */
-export default class XmlReloadEvent extends EventBase<DocumentDetail> {
+export default class XmlReloadEvent extends EventBase<XmlRoot> {
   static readonly TYPE = 'xml-reload';
 
-  constructor(init?: CustomEventInit<DocumentDetail>) {
-    super(XmlReloadEvent.TYPE, init);
+  constructor(init?: CustomEventInit<XmlRoot>) {
+    super(XmlReloadEvent.TYPE, Object.assign({}, init, { cancelable: false }));
   }
 }

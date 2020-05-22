@@ -9,7 +9,8 @@ import EventBase from './event-base';
 
 /**
  * An attribute is about to be edited. The `detail` field holds information
- * about the attribute to be edited.
+ * about the attribute to be edited. `detail.attribute` holds the attribute
+ * to be edited (return value of the event).
  */
 export default class EditAttributeEvent extends EventBase<
   EditAttributeEventDetail

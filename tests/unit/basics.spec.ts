@@ -6,35 +6,12 @@
 
 import { mount } from '@vue/test-utils';
 import { G8XmlEdit } from '../../src';
-import { expandTreeNode } from './helpers';
-
-const xml =
-  '<?xml version="1.0" encoding="utf-8"?>\n' +
-  '<!DOCTYPE note [\n' +
-  '  <!ELEMENT note    (to,from,heading,body)>\n' +
-  '  <!ELEMENT to      (#PCDATA)>\n' +
-  '  <!ELEMENT from    (#PCDATA)>\n' +
-  '  <!ELEMENT heading (#PCDATA)>\n' +
-  '  <!ELEMENT body    (#PCDATA)>\n' +
-  ']>' +
-  // '<!DOCTYPE note SYSTEM "note.dtd">' +
-  '<!-- xslplane.1.xml -->\n' +
-  '<?xml-stylesheet type="text/xsl" href="xslplane.1.xsl" ?>\n' +
-  '<plane xmlns="urn:xxx" xmlns:y="urn:yyy">\n' +
-  '  <![CDATA[<sender>John Smith</sender>]]>\n' +
-  '  <!-- xslplane.2.xml -->\n' +
-  '  <year> 1977 </year>\n' +
-  '  <y:make> <c>Cessna</c><c></c><c></c> </y:make>\n' +
-  '  <model>\n' +
-  '    Skyhawk\n' +
-  '  </model>\n' +
-  '  <color> Light&nbsp;blue and white </color>\n' +
-  '</plane>';
+import { expandTreeNode, source } from './helpers';
 
 describe('XML view', () => {
   let propsData: any;
 
-  beforeEach(() => (propsData = { xml }));
+  beforeEach(() => (propsData = { xml: source() }));
 
   it('shows tree view', async () => {
     expect.assertions(2);

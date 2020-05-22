@@ -9,7 +9,8 @@ import EventBase from './event-base';
 
 /**
  * A node is about to be edited. The `detail` field holds information about the
- * node to be edited.
+ * node to be edited. `detail.node` is the node to be edited (return value of
+ * then event).
  */
 export default class EditNodeEvent extends EventBase<EditNodeEventDetail> {
   static readonly TYPE = 'edit-node';

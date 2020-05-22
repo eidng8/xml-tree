@@ -9,7 +9,8 @@ import EventBase from './event-base';
 
 /**
  * The context menu is about to open. Call `preventDefault()` to prevent menu
- * from opening.
+ * from opening. `detail.items` are items to be shown in the menu (return value
+ * of the event).
  */
 export default class MenuOpenEvent extends EventBase<MenuOpenEventDetail> {
   static readonly TYPE = 'menu-open';

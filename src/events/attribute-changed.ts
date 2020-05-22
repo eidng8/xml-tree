@@ -9,7 +9,7 @@ import EventBase from './event-base';
 
 /**
  * An attribute is about to be changed. The `detail` field holds information
- * about the changed attribute.
+ * about the changed attribute. This event is not cancelable.
  */
 export default class AttributeChangedEvent extends EventBase<
   EditAttributeEventDetail
@@ -17,6 +17,9 @@ export default class AttributeChangedEvent extends EventBase<
   static readonly TYPE = 'attribute-changed';
 
   constructor(init?: CustomEventInit<EditAttributeEventDetail>) {
-    super(AttributeChangedEvent.TYPE, init);
+    super(
+      AttributeChangedEvent.TYPE,
+      Object.assign({}, init, { cancelable: false }),
+    );
   }
 }

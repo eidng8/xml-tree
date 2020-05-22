@@ -9,12 +9,15 @@ import { XmlNode } from '../types/types';
 
 /**
  * A node has be removed. The `detail` field holds information about the
- * removed node.
+ * removed node. This event is not cancelable.
  */
 export default class NodeRemovedEvent extends EventBase<XmlNode> {
   static readonly TYPE = 'node-removed';
 
   constructor(init?: CustomEventInit<XmlNode>) {
-    super(NodeRemovedEvent.TYPE, init);
+    super(
+      NodeRemovedEvent.TYPE,
+      Object.assign({}, init, { cancelable: false }),
+    );
   }
 }

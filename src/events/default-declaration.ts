@@ -8,15 +8,14 @@ import { DefaultDeclarationEventDetail } from '../types/events';
 import EventBase from './event-base';
 
 /**
- * Emitted when the XML document doesn't have a declaration. The default
- * behavior of this event is to combine the build-in default declaration and the
- * `detail.declaration`. Call `preventDefault()` on the event if the default
- * behavior is not desired. The `detail` field holds information
- * about the event:
+ * Emitted when the XML document doesn't have a declaration. The `detail` field
+ * holds information about the event:
  *
- * - `detail.document` field holds the loaded XML object,
- * - `detail.declaration` field is the return value of the event, which will
- * be set to the loaded document.
+ * - `detail.document` field holds the loaded XML object. There may be
+ * declaration in this object.
+ * - `detail.declaration` field is the return value of this event, which will
+ * be set to the loaded document. If this field is `undefined` upon return,
+ * a sensible default value will be used.
  */
 export default class DefaultDeclarationEvent extends EventBase<
   DefaultDeclarationEventDetail

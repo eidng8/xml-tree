@@ -9,7 +9,8 @@ import EventBase from './event-base';
 
 /**
  * A node is about to be saved. The `detail` field holds information about the
- * node to be saved.
+ * node to be saved. `detail.node` is the node to be saved (return value of
+ * then event).
  */
 export default class SaveNodeEvent extends EventBase<EditNodeEventDetail> {
   static readonly TYPE = 'save-node';

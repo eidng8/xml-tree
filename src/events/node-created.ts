@@ -9,12 +9,15 @@ import { XmlNode } from '../types/types';
 
 /**
  * A node has be created. The `detail` field holds information about the
- * node being created.
+ * node being created. This event is not cancelable.
  */
 export default class NodeCreatedEvent extends EventBase<XmlNode> {
   static readonly TYPE = 'node-created';
 
   constructor(init?: CustomEventInit<XmlNode>) {
-    super(NodeCreatedEvent.TYPE, init);
+    super(
+      NodeCreatedEvent.TYPE,
+      Object.assign({}, init, { cancelable: false }),
+    );
   }
 }

@@ -37,7 +37,7 @@ export default class NodeMenu extends Vue {
     });
     this.$emit(MenuOpenEvent.TYPE, ovt);
     if (ovt.defaultPrevented) return;
-    (this.$children[0] as G8PopupMenu).open(items, evt);
+    (this.$children[0] as G8PopupMenu).open(ovt.detail.items, evt);
   }
 
   /**

@@ -9,12 +9,15 @@ import { XmlDeclaration } from '../types/types';
 
 /**
  * Declaration has be changed. The `detail` field holds information about the
- * new declaration.
+ * new declaration. This event is not cancelable.
  */
 export default class DeclarationChangedEvent extends EventBase<XmlDeclaration> {
   static readonly TYPE = 'declaration-changed';
 
   constructor(init?: CustomEventInit<XmlDeclaration>) {
-    super(DeclarationChangedEvent.TYPE, init);
+    super(
+      DeclarationChangedEvent.TYPE,
+      Object.assign({}, init, { cancelable: false }),
+    );
   }
 }

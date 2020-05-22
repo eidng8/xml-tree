@@ -211,7 +211,7 @@ export default class G8XmlEdit extends Vue {
   /**
    * Returns default XML declaration.
    */
-  private get defaultDeclaration(): XmlDeclaration {
+  getDefaultDeclaration(): XmlDeclaration {
     const evt = new DefaultDeclarationEvent({
       detail: { document: this.tree, declaration: this.tree.declaration },
     });
@@ -227,11 +227,10 @@ export default class G8XmlEdit extends Vue {
      */
     this.$emit(DefaultDeclarationEvent.TYPE, evt);
     if (evt.defaultPrevented) return evt.detail.declaration;
-    return Object.assign(
-      {},
-      defaultDeclaration(this.tree),
-      evt.detail.declaration,
-    );
+    if (evt.detail.declaration) {
+      return Object.assign({ parent: this.tree }, evt.detail.declaration);
+    }
+    return Object.assign({}, defaultDeclaration(this.tree));
   }
 
   /**
@@ -247,7 +246,7 @@ export default class G8XmlEdit extends Vue {
       !this.tree.declaration.attributes ||
       !this.tree.declaration.attributes.length
     ) {
-      this.tree.declaration = this.defaultDeclaration;
+      this.tree.declaration = this.getDefaultDeclaration();
     }
     /**
      * Emits when XML document has been reloaded. The `detail.document` field
@@ -256,10 +255,7 @@ export default class G8XmlEdit extends Vue {
      * called. Changing the {@see xml} property will be trigger this event.
      * @type {XmlReloadEvent}
      */
-    this.$emit(
-      XmlReloadEvent.TYPE,
-      new XmlReloadEvent({ detail: { document: this.tree } }),
-    );
+    this.$emit(XmlReloadEvent.TYPE, new XmlReloadEvent({ detail: this.tree }));
   }
 
   toString(options?: Options.JS2XML): string {
@@ -291,7 +287,6 @@ export default class G8XmlEdit extends Vue {
           node: this.currentNode,
           parent: this.currentNodeParent,
           index: this.currentNodeIndex,
-          creating: this.creatingNode,
           expanded,
         },
       }),
@@ -505,7 +500,7 @@ export default class G8XmlEdit extends Vue {
     });
     this.$emit(SaveAttributeEvent.TYPE, svt);
     if (svt.defaultPrevented) return;
-    const attributes = svt.detail.node.attributes!;
+    const attributes = (this.currentNode! as XmlElement).attributes!;
     const attribute = svt.detail.attribute;
     const idx = findIndex(attributes, a => attribute.name == a.name);
     attributes[idx] = attribute;
@@ -543,7 +538,7 @@ export default class G8XmlEdit extends Vue {
     });
     this.$emit(DeleteNodeEvent.TYPE, evt);
     if (evt.defaultPrevented) return;
-    const node = evt.detail.node;
+    const node = this.currentNode!;
     remove(node.parent!.nodes!, n => n === node);
     this.$forceUpdate();
     dehydrate(node);

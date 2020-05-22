@@ -9,12 +9,15 @@ import { XmlNode } from '../types/types';
 
 /**
  * A node has be changed. The `detail` field holds information about the
- * node being changed.
+ * node being changed. This event is not cancelable.
  */
 export default class NodeChangedEvent extends EventBase<XmlNode> {
   static readonly TYPE = 'node-changed';
 
   constructor(init?: CustomEventInit<XmlNode>) {
-    super(NodeChangedEvent.TYPE, init);
+    super(
+      NodeChangedEvent.TYPE,
+      Object.assign({}, init, { cancelable: false }),
+    );
   }
 }

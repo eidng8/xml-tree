@@ -9,7 +9,7 @@ import EventBase from './event-base';
 
 /**
  * A node is about to be deleted. The `detail` field holds information about the
- * node to be deleted.
+ * node to be deleted. This event has no return value.
  */
 export default class DeleteNodeEvent extends EventBase<EditNodeEventDetail> {
   static readonly TYPE = 'delete-node';
