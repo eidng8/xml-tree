@@ -10,6 +10,7 @@ import EventBase from './event-base';
 /**
  * An attribute is about to be changed. The `detail` field holds information
  * about the changed attribute. This event is not cancelable.
+ * [[include:xml-edit.md]]
  */
 export default class AttributeChangedEvent extends EventBase<
   EditAttributeEventDetail
