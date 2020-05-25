@@ -6,8 +6,8 @@
 
 @import 'variables';
 
-@import '~g8-vue-tree/src/components/tree-view';
-@import '~g8-popup-menu/src/styles/popup-menu';
+@import '../../node_modules/g8-vue-tree/src/components/tree-view';
+@import '../../node_modules/g8-popup-menu/src/styles/popup-menu';
 @import './overwrites';
 @import './xml-edit';
 @import './popup';

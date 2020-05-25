@@ -108,3 +108,5 @@ export class SaveNodeKeyboardEvent extends KeyboardEvent {
    */
   data!: XmlNode | XmlDeclaration | XmlAttribute;
 }
+
+export type SaveNodePopupEvent = SaveNodeMouseEvent | SaveNodeKeyboardEvent;

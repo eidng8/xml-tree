@@ -18,15 +18,34 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { getTexts } from '../../translations/translation';
 import { XmlAttribute } from '../../types/types';
 
+/**
+ * An HTML input field for entering character encoding. It uses
+ * [iconv-lite](https://www.npmjs.com/package/iconv-lite) to
+ * validate the input.
+ */
 @Component({ name: 'input-encoding' })
 export default class InputEncoding extends Vue {
+  /**
+   * Input's value
+   */
   @Prop() private value!: XmlAttribute;
 
+  /**
+   * Text translations
+   */
   private texts = getTexts();
 
-  private validate(evt: InputEvent): void {
+  /**
+   * Validates the input value, and reports validity error if invalid.
+   * @param event
+   */
+  private validate(event: InputEvent): void {
     if (encodingExists(this.value.value!)) {
-      this.$emit('input', evt);
+      /**
+       * Emitted when there is valid input.
+       * @type {InputEvent}
+       */
+      this.$emit('input', event);
       (this.$el as HTMLInputElement).setCustomValidity('');
       return;
     }

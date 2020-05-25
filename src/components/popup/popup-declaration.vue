@@ -48,7 +48,7 @@
 import { each, filter, includes, map } from 'lodash';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { XmlAttribute, XmlDeclaration } from '../../types/types';
-import { SaveNodeKeyboardEvent, SaveNodeMouseEvent } from '../../types/events';
+import { SaveNodePopupEvent } from '../../types/events';
 import PopupBox from './popup-box.vue';
 import {
   cloneWithoutHierarchy,
@@ -57,21 +57,42 @@ import {
 import { getTexts } from '../../translations/translation';
 import InputEncoding from '../inputs/input-encoding.vue';
 
+/**
+ * Popup box for editing XML declaration.
+ */
 @Component({
   name: 'popup-declaration',
   components: { InputEncoding, PopupBox },
 })
 export default class PopupDeclaration extends Vue {
+  /**
+   * The node to be edited.
+   */
   @Prop() private node!: XmlDeclaration;
 
+  /**
+   * Actual object to work with.
+   */
   private operand!: XmlDeclaration;
 
+  /**
+   * Text translations
+   */
   private texts = getTexts();
 
+  /**
+   * `version` attribute of declaration.
+   */
   private version!: XmlAttribute;
 
+  /**
+   * `encoding` attribute of declaration.
+   */
   private encoding!: XmlAttribute;
 
+  /**
+   * `standalone` attribute of declaration.
+   */
   private standalone!: XmlAttribute;
 
   // noinspection JSUnusedLocalSymbols
@@ -107,25 +128,35 @@ export default class PopupDeclaration extends Vue {
     });
   }
 
-  private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+  /**
+   * The `save` button has been pressed.
+   */
+  private save(event: SaveNodePopupEvent): void {
     const invalid = this.$el.querySelector(':invalid') as HTMLInputElement;
     if (invalid) {
       invalid.reportValidity();
-      evt.preventDefault();
+      event.preventDefault();
       return;
     }
-    evt.data = this.operand;
+    event.data = this.operand;
     removeHierarchyFromNode(this.operand);
     /**
      * The node passed in the `data` field shall be saved.
-     * @param {SaveNodeMouseEvent|SaveNodeKeyboardEvent} event
+     * @param {SaveNodePopupEvent} event
      */
-    this.$emit('save', evt);
-    this.close(evt);
+    this.$emit('save', event);
+    this.close(event);
   }
 
-  private close(evt: Event): void {
-    this.$emit('close', evt);
+  /**
+   * Closes the popup box.
+   */
+  private close(event: Event): void {
+    /**
+     * The popup has been closed.
+     * @type {UIEvent}
+     */
+    this.$emit('close', event);
   }
 }
 </script>

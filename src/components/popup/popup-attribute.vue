@@ -34,16 +34,25 @@
 import { cloneDeep } from 'lodash';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { XmlAttribute } from '../../types/types';
-import { SaveNodeKeyboardEvent, SaveNodeMouseEvent } from '../../types/events';
+import { SaveNodePopupEvent } from '../../types/events';
 import PopupBox from './popup-box.vue';
 
+/**
+ * Popup box for editing attribute.
+ */
 @Component({
   name: 'popup-attribute',
   components: { PopupBox },
 })
 export default class PopupAttribute extends Vue {
+  /**
+   * Attribute value
+   */
   @Prop() private attribute!: XmlAttribute;
 
+  /**
+   * Actual object to work with.
+   */
   private operand!: XmlAttribute;
 
   // noinspection JSUnusedLocalSymbols
@@ -51,13 +60,29 @@ export default class PopupAttribute extends Vue {
     this.operand = cloneDeep(this.attribute);
   }
 
-  private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
-    evt.data = this.operand;
-    this.$emit('save', evt);
-    this.close(evt);
+  /**
+   * The `save` button has been pressed.
+   * @param event
+   */
+  private save(event: SaveNodePopupEvent): void {
+    event.data = this.operand;
+    /**
+     * The `save` button has been pressed.
+     * @type {SaveNodePopupEvent}
+     */
+    this.$emit('save', event);
+    this.close(event);
   }
 
+  /**
+   * Closes the popup box.
+   * @param evt
+   */
   private close(evt: Event): void {
+    /**
+     * The popup has been closed.
+     * @type {UIEvent}
+     */
     this.$emit('close', evt);
   }
 }
