@@ -48,7 +48,7 @@ function updateReleaseNotes(log) {
   // extract current version log to release notes
   const match = /## \[.+?## \[/ms.exec(log)[0];
   const note = path.resolve(path.join(__dirname, '../RELEASE.md'));
-  const text = `# Vue-Tree v${version}
+  const text = `# Xml-Edit v${version}
 
 A Vue.js component showing and editing XML in tree view.
 Released under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).

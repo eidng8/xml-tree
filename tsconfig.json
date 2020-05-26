@@ -13,6 +13,9 @@
     "sourceMap": true,
     "baseUrl": ".",
     "outDir": "lib",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "typings",
     "types": ["webpack-env", "jest"],
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
@@ -23,5 +26,15 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "tests"],
+  "typedocOptions": {
+    "excludeExternals": true,
+    "excludeNotExported": true,
+    "inputFiles": "src",
+    "includes": "docs/md",
+    "exclude": "src/*.ts",
+    "readme": "docs/md/xml-edit.md",
+    "out": "docs/typedoc",
+    "theme": "node_modules/g8-typedoc-dark/wide/"
+  }
 }

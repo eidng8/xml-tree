@@ -7,5 +7,5 @@
 module.exports = {
   componentsRoot: 'src/components',
   components: '**/*.vue',
-  outDir: 'docs',
+  outDir: 'docs/md',
 };

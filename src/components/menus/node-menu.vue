@@ -5,6 +5,11 @@
   -->
 
 <template>
+  <!--
+  Emitted when a menu item has be selected.
+  @event select
+  @type {G8MenuItem}
+  -->
   <g8-popup-menu
     class="g8-menu g8-menu--off"
     :add-element-id="true"
@@ -21,10 +26,19 @@ import { getTexts } from '../../translations/translation';
 import { isElementNode, isTextNode } from '../../utils/type-guards';
 import MenuOpenEvent from '../../events/menu-open';
 
+/**
+ * Generate menu for a tree node.
+ */
 @Component({ name: 'node-menu', components: { G8PopupMenu } })
 export default class NodeMenu extends Vue {
+  /**
+   * Separator signature
+   */
   private static readonly SEPARATOR = { label: '---' };
 
+  /**
+   * Text translations
+   */
   private texts = getTexts();
 
   /**
@@ -35,6 +49,10 @@ export default class NodeMenu extends Vue {
     const ovt = new MenuOpenEvent({
       detail: { items, node, rootLevel: isRoot, originalEvent: evt },
     });
+    /**
+     * @event menu-open
+     * @type {MenuOpenEvent}
+     */
     this.$emit(MenuOpenEvent.TYPE, ovt);
     if (ovt.defaultPrevented) return;
     (this.$children[0] as G8PopupMenu).open(ovt.detail.items, evt);

@@ -117,7 +117,7 @@ import {
   XmlNode,
   XmlText,
 } from '../../types/types';
-import { SaveNodeKeyboardEvent, SaveNodeMouseEvent } from '../../types/events';
+import { SaveNodePopupEvent } from '../../types/events';
 import {
   cloneWithoutHierarchy,
   objXml,
@@ -131,21 +131,42 @@ import InputName from '../inputs/input-name.vue';
 import PopupBox from './popup-box.vue';
 import { isElementNode, isTextNode } from '../../utils/type-guards';
 
+/**
+ * Popup box for editing XML node.
+ */
 @Component({
   name: 'popup-node',
   components: { InputName, PopupBox },
 })
 export default class PopupNode extends Vue {
+  /**
+   * The node to be edited.
+   */
   @Prop() private node!: XmlNode;
 
+  /**
+   * Actual object to work with.
+   */
   private operand!: XmlNode;
 
+  /**
+   * Text translations
+   */
   private texts = getTexts();
 
+  /**
+   * Raw XML string.
+   */
   private raw = '';
 
+  /**
+   * Error message of the editing node.
+   */
   private errorMessage = '';
 
+  /**
+   * Error message tooltip of the editing node.
+   */
   private errorMessageHint = '';
 
   // noinspection JSUnusedLocalSymbols
@@ -177,6 +198,9 @@ export default class PopupNode extends Vue {
     each(areas, a => (a.style.height = `${ah}px`));
   }
 
+  /**
+   * Update raw XML string according to other input.
+   */
   private updateRaw(): void {
     const bak = this.raw;
     if (isTextNode(this.operand)) {
@@ -189,6 +213,9 @@ export default class PopupNode extends Vue {
     if (!this.validateXml()) this.raw = bak;
   }
 
+  /**
+   * Validate the edting node.
+   */
   private validateXml(): boolean {
     const xml = isTextNode(this.operand) ? `<tmp>${this.raw}</tmp>` : this.raw;
     try {
@@ -206,6 +233,9 @@ export default class PopupNode extends Vue {
     }
   }
 
+  /**
+   * The raw XML has been changed.
+   */
   private rawChanged(): void {
     if (!this.validateXml()) return;
     let node: XmlElement, obj: XmlNode;
@@ -222,6 +252,9 @@ export default class PopupNode extends Vue {
     this.operand = obj;
   }
 
+  /**
+   * Add a new attribute to the node.
+   */
   private newAttribute(): void {
     const node = this.operand as XmlElement;
     node.attributes!.push({ name: '', value: '' });
@@ -235,6 +268,9 @@ export default class PopupNode extends Vue {
     });
   }
 
+  /**
+   * Delete the specified attribute from node.
+   */
   private deleteAttribute(idx: number): void {
     const node = this.operand as XmlElement;
     node.attributes!.splice(idx, 1);
@@ -242,7 +278,10 @@ export default class PopupNode extends Vue {
     this.$forceUpdate();
   }
 
-  private save(evt: SaveNodeMouseEvent | SaveNodeKeyboardEvent): void {
+  /**
+   * The `save` button has been pressed.
+   */
+  private save(event: SaveNodePopupEvent): void {
     if (this.hasError()) {
       this.reportError();
       return;
@@ -257,18 +296,28 @@ export default class PopupNode extends Vue {
       ? (wrapper.nodes![0] as XmlElement).nodes![0]
       : wrapper.nodes![0]) as XmlNode;
     removeHierarchyFromNode(node);
-    evt.data = node;
+    event.data = node;
     /**
      * The node passed in the `data` field shall be saved.
-     * @param {SaveNodeMouseEvent|SaveNodeKeyboardEvent} event
+     * @type {SaveNodePopupEvent}
      */
-    this.$emit('save', evt);
+    this.$emit('save', event);
   }
 
-  private close(evt: Event): void {
-    this.$emit('close', evt);
+  /**
+   * Closes the popup box.
+   */
+  private close(event: Event): void {
+    /**
+     * The popup has been closed.
+     * @type {UIEvent}
+     */
+    this.$emit('close', event);
   }
 
+  /**
+   * Whether current editing node has error.
+   */
   private hasError(): boolean {
     return (
       this.$el.classList.contains('g8--error') ||
@@ -276,6 +325,9 @@ export default class PopupNode extends Vue {
     );
   }
 
+  /**
+   * Report error on first erroneous field.
+   */
   private reportError(): void {
     const elem = this.$el.querySelector(':invalid') as HTMLInputElement;
     if (elem) elem.reportValidity();

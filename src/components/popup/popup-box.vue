@@ -46,12 +46,24 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { getTexts } from '../../translations/translation';
 
+/**
+ * Popup box
+ */
 @Component({ name: 'popup-box' })
 export default class PopupBox extends Vue {
+  /**
+   * Message to be shown in the popup box.
+   */
   @Prop() private message?: string;
 
+  /**
+   * Message tooltip to the popup box message.
+   */
   @Prop() private messageHint?: string;
 
+  /**
+   * Text translations
+   */
   private texts = getTexts();
 
   // noinspection JSUnusedLocalSymbols
@@ -69,6 +81,9 @@ export default class PopupBox extends Vue {
     document.removeEventListener('keyup', this.keyup);
   }
 
+  /**
+   * Place the input focus to first text input control.
+   */
   private initFocus(): void {
     const input = this.$el.querySelector(
       '.g8-xml__popup__attributes .g8-xml__popup__control input,textarea',
@@ -76,14 +91,31 @@ export default class PopupBox extends Vue {
     if (input) input.focus();
   }
 
-  private close(evt: Event): void {
-    this.$emit('close', evt);
+  /**
+   * Closes the popup box.
+   */
+  private close(event: Event): void {
+    /**
+     * The popup has been closed.
+     * @type {UIEvent}
+     */
+    this.$emit('close', event);
   }
 
-  private save(evt: Event): void {
-    this.$emit('save', evt);
+  /**
+   * The `save` button has been pressed.
+   */
+  private save(event: Event): void {
+    /**
+     * The `save` button has been pressed.
+     * @type {SaveNodePopupEvent}
+     */
+    this.$emit('save', event);
   }
 
+  /**
+   * Handles special key input.
+   */
   private keyup(evt: KeyboardEvent): void {
     if ('Escape' == evt.key) {
       this.close(evt);
