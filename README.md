@@ -13,6 +13,8 @@ npm i -S g8-xml-edit
 ## Usage
 
 ```html
+<g8-xml-edit xml="<root/>" />
+<!-- OR -->
 <g8-xml-edit :xml="xml" />
 ```
 
