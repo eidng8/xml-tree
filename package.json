@@ -22,10 +22,10 @@
     "xml"
   ],
   "scripts": {
-    "build": "npm run build-app && npm run build-sass",
-    "build-app": "vue-cli-service build --target lib --mode production ./src/index.ts",
+    "build": "vue-cli-service build --target lib --mode production ./src/index.ts && npm run build-sass && tsc",
+    "build-dev": "npm run build-app && npm run build-sass",
     "build-sass": "node-sass --output-style compressed src/styles/index.scss > dist/g8-xml-edit.css",
-    "docs": "vue-docgen && typedoc",
+    "build-docs": "vue-docgen && typedoc",
     "serve": "vue-cli-service serve",
     "start": "npm run serve",
     "test": "npm run test:unit && npm run test:e2e",

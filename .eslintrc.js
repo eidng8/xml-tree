@@ -14,8 +14,8 @@ const rules = {
       onlyEquality: true,
     },
   ],
-  'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-  'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+  'no-console': 'production' === process.env.NODE_ENV ? 'error' : 'off',
+  'no-debugger': 'production' === process.env.NODE_ENV ? 'error' : 'off',
 };
 
 module.exports = {
