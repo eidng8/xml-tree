@@ -128,6 +128,18 @@ import NodeRemovedEvent from '../events/node-removed';
 
 /**
  * Presents an XML document in tree view for editing.
+ *
+ * ## Installation
+ *
+ * ```bash
+ * npm i -S g8-xml-edit
+ * ```
+ *
+ * ## Usage
+ *
+ * ```html
+ * <g8-xml-edit :xml="xml" />
+ * ```
  */
 @Component({
   name: 'g8-xml-edit',
@@ -166,17 +178,20 @@ import NodeRemovedEvent from '../events/node-removed';
 export default class G8XmlEdit extends Vue {
   /**
    * Whether to show attribute value in tree item badges.
+   * @values true, false
    */
   @Prop({ default: false, required: false }) private showAttrValue!: boolean;
 
   /**
    * Set to `false` to treat processing instruction as text;
    * or `true` to facilitate attributes.
+   * @values true, false
    */
   @Prop({ default: false, required: false }) private piUseAttribute!: boolean;
 
   /**
    * Input XML content. This component doesn't mutate the input XML content.
+   * @values XML string
    */
   @Prop({ required: true }) private xml!: string;
 

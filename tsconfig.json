@@ -29,8 +29,9 @@
     "excludeNotExported": true,
     "inputFiles": "src",
     "includes": "docs/md",
+    "exclude": "src/*.ts",
     "readme": "docs/md/xml-edit.md",
     "out": "docs/typedoc",
-    "theme": "node_modules/g8-typedoc-dark/default/"
+    "theme": "node_modules/g8-typedoc-dark/wide/"
   }
 }

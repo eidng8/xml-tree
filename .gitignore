@@ -1,6 +1,6 @@
 /release
 /dist
-/docs
+/docs/typedoc
 /lib
 /tests/e2e/reports
 
