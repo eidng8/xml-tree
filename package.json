@@ -40,7 +40,7 @@
     "core-js": "^3.6.4",
     "g8-popup-menu": "0.0.7",
     "g8-vue-tree": "^0.2.4",
-    "iconv-lite": "^0.5.1",
+    "iconv-lite": "^0.6.0",
     "lodash": "^4.17.15",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
