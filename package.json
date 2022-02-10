@@ -79,7 +79,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "g8-typedoc-dark": "^0.1.2",
     "husky": "^4.2.5",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "sass-loader": "^8.0.2",
